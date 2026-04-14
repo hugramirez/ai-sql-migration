@@ -132,7 +132,8 @@ USER_QUERY="Use run_sqledge_query to execute: SELECT TOP (100) [sk_patient_id], 
 
 **Migrate SQL Edge -> Databricks (`migrate_sql_query` + `run_sql_query`)**
 ```bash
-USER_QUERY="Use migrate_sql_query for: SELECT TOP 5 ISNULL([first_name], 'unknown') AS first_name, ISNULL([last_name], 'unknown') AS last_name, GETDATE() AS migrated_at FROM [PANTHERx].[cpr].[dim_patient]; then run_sql_query on the migrated SQL in Databricks." uv run python main.py
+export USER_QUERY="Use migrate_sql_query for: SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name, ISNULL(last_name, 'unknown') AS last_name, GETDATE() AS migrated_at FROM PANTHERx.cpr.dim_patient; then run_sql_query on the migrated SQL in Databricks."
+uv run python main.py
 ```
 
 **Programmatic usage:**
