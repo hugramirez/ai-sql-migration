@@ -8,10 +8,17 @@ from __future__ import annotations
 
 from typing import Any
 from src.tools.databricks_sql import describe_table, run_sql_query
+from src.tools.sql_migration import migrate_sql_query
 from src.tools.sqledge_sql import describe_sqledge_table, run_sqledge_query
 
 def get_agent_tools() -> list[Any]:
     """Return tool instances compatible with LangChain tool calling."""
-    return [run_sql_query, describe_table, run_sqledge_query, describe_sqledge_table]
+    return [
+        migrate_sql_query,
+        run_sql_query,
+        describe_table,
+        run_sqledge_query,
+        describe_sqledge_table,
+    ]
 
 __all__ = ["get_agent_tools"]

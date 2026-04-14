@@ -46,6 +46,9 @@ cp .env.example .env
 | `DATABRICKS_WAREHOUSE_ID` | SQL warehouse ID |
 | `UC_CATALOG` | Unity Catalog name |
 | `UC_SCHEMA` | Schema name within the catalog |
+| `SQLFLUFF_ENABLED` | Enable SQL migration lint/fix flow (`true`/`false`) |
+| `SQLFLUFF_SOURCE_DIALECT` | Source SQL dialect for migration (default: `tsql`) |
+| `SQLFLUFF_TARGET_DIALECT` | Target SQL dialect for migration (default: `sparksql`) |
 
 ## Running
 
@@ -56,7 +59,7 @@ uv run python main.py
 Override the default query with the `USER_QUERY` environment variable:
 
 ```bash
-USER_QUERY="List the top 10 stations by name" uv run python main.py
+USER_QUERY="Use migrate_sql_query for: SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name FROM PANTHERx.cpr.dim_patient; then run_sql_query on the migrated SQL in Databricks." uv run python main.py
 ```
 
 ## Project Structure
@@ -76,6 +79,7 @@ ai-sql-migration/
     │   └── state.py             # Agent state definition
     ├── models/                  # Data models
     └── tools/
+        ├── sql_migration.py     # SQL Edge -> Databricks migration tool (SQLFluff)
         ├── sqledge_sql.py       # Azure SQL Edge tools
         └── databricks_sql.py    # Databricks SQL tools
 ```
@@ -95,35 +99,41 @@ ai-sql-migration/
 |---|---|
 | `run_sql_query` | Runs a read-only `SELECT`, `SHOW`, or `DESCRIBE` query against Databricks SQL Warehouse. Automatically appends `LIMIT N`. |
 | `describe_table` | Describes a Unity Catalog table schema using `DESCRIBE TABLE`. |
+| `migrate_sql_query` | Migrates SQL Edge/T-SQL flavored SQL to Spark SQL using SQLFluff lint + rewrite rules. |
 
 ## Usage Examples
 
 Use explicit queries so the agent chooses the correct tool and data source.
 
-**Databricks (`run_sql_query`)**  
-Replace `workspace.default.summary_employee_assignments` with a table that exists in your workspace.
+**Databricks (`run_sql_query`)**
 ```bash
-USER_QUERY="Use run_sql_query to list 5 rows from workspace.default.summary_employee_assignments." uv run python main.py
+USER_QUERY="Use run_sql_query to list 5 rows from workspace.default.dim_patient." uv run python main.py
 ```
 
 **Databricks schema (`describe_table`)**
 ```bash
-USER_QUERY="Use describe_table for workspace.default.summary_employee_assignments and show me the columns." uv run python main.py
+USER_QUERY="Use describe_table for workspace.default.dim_patient and show me the columns." uv run python main.py
 ```
 
 **SQL Edge (`run_sqledge_query`)**
 ```bash
-USER_QUERY="Use run_sqledge_query to show TOP 5 rows from stations." uv run python main.py
+USER_QUERY="Use run_sqledge_query to execute: SELECT TOP (5) [sk_patient_id], [patient_external_id], [first_name], [last_name], [date_of_birth], [age], [gender], [ethnicity], [state], [zip_code], [enrollment_date], [primary_rare_disease], [secondary_conditions], [is_active], [created_date], [updated_date] FROM [PANTHERx].[cpr].[dim_patient]" uv run python main.py
 ```
 
 **SQL Edge schema (`describe_sqledge_table`)**
 ```bash
-USER_QUERY="Use describe_sqledge_table for trips and list all columns." uv run python main.py
+USER_QUERY="Use describe_sqledge_table for dim_patient and list all columns." uv run python main.py
 ```
 
-**SQL Edge aggregate (`run_sqledge_query`)**
+**SQL Edge active patients (`run_sqledge_query`)**
 ```bash
-USER_QUERY="Use run_sqledge_query to count trips by user_type from trips." uv run python main.py
+USER_QUERY="Use run_sqledge_query to execute: SELECT TOP (5) [sk_patient_id], [first_name], [last_name], [is_active], [updated_date] FROM [PANTHERx].[cpr].[dim_patient] WHERE [is_active] = 1" uv run python main.py
+```
+
+**Migrate SQL Edge -> Databricks (`migrate_sql_query` + `run_sql_query`)**
+```bash
+export USER_QUERY="Use migrate_sql_query for: SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name, ISNULL(last_name, 'unknown') AS last_name, GETDATE() AS migrated_at FROM PANTHERx.cpr.dim_patient; then run_sql_query on the migrated SQL in Databricks."
+uv run python main.py
 ```
 
 **Programmatic usage:**
@@ -140,7 +150,7 @@ settings = Settings.from_env()
 agent = build_agent(settings)
 
 result = agent.invoke({
-    "messages": [HumanMessage(content="List all stations in the ecobicis database")]
+    "messages": [HumanMessage(content="Migrate this SQL Edge query to Databricks and run it: SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name FROM PANTHERx.cpr.dim_patient;")]
 })
 print(result["messages"][-1].content)
 ```
@@ -156,4 +166,5 @@ print(result["messages"][-1].content)
 | `pyodbc` | ODBC connector for Azure SQL Edge |
 | `databricks-sql-connector` | Databricks SQL warehouse connector |
 | `python-dotenv` | Load environment variables from `.env` |
+| `sqlfluff` | SQL linting/fixing and dialect-aware migration assistance |
 | `rich` | Terminal UI (panels, markdown, colored output) |
