@@ -85,7 +85,7 @@ def main() -> None:
     user_query = os.environ.get(
         "USER_QUERY",
         "Migrate this SQL Edge query to Databricks using migrate_sql_query, then execute it with run_sql_query: "
-        "SELECT TOP 5 ISNULL(name, 'unknown') AS station_name, GETDATE() AS migrated_at FROM stations;",
+        "SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name, ISNULL(last_name, 'unknown') AS last_name, GETDATE() AS migrated_at FROM PANTHERx.cpr.dim_patient;",
     ).strip()
 
     console.print(Panel(user_query, title="[human]Query[/human]", border_style="cyan", padding=(0, 1)))
