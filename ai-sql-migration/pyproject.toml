@@ -6,9 +6,19 @@ requires-python = ">=3.13"
 dependencies = [
     "anthropic>=0.94.1",
     "databricks-sql-connector>=4.2.5",
+    "langchain-anthropic>=1.4.0",
+    "langchain-core>=1.2.28",
     "langgraph>=1.1.6",
     "python-dotenv>=1.2.2",
 ]
 
 [project.scripts]
 ai-sql-migration = "main:main"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]

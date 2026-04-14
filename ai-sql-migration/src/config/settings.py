@@ -17,7 +17,8 @@ DEFAULT_SYSTEM_PROMPT = (
 class Settings:
     """Runtime configuration for the LangGraph agent."""
 
-    model_name: str = "claude-sonnet-4-6"
+    model_name: str = "claude-haiku-4-5-20251001"
+    max_tokens: int = 1024
     temperature: float = 0.0
     system_prompt: str = DEFAULT_SYSTEM_PROMPT
     anthropic_api_key: str = ""
