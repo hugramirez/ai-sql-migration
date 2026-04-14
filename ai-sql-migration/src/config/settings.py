@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 DEFAULT_SYSTEM_PROMPT = (
-    "You are a helpful assistant that can query Databricks data sources."
+    "You are a helpful assistant that can query Databricks data sources and Azure SQL Edge."
 )
 
 @dataclass(frozen=True)
@@ -27,6 +27,12 @@ class Settings:
     databricks_warehouse_id: str = ""
     uc_catalog: str = ""
     uc_schema: str = ""
+    sqledge_host: str = "localhost"
+    sqledge_port: int = 1433
+    sqledge_database: str = ""
+    sqledge_user: str = ""
+    sqledge_password: str = ""
+
 
     @classmethod
     def from_env(cls) -> Settings:
@@ -46,7 +52,11 @@ class Settings:
             databricks_warehouse_id=os.environ.get("DATABRICKS_WAREHOUSE_ID", "").strip(),
             uc_catalog=os.environ.get("UC_CATALOG", "").strip(),
             uc_schema=os.environ.get("UC_SCHEMA", "").strip(),
-
+            sqledge_host=os.environ.get("SQLEDGE_HOST", "localhost").strip(),
+            sqledge_port=int(os.environ.get("SQLEDGE_PORT", "1433")),
+            sqledge_database=os.environ.get("SQLEDGE_DATABASE", "sqledge_dev").strip(),
+            sqledge_user=os.environ.get("SQLEDGE_USER", "").strip(),
+            sqledge_password=os.environ.get("SQLEDGE_PASSWORD", "").strip(),
         )
 
 
