@@ -13,7 +13,6 @@ def create_chat_model(settings: Settings):
         model=settings.model_name,
         max_tokens=settings.max_tokens,
         temperature=settings.temperature,
-        model_kwargs={"system_prompt": settings.system_prompt},
     )
 
 if __name__ == "__main__":

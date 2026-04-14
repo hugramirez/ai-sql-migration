@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import os
 
-from langchain_core.messages import AIMessage, HumanMessage, ToolMessage
+from langchain_core.messages import AIMessage, HumanMessage
 from rich.console import Console
 from rich.markdown import Markdown
 from rich.panel import Panel
@@ -73,16 +73,6 @@ def _print_messages(messages: list) -> None:
                     )
                 )
 
-        elif isinstance(msg, ToolMessage):
-            console.print(
-                Panel(
-                    str(msg.content),
-                    title=f"[tool]Tool result · {getattr(msg, 'name', '')}[/tool]",
-                    border_style="yellow",
-                    padding=(0, 1),
-                )
-            )
-
     console.print(Rule(style="bright_black"))
 
 
@@ -94,7 +84,8 @@ def main() -> None:
 
     user_query = os.environ.get(
         "USER_QUERY",
-        "Use run_sql_query to list 5 rows from workspace.default.summary_employee_assignments.",
+        "Use run_sql_query to list 5 rows from workspace.default.summary_employee_assignments. "
+        "If the source is Azure SQL Edge, use run_sqledge_query instead.",
     ).strip()
 
     console.print(Panel(user_query, title="[human]Query[/human]", border_style="cyan", padding=(0, 1)))
