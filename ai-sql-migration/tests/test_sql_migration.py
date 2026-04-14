@@ -59,19 +59,18 @@ def test_full_query_combined():
     assert "GETDATE" not in sql.upper()
 
 
-def test_migrate_sql_query_tool_output_contains_markers():
+def test_migrate_sql_query_tool_output_format():
     query = "SELECT TOP 3 ISNULL(name, 'x') AS name FROM PANTHERx.cpr.dim_patient;"
     result = migrate_sql_query.invoke({"query": query})
-    assert "MIGRATED_SQL_START" in result
-    assert "MIGRATED_SQL_END" in result
+    assert result.startswith("MIGRATED_SQL:")
+    assert "REWRITES:" in result
 
 
-def test_migrate_sql_query_tool_sql_between_markers():
+def test_migrate_sql_query_tool_migrated_sql_line():
     query = "SELECT TOP 3 GETDATE() AS ts FROM PANTHERx.cpr.dim_patient;"
     result = migrate_sql_query.invoke({"query": query})
-    start = result.index("MIGRATED_SQL_START\n") + len("MIGRATED_SQL_START\n")
-    end = result.index("\nMIGRATED_SQL_END")
-    extracted = result[start:end].strip()
+    migrated_line = next(l for l in result.splitlines() if l.startswith("MIGRATED_SQL:"))
+    extracted = migrated_line[len("MIGRATED_SQL:"):].strip()
     assert "current_timestamp()" in extracted
     assert "LIMIT 3" in extracted
     assert "workspace.default.dim_patient" in extracted

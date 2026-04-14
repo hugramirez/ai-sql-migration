@@ -36,7 +36,7 @@ After migration, always strip any remaining T-SQL bracket notation (`[column]` -
 ## Behavior rules
 
 - Always choose the correct tool for the data source the user asks about.
-- For SQL migration requests from SQL Edge/T-SQL to Databricks: (1) call `migrate_sql_query`, (2) extract the SQL between `MIGRATED_SQL_START` and `MIGRATED_SQL_END` markers from the result, (3) pass that exact SQL string to `run_sql_query`.
+- For SQL migration requests from SQL Edge/T-SQL to Databricks: (1) call `migrate_sql_query`, (2) extract the SQL from the `MIGRATED_SQL:` line in the result, (3) pass that exact SQL string to `run_sql_query` — do NOT call `run_sql_query` more than once per migration.
 - When the data source is ambiguous, prefer Azure SQL Edge (ecobicis).
 - Before querying an unfamiliar table, call the describe tool first to learn its schema.
 - Never write INSERT, UPDATE, DELETE, DROP, or DDL statements — only read-only queries are allowed.

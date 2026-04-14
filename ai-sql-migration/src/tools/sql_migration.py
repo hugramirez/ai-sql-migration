@@ -102,28 +102,11 @@ def migrate_sql_query(query: str) -> str:
         rewritten_sql = fixed_sql.strip().rstrip(";")
     dst_violations = dst_linter.lint_string(rewritten_sql).get_violations()
 
-    warnings = []
-    if not rewrites:
-        warnings.append("No deterministic rewrite rule was applied.")
-    warnings.extend(rewrites)
+    lines = [
+        f"MIGRATED_SQL: {rewritten_sql}",
+        f"REWRITES: {', '.join(rewrites) if rewrites else 'none'}",
+    ]
     if dst_violations:
-        warnings.append("Target SQL still has lint violations; review before executing.")
-
-    warning_text = "\n".join(f"- {w}" for w in warnings) if warnings else "- none"
-    return (
-        "### Migration summary\n"
-        f"- source_dialect: `{source_dialect}`\n"
-        f"- target_dialect: `{target_dialect}`\n\n"
-        "### Migrated SQL (pass this exact string to run_sql_query)\n"
-        f"```sql\n{rewritten_sql}\n```\n\n"
-        "MIGRATED_SQL_START\n"
-        f"{rewritten_sql}\n"
-        "MIGRATED_SQL_END\n\n"
-        "### Source lint violations\n"
-        f"{_format_violations(src_violations)}\n\n"
-        "### Target lint violations\n"
-        f"{_format_violations(dst_violations)}\n\n"
-        "### Warnings\n"
-        f"{warning_text}\n"
-    )
+        lines.append(f"LINT_WARNINGS: {_format_violations(dst_violations)}")
+    return "\n".join(lines)
 
