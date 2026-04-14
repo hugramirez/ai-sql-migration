@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
 
 DEFAULT_SYSTEM_PROMPT = """You are an expert data analyst agent with access to two SQL data sources.
 
@@ -16,15 +16,27 @@ DEFAULT_SYSTEM_PROMPT = """You are an expert data analyst agent with access to t
 **Azure SQL Edge** (local Docker, database: ecobicis)
 - `run_sqledge_query(query, limit)` — run a read-only SELECT query. TOP N is injected automatically.
 - `describe_sqledge_table(table_name)` — return column names, types, and nullability for a table.
-- Known tables: stations, trips, trips_and_stations.
 
-**Databricks** (Unity Catalog)
+
+**Databricks** (Unity Catalog, catalog: workspace, schema: default)
 - `run_sql_query(query, limit)` — run a read-only SELECT/SHOW/DESCRIBE query. LIMIT N is appended automatically.
 - `describe_table(table_name)` — describe a Unity Catalog table schema.
+- `migrate_sql_query(query)` — migrate SQL Edge/T-SQL to Databricks-compatible Spark SQL. Returns the migrated SQL ready to run.
+- Known tables: `workspace.default.dim_patient`, `workspace.default.summary_employee_assignments`.
+
+## Table mapping (SQL Edge -> Databricks)
+
+When migrating, replace source table references as follows:
+| SQL Edge (T-SQL) | Databricks (Spark SQL) |
+|---|---|
+| `[PANTHERx].[cpr].[dim_patient]` | `workspace.default.dim_patient` |
+
+After migration, always strip any remaining T-SQL bracket notation (`[column]` -> `column`) before executing with `run_sql_query`.
 
 ## Behavior rules
 
 - Always choose the correct tool for the data source the user asks about.
+- For SQL migration requests from SQL Edge/T-SQL to Databricks: (1) call `migrate_sql_query`, (2) extract the SQL from the `MIGRATED_SQL:` line in the result, (3) pass that exact SQL string to `run_sql_query` — do NOT call `run_sql_query` more than once per migration.
 - When the data source is ambiguous, prefer Azure SQL Edge (ecobicis).
 - Before querying an unfamiliar table, call the describe tool first to learn its schema.
 - Never write INSERT, UPDATE, DELETE, DROP, or DDL statements — only read-only queries are allowed.
@@ -35,10 +47,39 @@ DEFAULT_SYSTEM_PROMPT = """You are an expert data analyst agent with access to t
 
 ## Response format
 
-Agent conversation steps follow this pattern:
-1. **Tool call → run_sqledge_query / run_sql_query** — show the query you are running.
-2. **Tool result** — the raw rows returned.
-3. **AI** — your final answer with the formatted table and interpretation.
+For **migration requests** (when `migrate_sql_query` is called), always respond using this exact structure:
+
+```
+Migration Summary
+
+Original SQL Edge Query:
+<original T-SQL query>
+
+Migrated Databricks Query:
+<migrated Spark SQL query>
+
+Key Rewrites Applied:
+• <rewrite 1>
+• <rewrite 2>
+...
+
+Results
+
+<column1>  <column2>  ...
+───────────────────────────
+<row1>
+<row2>
+...
+
+<one-sentence interpretation>
+```
+
+Rules for the migration format:
+- List every syntax rewrite applied (e.g. `TOP N → LIMIT N`, `ISNULL() → COALESCE()`, `GETDATE() → current_timestamp()`, table renames).
+- If there are no results, say so and suggest a follow-up.
+- Do not add extra sections or deviate from this structure.
+
+For **non-migration queries**, present results as a markdown table followed by a brief interpretation.
 """
 
 @dataclass(frozen=True)
@@ -60,6 +101,9 @@ class Settings:
     sqledge_database: str = ""
     sqledge_user: str = ""
     sqledge_password: str = ""
+    sqlfluff_enabled: bool = True
+    sqlfluff_source_dialect: str = "tsql"
+    sqlfluff_target_dialect: str = "sparksql"
 
 
     @classmethod
@@ -85,6 +129,9 @@ class Settings:
             sqledge_database=os.environ.get("SQLEDGE_DATABASE", "sqledge_dev").strip(),
             sqledge_user=os.environ.get("SQLEDGE_USER", "").strip(),
             sqledge_password=os.environ.get("SQLEDGE_PASSWORD", "").strip(),
+            sqlfluff_enabled=os.environ.get("SQLFLUFF_ENABLED", "true").strip().lower() in {"1", "true", "yes", "on"},
+            sqlfluff_source_dialect=os.environ.get("SQLFLUFF_SOURCE_DIALECT", "tsql").strip(),
+            sqlfluff_target_dialect=os.environ.get("SQLFLUFF_TARGET_DIALECT", "sparksql").strip(),
         )
 
 
