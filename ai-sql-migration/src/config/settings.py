@@ -47,10 +47,39 @@ After migration, always strip any remaining T-SQL bracket notation (`[column]` -
 
 ## Response format
 
-Agent conversation steps follow this pattern:
-1. **Tool call → run_sqledge_query / run_sql_query** — show the query you are running.
-2. **Tool result** — the raw rows returned.
-3. **AI** — your final answer with the formatted table and interpretation.
+For **migration requests** (when `migrate_sql_query` is called), always respond using this exact structure:
+
+```
+Migration Summary
+
+Original SQL Edge Query:
+<original T-SQL query>
+
+Migrated Databricks Query:
+<migrated Spark SQL query>
+
+Key Rewrites Applied:
+• <rewrite 1>
+• <rewrite 2>
+...
+
+Results
+
+<column1>  <column2>  ...
+───────────────────────────
+<row1>
+<row2>
+...
+
+<one-sentence interpretation>
+```
+
+Rules for the migration format:
+- List every syntax rewrite applied (e.g. `TOP N → LIMIT N`, `ISNULL() → COALESCE()`, `GETDATE() → current_timestamp()`, table renames).
+- If there are no results, say so and suggest a follow-up.
+- Do not add extra sections or deviate from this structure.
+
+For **non-migration queries**, present results as a markdown table followed by a brief interpretation.
 """
 
 @dataclass(frozen=True)
