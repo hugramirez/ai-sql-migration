@@ -101,6 +101,11 @@ class Settings:
     sqledge_database: str = ""
     sqledge_user: str = ""
     sqledge_password: str = ""
+    sqlserver_host: str = "localhost"
+    sqlserver_port: int = 1433
+    sqlserver_database: str = ""
+    sqlserver_user: str = ""
+    sqlserver_password: str = ""
     sqlfluff_enabled: bool = True
     sqlfluff_source_dialect: str = "tsql"
     sqlfluff_target_dialect: str = "sparksql"
@@ -129,6 +134,11 @@ class Settings:
             sqledge_database=os.environ.get("SQLEDGE_DATABASE", "sqledge_dev").strip(),
             sqledge_user=os.environ.get("SQLEDGE_USER", "").strip(),
             sqledge_password=os.environ.get("SQLEDGE_PASSWORD", "").strip(),
+            sqlserver_host=os.environ.get("SQLSERVER_HOST", "localhost").strip(),
+            sqlserver_port=int(os.environ.get("SQLSERVER_PORT", "1433")),
+            sqlserver_database=os.environ.get("SQLSERVER_DATABASE", "pharmacy_db").strip(),
+            sqlserver_user=os.environ.get("SQLSERVER_USER", "").strip(),
+            sqlserver_password=os.environ.get("SQLSERVER_PASSWORD", "").strip(),
             sqlfluff_enabled=os.environ.get("SQLFLUFF_ENABLED", "true").strip().lower() in {"1", "true", "yes", "on"},
             sqlfluff_source_dialect=os.environ.get("SQLFLUFF_SOURCE_DIALECT", "tsql").strip(),
             sqlfluff_target_dialect=os.environ.get("SQLFLUFF_TARGET_DIALECT", "sparksql").strip(),

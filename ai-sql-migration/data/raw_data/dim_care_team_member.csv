@@ -1,0 +1,81 @@
+sk_care_team_member_id,employee_id,first_name,last_name,role,disease_specialty,hire_date,is_active,created_date,updated_date
+1,EMP-00001,Edward,Harris,Clinical Pharmacist,PKU,2022-05-06,1,2022-05-06,2022-05-06
+2,EMP-00002,Stephanie,Johnson,Patient Care Coordinator,Niemann-Pick Disease,2023-04-10,1,2023-04-10,2023-04-10
+3,EMP-00003,Robert,Fleming,Nurse,Cystic Fibrosis,2016-06-21,0,2016-06-21,2016-06-21
+4,EMP-00004,Sarah,Wells,Patient Care Coordinator,Hereditary Angioedema,2022-06-10,1,2022-06-10,2022-06-10
+5,EMP-00005,Robert,Rojas,Benefits Specialist,Alagille Syndrome,2020-03-28,1,2020-03-28,2020-03-28
+6,EMP-00006,Andrew,Lopez,Clinical Pharmacist,MPS II,2021-02-24,1,2021-02-24,2021-02-24
+7,EMP-00007,Andrew,Pham,Nurse,Cystic Fibrosis,2022-10-28,1,2022-10-28,2022-10-28
+8,EMP-00008,Mary,Stone,Social Worker,General,2020-02-14,1,2020-02-14,2020-02-14
+9,EMP-00009,Matthew,Lane,Nurse,General,2019-11-17,1,2019-11-17,2019-11-17
+10,EMP-00010,Diana,Buchanan,Patient Care Coordinator,Wilson Disease,2018-06-22,1,2018-06-22,2018-06-22
+11,EMP-00011,Todd,Wade,Clinical Pharmacist,PKU,2016-01-02,1,2016-01-02,2016-01-02
+12,EMP-00012,Alyssa,Kelley,Pharmacy Technician,PKU,2017-11-30,0,2017-11-30,2017-11-30
+13,EMP-00013,Stephen,Bradley,Benefits Specialist,MPS II,2020-11-13,1,2020-11-13,2020-11-13
+14,EMP-00014,Rachel,Parker,Nurse,Gaucher Disease,2020-04-05,1,2020-04-05,2020-04-05
+15,EMP-00015,Kristina,Perez,Benefits Specialist,Wilson Disease,2020-07-07,1,2020-07-07,2020-07-07
+16,EMP-00016,Nathan,Roberts,Clinical Pharmacist,PKU,2023-08-04,1,2023-08-04,2023-08-04
+17,EMP-00017,Megan,Hernandez,Pharmacist,Alagille Syndrome,2023-12-08,1,2023-12-08,2023-12-08
+18,EMP-00018,Justin,Huber,Nurse,Amyloidosis,2019-08-14,1,2019-08-14,2019-08-14
+19,EMP-00019,Christine,Martin,Social Worker,General,2016-10-30,1,2016-10-30,2016-10-30
+20,EMP-00020,Amanda,White,Pharmacy Technician,Hemophilia B,2019-03-30,1,2019-03-30,2019-03-30
+21,EMP-00021,Gregory,Erickson,Pharmacy Technician,Alpha-1 Antitrypsin Deficiency,2022-01-05,1,2022-01-05,2022-01-05
+22,EMP-00022,Rebecca,Bauer,Benefits Specialist,Hemophilia B,2021-11-16,1,2021-11-16,2021-11-16
+23,EMP-00023,Evan,Wilson,Nurse,Hemophilia B,2023-05-02,1,2023-05-02,2023-05-02
+24,EMP-00024,Victoria,Andrews,Pharmacy Technician,MPS II,2015-10-08,1,2015-10-08,2015-10-08
+25,EMP-00025,Scott,Wood,Clinical Pharmacist,Dravet Syndrome,2022-02-21,1,2022-02-21,2022-02-21
+26,EMP-00026,Jamie,Mann,Nurse,Wilson Disease,2022-11-09,1,2022-11-09,2022-11-09
+27,EMP-00027,Elizabeth,Spence,Pharmacy Technician,Fabry Disease,2015-03-21,1,2015-03-21,2015-03-21
+28,EMP-00028,Earl,West,Pharmacy Technician,MPS I,2015-04-01,1,2015-04-01,2015-04-01
+29,EMP-00029,Theresa,Ferguson,Social Worker,Niemann-Pick Disease,2016-05-27,1,2016-05-27,2016-05-27
+30,EMP-00030,David,Johnson,Pharmacist,MPS II,2017-08-11,0,2017-08-11,2017-08-11
+31,EMP-00031,Sarah,Mack,Patient Care Coordinator,Amyloidosis,2017-06-08,1,2017-06-08,2017-06-08
+32,EMP-00032,Stacie,Reilly,Clinical Pharmacist,Paroxysmal Nocturnal Hemoglobinuria,2023-12-19,1,2023-12-19,2023-12-19
+33,EMP-00033,Eric,Cordova,Pharmacist,Hereditary Angioedema,2023-11-16,1,2023-11-16,2023-11-16
+34,EMP-00034,Amy,Romero,Pharmacy Technician,Fabry Disease,2023-06-02,1,2023-06-02,2023-06-02
+35,EMP-00035,Deborah,Phillips,Pharmacist,Alagille Syndrome,2019-05-27,1,2019-05-27,2019-05-27
+36,EMP-00036,Paula,Montes,Benefits Specialist,Hemophilia B,2017-02-26,1,2017-02-26,2017-02-26
+37,EMP-00037,Karen,Mcknight,Pharmacist,Hemophilia A,2015-02-21,1,2015-02-21,2015-02-21
+38,EMP-00038,Elizabeth,Marsh,Pharmacy Technician,Fabry Disease,2019-12-20,1,2019-12-20,2019-12-20
+39,EMP-00039,Jessica,Nielsen,Benefits Specialist,MPS I,2023-03-31,1,2023-03-31,2023-03-31
+40,EMP-00040,Matthew,Rodriguez,Clinical Pharmacist,Pulmonary Arterial Hypertension,2017-05-03,1,2017-05-03,2017-05-03
+41,EMP-00041,Timothy,Williams,Patient Care Coordinator,Cystic Fibrosis,2018-07-02,1,2018-07-02,2018-07-02
+42,EMP-00042,Erica,Wilson,Social Worker,Alagille Syndrome,2015-06-22,1,2015-06-22,2015-06-22
+43,EMP-00043,Angel,Williamson,Clinical Pharmacist,General,2017-11-03,1,2017-11-03,2017-11-03
+44,EMP-00044,Jeffrey,Howard,Pharmacist,Spinal Muscular Atrophy,2019-01-16,1,2019-01-16,2019-01-16
+45,EMP-00045,Mark,Franklin,Social Worker,Amyloidosis,2017-08-24,1,2017-08-24,2017-08-24
+46,EMP-00046,James,Fox,Benefits Specialist,Hemophilia B,2016-11-16,1,2016-11-16,2016-11-16
+47,EMP-00047,Kimberly,Wang,Benefits Specialist,Hemophilia A,2019-06-10,0,2019-06-10,2019-06-10
+48,EMP-00048,James,Miller,Nurse,Wilson Disease,2015-06-22,1,2015-06-22,2015-06-22
+49,EMP-00049,Melissa,Rhodes,Patient Care Coordinator,Pompe Disease,2016-09-26,1,2016-09-26,2016-09-26
+50,EMP-00050,Susan,Daugherty,Pharmacist,Dravet Syndrome,2020-08-09,1,2020-08-09,2020-08-09
+51,EMP-00051,Preston,Henry,Social Worker,Fabry Disease,2023-07-09,0,2023-07-09,2023-07-09
+52,EMP-00052,Carrie,Hunt,Pharmacy Technician,Alagille Syndrome,2022-03-25,1,2022-03-25,2022-03-25
+53,EMP-00053,Brian,Estrada,Clinical Pharmacist,Hemophilia A,2016-05-30,1,2016-05-30,2016-05-30
+54,EMP-00054,Raymond,Baldwin,Benefits Specialist,General,2021-04-06,1,2021-04-06,2021-04-06
+55,EMP-00055,Ronald,Hughes,Social Worker,Spinal Muscular Atrophy,2019-12-02,0,2019-12-02,2019-12-02
+56,EMP-00056,Alexander,Cooper,Patient Care Coordinator,MPS II,2019-03-28,1,2019-03-28,2019-03-28
+57,EMP-00057,Kyle,Griffin,Clinical Pharmacist,Niemann-Pick Disease,2015-06-11,1,2015-06-11,2015-06-11
+58,EMP-00058,Ann,Lewis,Social Worker,Wilson Disease,2021-02-01,1,2021-02-01,2021-02-01
+59,EMP-00059,Pamela,Figueroa,Nurse,Paroxysmal Nocturnal Hemoglobinuria,2017-02-03,1,2017-02-03,2017-02-03
+60,EMP-00060,Robert,Ramos,Patient Care Coordinator,Dravet Syndrome,2020-04-02,1,2020-04-02,2020-04-02
+61,EMP-00061,Frank,Luna,Pharmacy Technician,Pompe Disease,2021-03-21,1,2021-03-21,2021-03-21
+62,EMP-00062,Rachael,Chandler,Patient Care Coordinator,Hemophilia B,2020-01-15,1,2020-01-15,2020-01-15
+63,EMP-00063,Robert,Houston,Pharmacist,General,2020-02-03,1,2020-02-03,2020-02-03
+64,EMP-00064,Carla,Thomas,Pharmacy Technician,Gaucher Disease,2023-03-25,1,2023-03-25,2023-03-25
+65,EMP-00065,Kevin,Mcneil,Benefits Specialist,Dravet Syndrome,2019-01-31,1,2019-01-31,2019-01-31
+66,EMP-00066,Alicia,Rogers,Pharmacist,Alagille Syndrome,2023-02-01,1,2023-02-01,2023-02-01
+67,EMP-00067,Sarah,Garza,Nurse,Wilson Disease,2017-02-16,1,2017-02-16,2017-02-16
+68,EMP-00068,Nicholas,Smith,Nurse,PKU,2016-09-23,1,2016-09-23,2016-09-23
+69,EMP-00069,Danielle,Nelson,Patient Care Coordinator,MPS I,2022-03-10,1,2022-03-10,2022-03-10
+70,EMP-00070,Gregory,Murray,Pharmacist,Fabry Disease,2022-05-22,1,2022-05-22,2022-05-22
+71,EMP-00071,Ashley,Melendez,Pharmacy Technician,Fabry Disease,2016-06-15,1,2016-06-15,2016-06-15
+72,EMP-00072,James,Collier,Pharmacy Technician,MPS I,2020-06-11,0,2020-06-11,2020-06-11
+73,EMP-00073,Keith,Henry,Benefits Specialist,Pulmonary Arterial Hypertension,2022-03-13,1,2022-03-13,2022-03-13
+74,EMP-00074,Mackenzie,Turner,Nurse,Short Bowel Syndrome,2020-11-23,1,2020-11-23,2020-11-23
+75,EMP-00075,Brenda,Snyder,Pharmacy Technician,Dravet Syndrome,2019-02-09,1,2019-02-09,2019-02-09
+76,EMP-00076,Jodi,Walker,Pharmacy Technician,General,2015-02-23,1,2015-02-23,2015-02-23
+77,EMP-00077,Kylie,Moore,Clinical Pharmacist,General,2015-11-24,0,2015-11-24,2015-11-24
+78,EMP-00078,Kevin,Davidson,Social Worker,Amyloidosis,2021-04-04,1,2021-04-04,2021-04-04
+79,EMP-00079,Dana,Martinez,Social Worker,Fabry Disease,2023-11-28,1,2023-11-28,2023-11-28
+80,EMP-00080,Elizabeth,Roberts,Nurse,Fabry Disease,2017-12-24,1,2017-12-24,2017-12-24

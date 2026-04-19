@@ -8,7 +8,7 @@
 -- those scripts in dependency order (same order as listed in SOURCE SECTION
 -- markers below).
 --
--- Database: pharmacy_db
+-- Database: sqledge_dev
 -- Schema: dbo
 -- ============================================================================
 
@@ -20,14 +20,14 @@
 USE master;
 GO
 
-IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'pharmacy_db')
+IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'sqledge_dev')
 BEGIN
-    CREATE DATABASE pharmacy_db
+    CREATE DATABASE sqledge_dev
         COLLATE SQL_Latin1_General_CP1_CI_AS;
 END
 GO
 
-USE pharmacy_db;
+USE sqledge_dev;
 GO
 
 IF EXISTS (
@@ -456,7 +456,7 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'fact_last_event' AND schem
 BEGIN
     CREATE TABLE dbo.fact_last_event (
         sk_event_id bigint NOT NULL PRIMARY KEY IDENTITY(1,1),
-        sk_prescription_id bigint NOT NULL UNIQUE,
+        sk_prescription_id bigint NOT NULL,
         sk_patient_id bigint NOT NULL,
         sk_assigned_date_id int NOT NULL,
         last_event_assigned_date datetime2(3) NOT NULL,
