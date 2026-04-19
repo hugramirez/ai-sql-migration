@@ -30,11 +30,29 @@ GO
 USE pharmacy_db;
 GO
 
-EXEC sp_updateextendedproperty
-    @name = N'Description',
-    @value = N'Pharmacy Comprehensive Platform - dimensional model for pharmacy management',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo';
+IF EXISTS (
+    SELECT 1
+    FROM sys.extended_properties ep
+    INNER JOIN sys.schemas s ON ep.major_id = s.schema_id
+    WHERE ep.name = N'Description'
+      AND ep.class = 3
+      AND s.name = N'dbo'
+)
+BEGIN
+    EXEC sp_updateextendedproperty
+        @name = N'Description',
+        @value = N'Pharmacy Comprehensive Platform - dimensional model for pharmacy management',
+        @level0type = N'SCHEMA',
+        @level0name = N'dbo';
+END
+ELSE
+BEGIN
+    EXEC sp_addextendedproperty
+        @name = N'Description',
+        @value = N'Pharmacy Comprehensive Platform - dimensional model for pharmacy management',
+        @level0type = N'SCHEMA',
+        @level0name = N'dbo';
+END
 GO
 
 
