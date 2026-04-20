@@ -2,9 +2,7 @@
 CREATE OR REPLACE TABLE pharmacy.gold.dim_patient
 USING DELTA
 TBLPROPERTIES (
-    'delta.enableChangeDataFeed' = 'true',
-    'delta.minFileSize' = '1073741824',
-    'delta.tuneFileSizesForRewrites' = 'true'
+    'delta.enableChangeDataFeed' = 'true'
 )
 AS
 SELECT
