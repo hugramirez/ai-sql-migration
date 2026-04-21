@@ -57,10 +57,10 @@ GO
 
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: dimensions/01_dim_patient.sql
+-- SOURCE SECTION: dimensions/dim_patient.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 01 — dim_patient (one row per patient; SCD Type 1 - current state only)
+-- Run order: dim_patient (one row per patient; SCD Type 1 - current state only)
 
 USE pharmacy_db;
 GO
@@ -94,10 +94,10 @@ GO
 
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: dimensions/02_dim_medication.sql
+-- SOURCE SECTION: dimensions/dim_medication.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 02 — dim_medication (one row per NDC code; SCD Type 1 - prices update in place)
+-- Run order: dim_medication (one row per NDC code; SCD Type 1 - prices update in place)
 
 USE pharmacy_db;
 GO
@@ -131,10 +131,10 @@ GO
 
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: dimensions/03_dim_prescriber.sql
+-- SOURCE SECTION: dimensions/dim_prescriber.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 03 — dim_prescriber (one row per NPI; SCD Type 2 - track specialty/location changes)
+-- Run order: dim_prescriber (one row per NPI; SCD Type 2 - track specialty/location changes)
 
 USE pharmacy_db;
 GO
@@ -168,10 +168,10 @@ GO
 
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: dimensions/04_dim_payer.sql
+-- SOURCE SECTION: dimensions/dim_payer.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 04 — dim_payer (one row per payer/plan; SCD Type 1 - attributes update in place)
+-- Run order: dim_payer (one row per payer/plan; SCD Type 1 - attributes update in place)
 
 USE pharmacy_db;
 GO
@@ -201,10 +201,10 @@ GO
 
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: dimensions/05_dim_date.sql
+-- SOURCE SECTION: dimensions/dim_date.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 05 — dim_date (conformed date dimension; one row per calendar date)
+-- Run order: dim_date (conformed date dimension; one row per calendar date)
 
 USE pharmacy_db;
 GO
@@ -234,10 +234,10 @@ GO
 
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: dimensions/06_dim_care_team_member.sql
+-- SOURCE SECTION: dimensions/dim_care_team_member.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 06 — dim_care_team_member (one row per employee; SCD Type 1 - attributes update in place)
+-- Run order: dim_care_team_member (one row per employee; SCD Type 1 - attributes update in place)
 
 USE pharmacy_db;
 GO
@@ -265,10 +265,10 @@ GO
 
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: facts/01_fact_prescription.sql
+-- SOURCE SECTION: facts/fact_prescription.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 07 — fact_prescription (primary hub; one row per prescription; Fact Type: Additive)
+-- Run order: fact_prescription (primary hub; one row per prescription; Fact Type: Additive)
 
 USE pharmacy_db;
 GO
@@ -320,10 +320,10 @@ GO
 
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: facts/02_fact_adherence.sql
+-- SOURCE SECTION: facts/fact_adherence.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 08 — fact_adherence (one row per patient-prescription-measurement period; Fact Type: Semi-additive)
+-- Run order: fact_adherence (one row per patient-prescription-measurement period; Fact Type: Semi-additive)
 
 USE pharmacy_db;
 GO
@@ -359,10 +359,10 @@ GO
 
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: facts/03_fact_clinical_interaction.sql
+-- SOURCE SECTION: facts/fact_clinical_interaction.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 09 — fact_clinical_interaction (one row per interaction event; Fact Type: Additive)
+-- Run order: fact_clinical_interaction (one row per interaction event; Fact Type: Additive)
 
 USE pharmacy_db;
 GO
@@ -399,10 +399,10 @@ GO
 
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: facts/04_fact_shipment.sql
+-- SOURCE SECTION: facts/fact_shipment.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 10 — fact_shipment (one row per shipment; Fact Type: Additive)
+-- Run order: fact_shipment (one row per shipment; Fact Type: Additive)
 
 USE pharmacy_db;
 GO
@@ -444,10 +444,10 @@ GO
 
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: facts/05_fact_last_event.sql
+-- SOURCE SECTION: facts/fact_last_event.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 11 — fact_last_event (one row per prescription; Fact Type: Snapshot - current state only)
+-- Run order: fact_last_event (one row per prescription; Fact Type: Snapshot - current state only)
 
 USE pharmacy_db;
 GO
