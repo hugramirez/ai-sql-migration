@@ -1,7 +1,8 @@
-"""Database initialization: create tables and load CSV data."""
+"""Database initialization for SQL Server or Azure SQL Edge: create tables and load CSV data."""
 
 from __future__ import annotations
 
+import argparse
 import logging
 import os
 import sys
@@ -13,9 +14,9 @@ import pandas as pd
 import pyodbc
 from dotenv import load_dotenv
 
-# Load .env from parent directory
+# Load .env from parent directory (override=True so shell/IDE empty vars do not mask .env)
 env_path = os.path.join(os.path.dirname(__file__), "..", ".env")
-load_dotenv(env_path)
+load_dotenv(env_path, override=True)
 
 # Table loading order (dimensions first, then facts)
 LOAD_ORDER = [
@@ -40,7 +41,7 @@ def _get_connection(
     user: str = "",
     password: str = "",
 ) -> pyodbc.Connection:
-    """Create a connection to SQL Server.
+    """Create a connection to SQL Server or Azure SQL Edge (pyodbc).
     
     If parameters are not provided, reads from .env:
     - SQLEDGE_HOST (default: localhost)
@@ -470,19 +471,81 @@ def init(
         raise
 
 
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Initialize pharmacy_db on SQL Server or SQL Edge (schema + CSV load)."
+    )
+    parser.add_argument(
+        "command",
+        nargs="?",
+        default="init",
+        choices=("init", "create-tables", "load-data"),
+        help=(
+            "init: drop database if possible, recreate, run DDL, load CSVs; "
+            "create-tables: DDL only (same drop/recreate + run.sql); "
+            "load-data: load CSVs only (tables must exist)."
+        ),
+    )
+    conn = parser.add_argument_group("connection (optional; otherwise from .env)")
+    conn.add_argument("--host", default=None, help="Override SQLEDGE_HOST")
+    conn.add_argument("--port", type=int, default=None, help="Override SQLEDGE_PORT")
+    conn.add_argument("--database", default=None, help="Override SQLEDGE_DATABASE")
+    conn.add_argument("--user", default=None, help="Override SQLEDGE_USER")
+    conn.add_argument("--password", default=None, help="Override SQLEDGE_PASSWORD")
+    parser.add_argument(
+        "--sql-file",
+        default="pipelines/src_sql_server/run.sql",
+        help="DDL script path relative to data/ (create-tables and init only)",
+    )
+    parser.add_argument(
+        "--data-path",
+        default="raw_data",
+        help="CSV directory relative to data/ (load-data and init only)",
+    )
+    return parser.parse_args()
+
+
+def _connection_from_args(args: argparse.Namespace) -> tuple[str, int, str, str, str]:
+    host = args.host if args.host is not None else os.environ.get("SQLEDGE_HOST", "localhost")
+    port = (
+        args.port
+        if args.port is not None
+        else int(os.environ.get("SQLEDGE_PORT", "1433"))
+    )
+    database = (
+        args.database
+        if args.database is not None
+        else os.environ.get("SQLEDGE_DATABASE", "pharmacy_db")
+    )
+    user = args.user if args.user is not None else os.environ.get("SQLEDGE_USER", "")
+    password = (
+        args.password if args.password is not None else os.environ.get("SQLEDGE_PASSWORD", "")
+    )
+    return host, port, database, user, password
+
+
 if __name__ == "__main__":
-    host = os.environ.get("SQLEDGE_HOST", "localhost")
-    port = int(os.environ.get("SQLEDGE_PORT", "1433"))
-    database = os.environ.get("SQLEDGE_DATABASE", "pharmacy_db")
-    user = os.environ.get("SQLEDGE_USER", "")
-    password = os.environ.get("SQLEDGE_PASSWORD", "")
+    args = _parse_args()
+    host, port, database, user, password = _connection_from_args(args)
 
     if not user or not password:
-        print("SQLEDGE_USER and SQLEDGE_PASSWORD must be set in .env")
+        print(
+            "SQLEDGE_USER and SQLEDGE_PASSWORD must be set in .env "
+            "or passed as --user and --password.",
+            file=sys.stderr,
+        )
         sys.exit(1)
 
     try:
-        init(host, port, database, user, password)
-        print("\nDatabase initialization successful!")
-    except Exception as e:
+        if args.command == "init":
+            init(host, port, database, user, password, args.sql_file, args.data_path)
+            print("\nDatabase initialization successful!")
+        elif args.command == "create-tables":
+            _setup_logging()
+            create_tables(host, port, database, user, password, args.sql_file)
+            print("\nSchema created successfully!")
+        else:
+            load_data(host, port, database, user, password, args.data_path)
+            print("\nData load completed successfully!")
+    except Exception:
         sys.exit(1)
