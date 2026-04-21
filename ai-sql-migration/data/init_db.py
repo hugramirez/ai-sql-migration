@@ -45,14 +45,14 @@ def _get_connection(
     If parameters are not provided, reads from .env:
     - SQLEDGE_HOST (default: localhost)
     - SQLEDGE_PORT (default: 1433)
-    - SQLEDGE_DATABASE (default: sqledge_dev)
+    - SQLEDGE_DATABASE (default: pharmacy_db)
     - SQLEDGE_USER
     - SQLEDGE_PASSWORD
     """
     # Read from .env if parameters not provided
     host = host or os.environ.get("SQLEDGE_HOST", "localhost")
     port = port or int(os.environ.get("SQLEDGE_PORT", "1433"))
-    database = database or os.environ.get("SQLEDGE_DATABASE", "sqledge_dev")
+    database = database or os.environ.get("SQLEDGE_DATABASE", "pharmacy_db")
     user = user or os.environ.get("SQLEDGE_USER", "")
     password = password or os.environ.get("SQLEDGE_PASSWORD", "")
     
@@ -74,8 +74,12 @@ def _get_connection(
 
 
 def _setup_logging() -> str:
-    """Configure logging and return log filename."""
-    log_filename = f"data_load_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
+    """Configure logging and return absolute path to the log file."""
+    log_dir = os.path.join(os.path.dirname(__file__), "..", "logs")
+    os.makedirs(log_dir, exist_ok=True)
+    log_filename = os.path.join(
+        log_dir, f"data_load_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
+    )
 
     # Clear existing handlers
     for handler in logging.getLogger().handlers[:]:
@@ -102,6 +106,19 @@ def _validate_not_empty(df: pd.DataFrame, table_name: str) -> None:
     """Check if dataframe is empty."""
     if df.empty:
         raise ValueError(f"Data for {table_name} is empty")
+
+
+def _validate_fact_last_event_grain(df: pd.DataFrame) -> None:
+    """Enforce one row per prescription (matches dbo.fact_last_event UNIQUE grain)."""
+    if "sk_prescription_id" not in df.columns:
+        return
+    dup_mask = df.duplicated(subset=["sk_prescription_id"], keep=False)
+    if dup_mask.any():
+        n = int(dup_mask.sum())
+        raise ValueError(
+            f"fact_last_event.csv must have exactly one row per sk_prescription_id; "
+            f"found {n} rows in duplicate groups"
+        )
 
 
 def _validate_columns(
@@ -172,6 +189,8 @@ def _load_table(
     df = pd.read_csv(file_path)
 
     _validate_not_empty(df, table_name)
+    if table_name.lower().endswith("fact_last_event"):
+        _validate_fact_last_event_grain(df)
     _validate_columns(conn, table_name, df)
 
     df = _clean_dataframe(df)
@@ -215,9 +234,9 @@ def _load_table(
 
 
 def create_tables(
-    host: str = "localhost",
-    port: int = 1433,
-    database: str = "sqledge_dev",
+    host: str = "",
+    port: int = 0,
+    database: str = "",
     user: str = "",
     password: str = "",
     sql_file: str = "pipelines/src_sql_server/run.sql",
@@ -240,6 +259,8 @@ def create_tables(
 
     if not os.path.exists(full_sql_path):
         raise FileNotFoundError(f"SQL script not found: {full_sql_path}")
+
+    database = database or os.environ.get("SQLEDGE_DATABASE", "pharmacy_db")
 
     with open(full_sql_path, "r") as f:
         sql_script = f.read()
@@ -320,9 +341,9 @@ def create_tables(
 
 
 def load_data(
-    host: str = "localhost",
-    port: int = 1433,
-    database: str = "sqledge_dev",
+    host: str = "",
+    port: int = 0,
+    database: str = "",
     user: str = "",
     password: str = "",
     data_path: str = "raw_data",
@@ -364,25 +385,6 @@ def load_data(
         logging.info("Foreign key constraints disabled for data loading")
     except Exception as e:
         logging.warning(f"Failed to disable foreign key constraints: {str(e)}")
-
-    # Drop UNIQUE constraint on fact_last_event if it exists
-    try:
-        cursor.execute("""
-            DECLARE @ConstraintName NVARCHAR(128)
-            SELECT TOP 1 @ConstraintName = name
-            FROM sys.key_constraints
-            WHERE parent_object_id = OBJECT_ID('dbo.fact_last_event')
-              AND type = 'UQ'
-
-            IF @ConstraintName IS NOT NULL
-            BEGIN
-                EXEC ('ALTER TABLE dbo.fact_last_event DROP CONSTRAINT [' + @ConstraintName + ']')
-            END
-        """)
-        conn.commit()
-        logging.info("Removed UNIQUE constraint from fact_last_event if it existed")
-    except Exception as e:
-        logging.warning(f"Could not remove UNIQUE constraint: {str(e)}")
 
     # Clear existing data (delete in reverse order to respect foreign keys)
     for table in reversed(LOAD_ORDER):
@@ -432,9 +434,9 @@ def load_data(
 
 
 def init(
-    host: str = "localhost",
-    port: int = 1433,
-    database: str = "sqledge_dev",
+    host: str = "",
+    port: int = 0,
+    database: str = "",
     user: str = "",
     password: str = "",
     sql_file: str = "pipelines/src_sql_server/run.sql",
@@ -471,7 +473,7 @@ def init(
 if __name__ == "__main__":
     host = os.environ.get("SQLEDGE_HOST", "localhost")
     port = int(os.environ.get("SQLEDGE_PORT", "1433"))
-    database = os.environ.get("SQLEDGE_DATABASE", "sqledge_dev")
+    database = os.environ.get("SQLEDGE_DATABASE", "pharmacy_db")
     user = os.environ.get("SQLEDGE_USER", "")
     password = os.environ.get("SQLEDGE_PASSWORD", "")
 

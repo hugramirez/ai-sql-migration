@@ -17,8 +17,8 @@ def _to_bool(value: str, default: bool = True) -> bool:
 
 
 _TABLE_MAP: dict[str, str] = {
-    r"\[PANTHERx\]\.\[cpr\]\.\[dim_patient\]": "workspace.default.dim_patient",
-    r"PANTHERx\.cpr\.dim_patient": "workspace.default.dim_patient",
+    r"\[pharmacy_db\]\.\[dbo\]\.\[dim_patient\]": "workspace.default.dim_patient",
+    r"pharmacy_db\.dbo\.dim_patient": "workspace.default.dim_patient",
 }
 
 

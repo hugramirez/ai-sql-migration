@@ -8,15 +8,17 @@ Before querying data, you must create the database schema and load sample data.
 
 ### Quick start
 
-Set SQL Server credentials in `.env`:
+Set SQL Server credentials in `ai-sql-migration/.env` (read by `data/init_db.py`):
 
 ```env
-SQLSERVER_HOST=localhost
-SQLSERVER_PORT=1433
-SQLSERVER_DATABASE=pharmacy_db
-SQLSERVER_USER=sa
-SQLSERVER_PASSWORD=<your_password>
+SQLEDGE_HOST=localhost
+SQLEDGE_PORT=1433
+SQLEDGE_DATABASE=pharmacy_db
+SQLEDGE_USER=sa
+SQLEDGE_PASSWORD=<your_password>
 ```
+
+Omit `SQLEDGE_HOST` / `SQLEDGE_PORT` / `SQLEDGE_DATABASE` to use the defaults above. `create_tables`, `load_data`, and `init` also pick up these values when you pass empty host/port/database (for example only `user` and `password` in a one-liner).
 
 Then run the initialization script from the project root:
 
@@ -27,8 +29,8 @@ uv run python data/init_db.py
 
 This will:
 1. Execute `pipelines/src_sql_server/run.sql` to create all tables
-2. Load CSV data from `../.data/` into the created tables
-3. Generate a log file `data/data_load_YYYYMMDD_HHMMSS.log`
+2. Load CSV data from `data/raw_data/` into the created tables
+3. Generate a log file `logs/data_load_YYYYMMDD_HHMMSS.log` (under `ai-sql-migration/logs/`)
 
 ### Manual steps
 
@@ -79,9 +81,9 @@ docker-compose up -d  # if using Docker
 ```
 
 ### CSV files not found
-Ensure `.data/` directory exists with CSV files at project root:
+Ensure `data/raw_data/` contains the table CSV files (same names as `dbo` tables):
 ```bash
-ls -la ../.data/
+ls -la data/raw_data/
 ```
 
 ## Data schema

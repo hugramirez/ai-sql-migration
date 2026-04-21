@@ -26,15 +26,15 @@ def test_getdate_to_current_timestamp():
 
 
 def test_table_remap_dotted():
-    sql, warnings = _rewrite_tsql_to_sparksql("SELECT id FROM PANTHERx.cpr.dim_patient")
+    sql, warnings = _rewrite_tsql_to_sparksql("SELECT id FROM pharmacy_db.dbo.dim_patient")
     assert "workspace.default.dim_patient" in sql
-    assert "PANTHERx" not in sql
+    assert "pharmacy_db" not in sql
 
 
 def test_table_remap_bracketed():
-    sql, warnings = _rewrite_tsql_to_sparksql("SELECT id FROM [PANTHERx].[cpr].[dim_patient]")
+    sql, warnings = _rewrite_tsql_to_sparksql("SELECT id FROM [pharmacy_db].[dbo].[dim_patient]")
     assert "workspace.default.dim_patient" in sql
-    assert "PANTHERx" not in sql
+    assert "pharmacy_db" not in sql
 
 
 def test_bracket_notation_stripped():
@@ -47,7 +47,7 @@ def test_full_query_combined():
     query = (
         "SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name, "
         "ISNULL(last_name, 'unknown') AS last_name, "
-        "GETDATE() AS migrated_at FROM PANTHERx.cpr.dim_patient;"
+        "GETDATE() AS migrated_at FROM pharmacy_db.dbo.dim_patient;"
     )
     sql, warnings = _rewrite_tsql_to_sparksql(query)
     assert "LIMIT 5" in sql
@@ -60,14 +60,14 @@ def test_full_query_combined():
 
 
 def test_migrate_sql_query_tool_output_format():
-    query = "SELECT TOP 3 ISNULL(name, 'x') AS name FROM PANTHERx.cpr.dim_patient;"
+    query = "SELECT TOP 3 ISNULL(name, 'x') AS name FROM pharmacy_db.dbo.dim_patient;"
     result = migrate_sql_query.invoke({"query": query})
     assert result.startswith("MIGRATED_SQL:")
     assert "REWRITES:" in result
 
 
 def test_migrate_sql_query_tool_migrated_sql_line():
-    query = "SELECT TOP 3 GETDATE() AS ts FROM PANTHERx.cpr.dim_patient;"
+    query = "SELECT TOP 3 GETDATE() AS ts FROM pharmacy_db.dbo.dim_patient;"
     result = migrate_sql_query.invoke({"query": query})
     migrated_line = next(l for l in result.splitlines() if l.startswith("MIGRATED_SQL:"))
     extracted = migrated_line[len("MIGRATED_SQL:"):].strip()

@@ -8,26 +8,26 @@
 -- those scripts in dependency order (same order as listed in SOURCE SECTION
 -- markers below).
 --
--- Database: sqledge_dev
+-- Database: pharmacy_db
 -- Schema: dbo
 -- ============================================================================
 
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: schemas/00_schema.sql
+-- SOURCE SECTION: schemas/schema.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 USE master;
 GO
 
-IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'sqledge_dev')
+IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'pharmacy_db')
 BEGIN
-    CREATE DATABASE sqledge_dev
+    CREATE DATABASE pharmacy_db
         COLLATE SQL_Latin1_General_CP1_CI_AS;
 END
 GO
 
-USE sqledge_dev;
+USE pharmacy_db;
 GO
 
 IF EXISTS (
