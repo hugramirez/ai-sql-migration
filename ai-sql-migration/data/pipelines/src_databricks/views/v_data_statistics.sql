@@ -1,4 +1,4 @@
--- Run order: 96 — High-level row counts and freshness by entity
+-- Run order: High-level row counts and freshness by entity
 CREATE OR REPLACE VIEW pharmacy.gold.v_data_statistics AS
 SELECT
     'Patients' AS entity,

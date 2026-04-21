@@ -1,4 +1,4 @@
--- Run order: 32 — Operational metadata for pipeline runs (optional lineage sidecar)
+-- Run order: Operational metadata for pipeline runs (optional lineage sidecar)
 CREATE OR REPLACE TABLE pharmacy.silver._metadata_pipeline_runs (
     run_id STRING NOT NULL COMMENT 'Unique run identifier',
     pipeline_name STRING NOT NULL COMMENT 'Pipeline or job name',

@@ -1,4 +1,4 @@
--- Run order: 10 — Bronze conformed date dimension (no CDF required for static calendar)
+-- Run order: Bronze conformed date dimension (no CDF required for static calendar)
 CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_date (
     sk_date_id INT COMMENT 'Surrogate key for calendar date',
     full_date DATE COMMENT 'Calendar date',

@@ -1,4 +1,4 @@
--- Run order: 20 — Bronze last event snapshot per prescription (or source grain)
+-- Run order: Bronze last event snapshot per prescription (or source grain)
 -- Lineage: prescription and patient; assigned date -> raw_dim_date
 CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_last_event (
     sk_event_id BIGINT COMMENT 'Surrogate key for event row',

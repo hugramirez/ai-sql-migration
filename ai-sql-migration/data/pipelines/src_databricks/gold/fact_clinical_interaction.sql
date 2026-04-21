@@ -1,4 +1,4 @@
--- Run order: 48 — Gold clinical interaction fact
+-- Run order: Gold clinical interaction fact
 CREATE OR REPLACE TABLE pharmacy.gold.fact_clinical_interaction
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')

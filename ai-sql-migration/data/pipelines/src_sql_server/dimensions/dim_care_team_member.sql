@@ -1,4 +1,4 @@
--- Run order: 06 — dim_care_team_member
+-- Run order: dim_care_team_member
 -- Grain: One row per unique employee
 -- SCD Type: Type 1
 
@@ -23,6 +23,6 @@ BEGIN
     DROP INDEX IF EXISTS idx_dim_care_team_member_employee_id ON dbo.dim_care_team_member; CREATE INDEX idx_dim_care_team_member_employee_id ON dbo.dim_care_team_member(employee_id);
     DROP INDEX IF EXISTS idx_dim_care_team_member_active ON dbo.dim_care_team_member; CREATE INDEX idx_dim_care_team_member_active ON dbo.dim_care_team_member(is_active);
 
-    PRINT '✅ dim_care_team_member';
+    PRINT 'dim_care_team_member';
 END
 GO

@@ -1,4 +1,4 @@
--- Run order: 17 — Bronze adherence measurement fact
+-- Run order: Bronze adherence measurement fact
 -- Lineage: sk_prescription_id -> raw_fact_prescription; patient/medication dimensions
 CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_adherence (
     sk_adherence_id BIGINT COMMENT 'Surrogate key for adherence row',

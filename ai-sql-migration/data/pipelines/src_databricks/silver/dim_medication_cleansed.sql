@@ -1,4 +1,4 @@
--- Run order: 22 — Silver medication (latest row per ndc_code)
+-- Run order: Silver medication (latest row per ndc_code)
 CREATE OR REPLACE TABLE pharmacy.silver.dim_medication_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')

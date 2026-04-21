@@ -1,4 +1,4 @@
--- Run order: 27 — Silver prescription fact (dedupe by prescription_external_id)
+-- Run order: Silver prescription fact (dedupe by prescription_external_id)
 CREATE OR REPLACE TABLE pharmacy.silver.fact_prescription_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')

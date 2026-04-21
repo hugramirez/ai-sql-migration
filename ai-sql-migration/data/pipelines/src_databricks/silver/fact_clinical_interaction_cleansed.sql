@@ -1,4 +1,4 @@
--- Run order: 29 — Silver clinical interactions (validated scores)
+-- Run order: Silver clinical interactions (validated scores)
 CREATE OR REPLACE TABLE pharmacy.silver.fact_clinical_interaction_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')

@@ -1,4 +1,4 @@
--- Run order: 31 — Silver last event (latest row per sk_prescription_id by assigned time)
+-- Run order: Silver last event (latest row per sk_prescription_id by assigned time)
 CREATE OR REPLACE TABLE pharmacy.silver.fact_last_event_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')

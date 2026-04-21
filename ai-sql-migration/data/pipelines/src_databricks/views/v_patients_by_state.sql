@@ -1,4 +1,4 @@
--- Run order: 90 — Analytic view: patient counts by state (BI)
+-- Run order: Analytic view: patient counts by state (BI)
 CREATE OR REPLACE VIEW pharmacy.gold.v_patients_by_state AS
 SELECT
     p.state,

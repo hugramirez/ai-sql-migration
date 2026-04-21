@@ -1,4 +1,4 @@
--- Run order: 02 — dim_medication
+-- Run order: dim_medication
 -- Grain: One row per unique NDC code
 -- SCD Type: Type 1
 
@@ -29,6 +29,6 @@ BEGIN
     CREATE INDEX idx_dim_medication_ndc ON dbo.dim_medication(ndc_code);
     CREATE INDEX idx_dim_medication_active ON dbo.dim_medication(is_active);
 
-    PRINT '✅ dim_medication';
+    PRINT 'dim_medication';
 END
 GO

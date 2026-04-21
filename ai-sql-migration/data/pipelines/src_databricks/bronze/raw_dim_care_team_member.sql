@@ -1,4 +1,4 @@
--- Run order: 12 — Bronze care team member dimension
+-- Run order: Bronze care team member dimension
 CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_care_team_member (
     sk_care_team_member_id BIGINT COMMENT 'Surrogate key for care team member',
     employee_id STRING COMMENT 'Internal employee identifier',

@@ -1,4 +1,4 @@
--- Run order: 95 — Referential integrity checks (orphan keys in gold fact_prescription)
+-- Run order: Referential integrity checks (orphan keys in gold fact_prescription)
 CREATE OR REPLACE VIEW pharmacy.gold.v_data_integrity_check AS
 SELECT
     'fact_prescription' AS table_name,

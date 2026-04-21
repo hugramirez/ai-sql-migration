@@ -1,4 +1,4 @@
--- Run order: 01 — dim_patient
+-- Run order: im_patient
 -- Grain: One row per unique patient
 -- SCD Type: Type 1
 
@@ -29,6 +29,6 @@ BEGIN
     CREATE INDEX idx_dim_patient_external_id ON dbo.dim_patient(patient_external_id);
     CREATE INDEX idx_dim_patient_active ON dbo.dim_patient(is_active);
 
-    PRINT '✅ dim_patient';
+    PRINT 'dim_patient';
 END
 GO

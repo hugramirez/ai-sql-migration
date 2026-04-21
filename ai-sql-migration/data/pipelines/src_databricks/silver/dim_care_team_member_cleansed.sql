@@ -1,4 +1,4 @@
--- Run order: 25 — Silver care team member (latest row per employee_id)
+-- Run order: Silver care team member (latest row per employee_id)
 CREATE OR REPLACE TABLE pharmacy.silver.dim_care_team_member_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')

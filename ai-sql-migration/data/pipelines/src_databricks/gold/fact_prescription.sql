@@ -1,4 +1,4 @@
--- Run order: 46 — Gold prescription fact + physical optimization
+-- Run order: Gold prescription fact + physical optimization
 CREATE OR REPLACE TABLE pharmacy.gold.fact_prescription
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')

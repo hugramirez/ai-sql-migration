@@ -1,4 +1,4 @@
--- Run order: 28 — Silver adherence (enriched; no dedupe key in bronze — pass-through with derived columns)
+-- Run order: Silver adherence (enriched; no dedupe key in bronze — pass-through with derived columns)
 CREATE OR REPLACE TABLE pharmacy.silver.fact_adherence_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')

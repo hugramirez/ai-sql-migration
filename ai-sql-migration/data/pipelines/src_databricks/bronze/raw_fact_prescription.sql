@@ -1,4 +1,4 @@
--- Run order: 16 — Bronze prescription fact (grain: prescription line or Rx header per source)
+-- Run order: Bronze prescription fact (grain: prescription line or Rx header per source)
 -- Lineage: joins raw_dim_patient, raw_dim_medication, raw_dim_prescriber, raw_dim_payer, raw_dim_date (written/filled)
 CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_prescription (
     sk_prescription_id BIGINT COMMENT 'Surrogate key for prescription fact',

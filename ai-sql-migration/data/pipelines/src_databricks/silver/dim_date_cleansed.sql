@@ -1,4 +1,4 @@
--- Run order: 26 — Silver date conformed dimension (pass-through from bronze calendar)
+-- Run order: Silver date conformed dimension (pass-through from bronze calendar)
 CREATE OR REPLACE TABLE pharmacy.silver.dim_date_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')

@@ -1,4 +1,4 @@
--- Run order: 30 — Silver shipments (delivery lag)
+-- Run order: Silver shipments (delivery lag)
 CREATE OR REPLACE TABLE pharmacy.silver.fact_shipment_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')

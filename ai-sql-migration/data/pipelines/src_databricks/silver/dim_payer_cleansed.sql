@@ -1,4 +1,4 @@
--- Run order: 24 — Silver payer (latest row per payer_external_id)
+-- Run order: Silver payer (latest row per payer_external_id)
 CREATE OR REPLACE TABLE pharmacy.silver.dim_payer_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')

@@ -1,4 +1,4 @@
--- Run order: 33 — Data quality check results
+-- Run order: Data quality check results
 CREATE OR REPLACE TABLE pharmacy.silver._metadata_quality_checks (
     table_name STRING NOT NULL COMMENT 'Table or dataset evaluated',
     check_type STRING COMMENT 'Rule or check category',

@@ -1,4 +1,4 @@
--- Run order: 04 — dim_payer
+-- Run order: dim_payer
 -- Grain: One row per payer/plan
 -- SCD Type: Type 1
 
@@ -25,6 +25,6 @@ BEGIN
     DROP INDEX IF EXISTS idx_dim_payer_external_id ON dbo.dim_payer; CREATE INDEX idx_dim_payer_external_id ON dbo.dim_payer(payer_external_id);
     DROP INDEX IF EXISTS idx_dim_payer_active ON dbo.dim_payer; CREATE INDEX idx_dim_payer_active ON dbo.dim_payer(is_active);
 
-    PRINT '✅ dim_payer';
+    PRINT 'dim_payer';
 END
 GO

@@ -1,4 +1,4 @@
--- Run order: 91 — Analytic view: prescription metrics by medication
+-- Run order: Analytic view: prescription metrics by medication
 CREATE OR REPLACE VIEW pharmacy.gold.v_prescription_metrics AS
 SELECT
     m.ndc_code,

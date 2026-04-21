@@ -1,4 +1,4 @@
--- Run order: 93 — Analytic view: prescriber performance metrics
+-- Run order: Analytic view: prescriber performance metrics
 CREATE OR REPLACE VIEW pharmacy.gold.v_prescriber_performance AS
 SELECT
     pr.sk_prescriber_id,

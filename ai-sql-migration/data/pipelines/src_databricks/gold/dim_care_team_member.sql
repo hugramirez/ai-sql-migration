@@ -1,4 +1,4 @@
--- Run order: 45 — Gold care team member dimension
+-- Run order: Gold care team member dimension
 CREATE OR REPLACE TABLE pharmacy.gold.dim_care_team_member
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')

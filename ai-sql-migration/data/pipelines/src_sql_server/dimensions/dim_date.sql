@@ -1,4 +1,4 @@
--- Run order: 05 — dim_date
+-- Run order: dim_date
 -- Grain: One row per calendar date
 -- Conformed dimension (all timestamps use this)
 
@@ -25,6 +25,6 @@ BEGIN
 
     DROP INDEX IF EXISTS idx_dim_date_full_date ON dbo.dim_date; CREATE INDEX idx_dim_date_full_date ON dbo.dim_date(full_date);
 
-    PRINT '✅ dim_date';
+    PRINT 'dim_date';
 END
 GO

@@ -1,4 +1,4 @@
--- Run order: 18 — Bronze clinical interaction fact
+-- Run order: Bronze clinical interaction fact
 -- Lineage: patient, prescriber, care team member, date dimension
 CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_clinical_interaction (
     sk_interaction_id BIGINT COMMENT 'Surrogate key for interaction event',

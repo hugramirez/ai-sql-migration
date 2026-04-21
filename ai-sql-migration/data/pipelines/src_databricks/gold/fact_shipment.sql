@@ -1,4 +1,4 @@
--- Run order: 49 — Gold shipment fact
+-- Run order: Gold shipment fact
 CREATE OR REPLACE TABLE pharmacy.gold.fact_shipment
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')

@@ -1,4 +1,4 @@
--- Run order: 21 — Silver patient (latest row per patient_external_id)
+-- Run order: Silver patient (latest row per patient_external_id)
 CREATE OR REPLACE TABLE pharmacy.silver.dim_patient_cleansed
 USING DELTA
 TBLPROPERTIES (

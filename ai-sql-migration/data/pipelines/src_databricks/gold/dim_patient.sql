@@ -1,4 +1,4 @@
--- Run order: 40 — Gold patient dimension (consumption layer)
+-- Run order: Gold patient dimension (consumption layer)
 CREATE OR REPLACE TABLE pharmacy.gold.dim_patient
 USING DELTA
 TBLPROPERTIES (

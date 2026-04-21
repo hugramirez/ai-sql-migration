@@ -1,4 +1,4 @@
--- Run order: 94 — Analytic view: shipment volume and performance by period
+-- Run order: Analytic view: shipment volume and performance by period
 CREATE OR REPLACE VIEW pharmacy.gold.v_shipment_analysis AS
 SELECT
     YEAR(s.ship_date) AS ship_year,

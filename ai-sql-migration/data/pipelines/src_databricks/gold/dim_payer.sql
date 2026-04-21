@@ -1,4 +1,4 @@
--- Run order: 43 — Gold payer dimension
+-- Run order: Gold payer dimension
 CREATE OR REPLACE TABLE pharmacy.gold.dim_payer
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')

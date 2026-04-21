@@ -1,4 +1,4 @@
--- Run order: 50 — Gold last-event snapshot fact
+-- Run order: Gold last-event snapshot fact
 CREATE OR REPLACE TABLE pharmacy.gold.fact_last_event
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')

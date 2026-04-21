@@ -1,4 +1,4 @@
--- Run order: 44 — Gold date dimension
+-- Run order: Gold date dimension
 CREATE OR REPLACE TABLE pharmacy.gold.dim_date
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')

@@ -1,4 +1,4 @@
--- Run order: 41 — Gold medication dimension
+-- Run order: Gold medication dimension
 CREATE OR REPLACE TABLE pharmacy.gold.dim_medication
 USING DELTA
 TBLPROPERTIES (

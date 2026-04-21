@@ -1,4 +1,4 @@
--- Run order: 13 — Bronze patient dimension
+-- Run order: Bronze patient dimension
 CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_patient (
     sk_patient_id BIGINT COMMENT 'Surrogate key for patient (internal unique identifier)',
     patient_external_id STRING COMMENT 'External patient identifier from source system',

@@ -1,4 +1,4 @@
--- Run order: 19 — Bronze shipment fact
+-- Run order: Bronze shipment fact
 -- Lineage: prescription and patient dimensions; ship/delivery date roles -> raw_dim_date
 CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_shipment (
     sk_shipment_id BIGINT COMMENT 'Surrogate key for shipment',

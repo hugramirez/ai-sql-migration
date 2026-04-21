@@ -1,4 +1,4 @@
--- Run order: 11 — fact_last_event
+-- Run order: fact_last_event
 -- Grain: One row per prescription (latest event snapshot)
 -- Fact Type: Snapshot
 
@@ -30,6 +30,6 @@ BEGIN
     DROP INDEX IF EXISTS idx_fact_last_event_patient ON dbo.fact_last_event; CREATE INDEX idx_fact_last_event_patient ON dbo.fact_last_event(sk_patient_id);
     DROP INDEX IF EXISTS idx_fact_last_event_resolved ON dbo.fact_last_event; CREATE INDEX idx_fact_last_event_resolved ON dbo.fact_last_event(is_resolved);
 
-    PRINT '✅ fact_last_event';
+    PRINT 'fact_last_event';
 END
 GO

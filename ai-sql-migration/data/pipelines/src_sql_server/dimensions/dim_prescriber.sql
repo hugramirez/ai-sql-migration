@@ -29,6 +29,6 @@ BEGIN
     DROP INDEX IF EXISTS idx_dim_prescriber_npi ON dbo.dim_prescriber; CREATE INDEX idx_dim_prescriber_npi ON dbo.dim_prescriber(npi_number);
     DROP INDEX IF EXISTS idx_dim_prescriber_active ON dbo.dim_prescriber; CREATE INDEX idx_dim_prescriber_active ON dbo.dim_prescriber(is_active);
 
-    PRINT '✅ dim_prescriber';
+    PRINT 'dim_prescriber';
 END
 GO

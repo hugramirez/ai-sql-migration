@@ -1,4 +1,4 @@
--- Run order: 23 — Silver prescriber (current row per npi_number; SCD2 fields reserved for future)
+-- Run order: Silver prescriber (current row per npi_number; SCD2 fields reserved for future)
 CREATE OR REPLACE TABLE pharmacy.silver.dim_prescriber_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')

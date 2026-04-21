@@ -1,4 +1,4 @@
--- Run order: 47 — Gold adherence fact
+-- Run order: Gold adherence fact
 CREATE OR REPLACE TABLE pharmacy.gold.fact_adherence
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')

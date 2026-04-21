@@ -1,4 +1,4 @@
--- Run order: 09 — fact_clinical_interaction
+-- Run order: fact_clinical_interaction
 -- Grain: One row per interaction event
 -- Fact Type: Additive
 
@@ -32,6 +32,6 @@ BEGIN
     DROP INDEX IF EXISTS idx_fact_clinical_interaction_care_team ON dbo.fact_clinical_interaction; CREATE INDEX idx_fact_clinical_interaction_care_team ON dbo.fact_clinical_interaction(sk_care_team_member_id);
     DROP INDEX IF EXISTS idx_fact_clinical_interaction_date ON dbo.fact_clinical_interaction; CREATE INDEX idx_fact_clinical_interaction_date ON dbo.fact_clinical_interaction(sk_interaction_date_id);
 
-    PRINT '✅ fact_clinical_interaction';
+    PRINT 'fact_clinical_interaction';
 END
 GO

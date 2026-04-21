@@ -1,4 +1,4 @@
--- Run order: 92 — Analytic view: adherence summary by patient
+-- Run order: Analytic view: adherence summary by patient
 CREATE OR REPLACE VIEW pharmacy.gold.v_patient_adherence AS
 SELECT
     p.sk_patient_id,

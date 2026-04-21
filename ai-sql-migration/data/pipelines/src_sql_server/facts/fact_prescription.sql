@@ -1,4 +1,4 @@
--- Run order: 07 — fact_prescription (PRIMARY HUB)
+-- Run order: fact_prescription (PRIMARY HUB)
 -- Grain: One row per prescription filled
 -- Fact Type: Additive
 
@@ -47,6 +47,6 @@ BEGIN
     DROP INDEX IF EXISTS idx_fact_prescription_payer ON dbo.fact_prescription; CREATE INDEX idx_fact_prescription_payer ON dbo.fact_prescription(sk_payer_id);
     DROP INDEX IF EXISTS idx_fact_prescription_filled_date ON dbo.fact_prescription; CREATE INDEX idx_fact_prescription_filled_date ON dbo.fact_prescription(sk_filled_date_id);
 
-    PRINT '✅ fact_prescription (HUB)';
+    PRINT 'fact_prescription (HUB)';
 END
 GO
