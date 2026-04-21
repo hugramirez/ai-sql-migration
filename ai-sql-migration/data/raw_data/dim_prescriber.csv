@@ -1,0 +1,151 @@
+sk_prescriber_id,npi_number,first_name,last_name,specialty,sub_specialty,practice_name,address_line1,city,state,zip_code,phone,years_experience,is_active,created_date,updated_date
+1,2864876473,Kelli,Conley,Pulmonology,Pediatric,"Johnson, Rogers and Miranda Medical Group",622 Marie Trail,Lake Samuel,CA,54353,(737)994-7383x473,23,1,2020-01-25,2024-04-18
+2,6504099682,Steven,Campbell,Cardiology,Adult,Shaw-Barnes Medical Group,92407 Spencer Cove,West Christopherburgh,CA,36256,782.561.3750x606,5,1,2021-10-02,2022-11-11
+3,2549748436,Paul,Miller,Neurology,Academic,Johnson Inc Medical Group,20472 West Avenue Apt. 043,New Shelby,CA,80308,961.243.4103x69711,20,1,2021-09-10,2023-02-13
+4,1110533960,Crystal,Andrews,Hematology,Adult,"Thomas, Patterson and Mendez Medical Group",621 Jones Pine,South Morganton,NJ,83819,(754)705-1531x9520,20,1,2021-08-27,2022-08-25
+5,8665986525,Lisa,Thompson,Endocrinology,Academic,"Marshall, Dominguez and Welch Medical Group",70430 Nina Island,Zacharyside,GA,62550,903-845-0541x566,18,1,2021-03-04,2023-01-14
+6,9098129449,Matthew,Lopez,Rheumatology,General,"Jimenez, Glass and Stone Medical Group",616 Amy Islands,North Markport,NY,40674,296.327.5705x964,30,1,2021-06-19,2024-08-10
+7,1264739091,Emily,Sullivan,Endocrinology,Pediatric,"Owen, Shelton and Cisneros Medical Group",702 Joel Rue,Michaelshire,CA,04745,+1-727-655-7192x856,24,1,2021-04-27,2023-04-11
+8,7539441086,John,Wilson,Cardiology,,"Lopez, Holmes and Mcintyre Medical Group",4739 Benson Overpass,North Derek,NJ,10207,427.715.5188x442,32,1,2020-04-27,2024-09-02
+9,5634076661,William,Martinez,Endocrinology,Pediatric,Conner and Sons Medical Group,58957 Cheryl Corners Apt. 467,Hammondshire,NC,10167,(451)477-8528,35,1,2019-10-29,2022-09-04
+10,5227828349,Ryan,Bartlett,Genetics,Adult,Guerra PLC Medical Group,2253 Meza Path,Meghanview,WA,26230,+1-484-724-9818x2992,14,1,2021-05-17,2022-06-10
+11,7850677534,Megan,Elliott,Oncology,General,Miller Ltd Medical Group,396 Tyler Road Suite 473,Evansland,MA,90758,4277677359,6,1,2021-03-24,2023-10-30
+12,7527011028,Michelle,Flores,Endocrinology,Pediatric,Hester-Anderson Medical Group,815 Steven Grove Suite 321,West Soniachester,WA,33042,(959)653-2787,35,1,2019-08-19,2024-04-28
+13,5035765954,Tyler,Davis,Pulmonology,Pediatric,Wagner-Levy Medical Group,500 Simpson Ville,Mitchelltown,MI,14590,(624)356-5060x98358,8,1,2022-01-01,2023-12-06
+14,6429425484,Paul,Cole,Oncology,Academic,"Ramirez, Hays and Becker Medical Group",16558 Fischer Flat,Porterton,MI,05601,(757)787-2982,32,1,2020-07-18,2024-04-05
+15,2725373847,Francisco,Ewing,Pulmonology,Academic,"Kirby, Wheeler and Romero Medical Group",947 Micheal Spring Apt. 694,New Thomasshire,MA,76212,509.272.8962,23,1,2019-04-11,2024-08-31
+16,9147687657,Ashley,Graves,Endocrinology,Pediatric,Smith LLC Medical Group,63689 Salas Street Apt. 283,Whitneyfort,PA,69376,(652)678-5854x9733,21,1,2021-10-03,2022-07-21
+17,5872148707,Jeffrey,Dudley,Gastroenterology,Academic,Wise-Bush Medical Group,7584 Martinez Springs Suite 652,Bobbyland,WA,45899,547.533.8484x219,22,1,2021-05-03,2022-07-02
+18,2897158366,Brent,Stein,Gastroenterology,Academic,Little Inc Medical Group,5712 Tamara Estate,Delgadofort,VA,63081,+1-434-254-0193x8026,33,1,2021-02-04,2022-04-26
+19,4399425369,Wendy,Sanders,Cardiology,Pediatric,Lopez-Curry Medical Group,04991 Mitchell Row Suite 287,Jamesville,IL,43844,(474)820-5493,34,1,2021-12-09,2022-03-01
+20,4577406847,Margaret,Robertson,Pulmonology,Pediatric,Morales Inc Medical Group,75304 Young Terrace,Stephanieport,FL,76845,001-690-345-3017x426,4,1,2021-01-08,2023-02-12
+21,4964570811,Danielle,Shepard,Endocrinology,Pediatric,Mendez-Robinson Medical Group,2795 Miles Mountains,Port John,FL,99426,+1-518-478-5191x088,25,1,2021-07-02,2022-12-30
+22,6797174636,Franklin,Bond,Genetics,Adult,Wilson-Harris Medical Group,87072 Bryant Centers Suite 406,Lisaborough,AZ,76301,206-651-8017,18,1,2019-07-05,2023-08-07
+23,2660286914,Robert,Mack,Neurology,Adult,"Good, Brewer and Fisher Medical Group",6618 Desiree Keys Apt. 286,Lake Tiffany,AZ,00956,001-504-378-6863x375,15,1,2020-04-06,2023-02-28
+24,8093513594,Antonio,Keller,Endocrinology,,"Miranda, Stephenson and Smith Medical Group",19079 John Cape,Gonzalesside,TX,28978,001-502-884-3959x953,2,1,2019-09-28,2022-12-21
+25,4439688162,Kevin,Brown,Nephrology,Adult,"Hobbs, Buck and Garrett Medical Group",705 Floyd Island Suite 624,Whiteside,IL,62566,434.827.0866,21,1,2020-07-17,2024-05-17
+26,8952502057,John,Harris,Oncology,Academic,"Miller, Cole and Watson Medical Group",46990 Jacob Trace,South Jason,IL,44143,603-831-7393x6385,15,1,2021-12-02,2024-03-24
+27,1439427140,Steven,Wong,Nephrology,,Green-Hunt Medical Group,1753 Edwards Cape Apt. 204,Phillipsborough,NJ,43737,969.937.8547,25,1,2020-08-01,2023-09-04
+28,3069050782,Gary,Norton,Hematology,General,Taylor PLC Medical Group,80801 Kathy Loop Apt. 312,East Williamstad,IL,08424,+1-697-670-0886x008,22,1,2020-06-18,2023-09-04
+29,4287687478,Andre,Li,Gastroenterology,Pediatric,"Jordan, Case and White Medical Group",233 Ochoa Grove,Millerfurt,WA,60662,001-833-941-0166,27,1,2019-10-14,2022-02-22
+30,9579064478,Brian,Smith,Genetics,General,Miller Group Medical Group,180 Jason Ways Suite 401,Rachelshire,MA,86760,6254039261,28,1,2019-03-14,2023-01-24
+31,8666074487,Anne,Knight,Rheumatology,General,Rhodes-Fernandez Medical Group,218 Brown Mews Apt. 159,Novakmouth,NC,04384,+1-647-573-5866x2961,21,1,2020-01-06,2023-08-25
+32,3021988477,Jennifer,Miller,Hematology,General,James Ltd Medical Group,655 Christopher Inlet,Wardview,VA,13900,(312)267-8886,13,1,2020-11-18,2022-07-02
+33,2525930586,Christopher,Spencer,Gastroenterology,General,"George, Nguyen and Cruz Medical Group",6183 Gina Extension Apt. 444,Thomasburgh,OH,57474,964-371-5437x993,23,1,2020-08-25,2024-08-07
+34,3020939193,Derek,Smith,Hematology,,Cook-Oliver Medical Group,5692 Flores Square Apt. 752,Novakport,MI,96822,001-479-235-6465x193,6,1,2020-02-03,2024-10-21
+35,6576395496,Stephanie,Murray,Hematology,Pediatric,"Clark, Salinas and Guerra Medical Group",7243 Hopkins Stravenue,Mccormickland,AZ,59361,+1-379-368-8680x589,11,1,2020-02-15,2023-12-03
+36,9532593594,Kayla,Sandoval,Oncology,Adult,Jackson-Salazar Medical Group,6101 Walker Summit Apt. 756,Bartonshire,PA,90997,925.507.1461x12545,13,1,2021-09-25,2023-11-13
+37,1249166485,Adriana,Bailey,Pulmonology,Academic,Kim Ltd Medical Group,1401 Melinda Rue Apt. 238,New Ethan,IL,73881,(873)262-2660x93796,15,1,2019-12-12,2022-11-21
+38,4349011298,Janet,Harris,Genetics,Adult,"Stokes, Brown and Garcia Medical Group",5371 Lambert Overpass,Candicefurt,MI,77440,355-479-2499,29,1,2021-04-06,2024-05-28
+39,2646331504,Lawrence,Allen,Genetics,Pediatric,White Ltd Medical Group,669 Bailey Manors,South Cynthia,NC,91390,+1-228-927-4225x7905,14,1,2019-01-29,2023-10-22
+40,1818520766,Derrick,Ochoa,Cardiology,Pediatric,"Wagner, Simpson and Cohen Medical Group",772 Ariana Underpass Apt. 404,New Keith,NJ,60443,001-778-281-9148,17,1,2020-12-06,2023-10-02
+41,5736095750,Kathleen,Alexander,Pulmonology,,Fritz Inc Medical Group,0745 Scott Crest,East Lisa,MI,77561,001-659-462-9233x095,21,1,2019-04-04,2023-09-03
+42,7546035453,Mario,Padilla,Endocrinology,Academic,Armstrong-Farley Medical Group,60422 Dustin Islands,Port Megan,MA,51973,929.946.6711x6845,10,1,2021-09-30,2024-01-06
+43,8782516473,Mark,Smith,Gastroenterology,Pediatric,"Davis, Stanton and Reid Medical Group",86363 Adams Village Suite 589,New Melissa,FL,45555,+1-600-417-0127x7063,16,1,2019-09-26,2023-03-09
+44,1725783958,Nancy,Mcdowell,Neurology,General,Pena LLC Medical Group,2064 Ruben Course,North Jasonland,VA,17894,001-438-970-0516,4,1,2020-06-07,2024-12-31
+45,9798613995,Chad,Reyes,Nephrology,Pediatric,"Shaffer, Garcia and Richardson Medical Group",62218 Chelsey Expressway Suite 532,Jensenmouth,NJ,28975,412-519-6565,8,1,2019-02-10,2022-04-09
+46,7085004726,Joshua,Miller,Hematology,Academic,"Burke, Griffith and Mitchell Medical Group",438 Julie Hill,Port Rachaelbury,CA,65366,(813)779-1805x5269,18,1,2019-11-10,2023-02-25
+47,6588252632,Amy,Thompson,Neurology,Pediatric,Best-Townsend Medical Group,104 Bill Circle,Hunterhaven,NJ,54952,(761)888-9241x41832,35,1,2019-10-08,2024-05-07
+48,3652992543,Brenda,Hines,Hematology,General,"Becker, Jones and Hale Medical Group",31617 Kyle Streets,North Alexander,CA,18485,001-302-275-8842x524,8,1,2020-02-14,2023-06-23
+49,5179517389,Matthew,Patterson,Cardiology,General,"Brown, Joseph and Ray Medical Group",7850 Villarreal Expressway,Ericville,VA,75724,+1-213-880-0030x7562,28,1,2019-03-22,2024-10-13
+50,7359403225,Jeffrey,Wright,Gastroenterology,Adult,"Flores, Mckenzie and Duncan Medical Group",023 Stephanie Cliff,Clineport,TX,43400,587-905-3494,2,1,2019-08-15,2024-10-08
+51,5077839614,Micheal,Bonilla,Pulmonology,,Oconnor PLC Medical Group,06038 Fields Square,West Aaronfurt,CA,97242,001-541-838-3670x241,8,1,2020-04-18,2024-07-24
+52,6429375645,Jaclyn,Watson,Endocrinology,Pediatric,"Miller, Davis and Anderson Medical Group",99062 Kelly Vista Suite 655,Nelsonland,CA,27070,(891)321-2775,13,1,2020-08-18,2024-01-08
+53,1497791242,Amanda,Oconnell,Rheumatology,Pediatric,Hayes Group Medical Group,12490 Mary Islands Apt. 135,Palmerport,TX,34601,(306)478-8317,10,1,2019-12-16,2023-11-05
+54,9136934170,David,Brown,Rheumatology,,Anderson Group Medical Group,199 Lowery Club Apt. 137,North Rebecca,IL,43957,207-802-9667,7,1,2020-12-02,2023-01-10
+55,7016293621,Felicia,Thompson,Hematology,Academic,Odonnell LLC Medical Group,2099 Deborah Parks Suite 870,West Patrickchester,IL,26644,+1-783-880-6578x7598,26,1,2021-09-06,2024-05-13
+56,1485574228,Joseph,Johnson,Pulmonology,Pediatric,"Robinson, Huang and Osborne Medical Group",8593 Craig Shoals,West Amanda,AZ,97108,7397652239,12,1,2021-09-15,2024-06-16
+57,7920580262,Robin,Johnson,Pulmonology,General,"Bell, Bradley and Thomas Medical Group",8427 Christopher Fort,North Alisha,MI,00590,793-325-2500x29218,3,1,2019-09-25,2024-09-16
+58,7061419749,Nathaniel,Mcmahon,Genetics,Pediatric,Willis-Rogers Medical Group,26752 Walker Radial Apt. 644,East Jessica,CA,92514,001-369-902-9593,18,1,2019-01-26,2024-12-10
+59,9045090355,Donald,Mcgee,Nephrology,,Reed LLC Medical Group,157 Joseph Gateway,West Jonathanville,NC,94927,7068762676,8,1,2020-05-24,2024-09-13
+60,8049778448,Craig,Mendoza,Rheumatology,Adult,"Curtis, Mcdaniel and Martin Medical Group",40541 Matthew Lane,Lake Charles,AZ,12704,599-870-6296x20153,5,0,2019-11-18,2024-11-01
+61,8953726023,Heidi,Bowen,Genetics,Adult,"Fernandez, Guerrero and Evans Medical Group",69872 Michael Meadow,West Madisonfort,CA,26672,803-924-1714,33,1,2020-11-08,2023-07-24
+62,3177244907,Tracy,Guerrero,Neurology,,May Group Medical Group,6527 Jose Mountain,Jeremyview,NJ,74457,2218158693,26,1,2020-04-26,2022-06-11
+63,7756133581,Loretta,Barnes,Genetics,Pediatric,"Mcdaniel, Mayer and Armstrong Medical Group",4160 David Throughway,Thompsonburgh,AZ,28273,620.761.6329,33,1,2019-09-01,2024-10-15
+64,5735817014,Renee,Sloan,Neurology,Academic,Miller PLC Medical Group,548 Stark Bridge Suite 162,New Brianna,TX,99903,819-914-8564,2,1,2020-09-15,2024-11-07
+65,8178927766,Ashley,Kennedy,Cardiology,General,Hill and Sons Medical Group,65307 Prince Brooks Suite 444,Garrisonville,PA,30379,(947)554-6913,5,1,2021-07-19,2023-11-11
+66,7871737874,Robin,Russell,Cardiology,General,Malone-Camacho Medical Group,214 Taylor Vista,East Jamesborough,VA,08054,807.305.3457,30,1,2020-03-30,2022-01-05
+67,8730566271,Erin,Allen,Rheumatology,,Wheeler-Thompson Medical Group,855 Mary Green Apt. 406,East Melissaborough,NC,29513,+1-533-646-8007x2290,25,1,2019-04-04,2022-12-03
+68,8394040015,Charlene,Hahn,Genetics,Pediatric,"Rasmussen, Day and Coleman Medical Group",7437 Byrd Views Suite 910,Annaport,IL,39622,+1-217-815-4544x4328,14,1,2021-03-15,2023-03-18
+69,2451413560,Donna,Becker,Genetics,Academic,"Johnson, Jimenez and Phillips Medical Group",6099 Matthew Station Apt. 875,Meganside,TX,24242,817-724-8251x3534,9,1,2021-07-11,2024-07-25
+70,3142452709,Nathan,Richards,Nephrology,,York-Ruiz Medical Group,3816 Gutierrez Ways,East Victoria,VA,45415,(697)525-2175x25007,5,1,2021-06-05,2024-09-16
+71,4909199720,Kathleen,Jackson,Cardiology,,Burns Inc Medical Group,666 Sanford Lights,North Amandastad,NY,02346,683-400-3354x21689,10,1,2020-10-21,2024-10-29
+72,6361144788,Cameron,Williams,Oncology,Academic,Bryant-Meyer Medical Group,2575 Frederick Valleys Suite 033,East Jessica,PA,77793,221.350.6489x09010,20,1,2019-10-01,2022-10-10
+73,7495255966,Robert,James,Oncology,,"King, Miles and Harris Medical Group",6184 Robert Cove,West Danielville,AZ,65740,493.248.3564,22,1,2020-03-21,2023-02-16
+74,3887823121,Amy,Lozano,Gastroenterology,Adult,"Fitzpatrick, Rivera and Smith Medical Group",97218 Jennifer Courts,Dawnmouth,NC,39301,270-212-0455x611,22,1,2020-12-22,2024-09-10
+75,8934097788,Melissa,Alvarado,Nephrology,Pediatric,Murphy Group Medical Group,155 Daniel Locks Suite 467,Banksburgh,NC,15319,(402)816-9797,8,0,2019-10-25,2022-04-19
+76,6153541642,Kimberly,Carr,Neurology,Adult,"Hobbs, Acosta and Snow Medical Group",1670 Jose Island Apt. 899,Lake Morgan,IL,68540,991.963.7562x89002,18,1,2019-05-08,2023-08-28
+77,5433722159,Molly,Jones,Gastroenterology,Academic,Flores-Rivera Medical Group,83866 Christian Mills Suite 177,Davidfort,CA,98180,+1-501-966-0880x1994,16,1,2021-03-07,2023-05-02
+78,3853978147,Stephanie,Cox,Cardiology,Academic,Velasquez Group Medical Group,997 Baldwin Crescent Apt. 305,Mariaport,OH,72287,851.502.7261x49331,28,1,2020-10-02,2022-04-21
+79,8489005480,Stephen,Harrington,Neurology,Adult,"Morgan, Sherman and Williams Medical Group",7982 Smith Street,New Savannahshire,MI,63799,529.622.1699x58669,30,1,2021-01-23,2023-02-07
+80,6558450990,Raymond,Cooper,Gastroenterology,Adult,Chavez-Anderson Medical Group,848 Joseph Plaza Apt. 339,Glendaberg,NJ,93614,+1-628-885-1587x9968,6,1,2019-12-22,2024-11-18
+81,2620054076,Lindsey,Mills,Hematology,Academic,James Inc Medical Group,42442 Hannah Hill,Port Amber,IL,47514,819.883.8638x406,18,1,2020-06-06,2022-01-12
+82,5026508020,Sue,Daugherty,Rheumatology,Pediatric,Church-Brown Medical Group,97359 Kimberly Fields Suite 721,East Jill,NY,16144,(406)248-4229x4057,22,1,2020-09-08,2024-10-01
+83,7657887271,Eric,Morris,Nephrology,Pediatric,Ayala Ltd Medical Group,9851 Fox Ferry Apt. 826,Davisbury,WA,28465,+1-555-554-3987x8015,22,1,2020-01-12,2024-12-02
+84,5979458346,Susan,Fleming,Hematology,,James-Hogan Medical Group,4840 Robertson Pass,Tuckerport,NC,85898,358.511.2880,27,1,2020-03-29,2023-03-13
+85,6716887234,Ellen,Ayala,Rheumatology,General,"Coleman, Garcia and Medina Medical Group",120 Love Camp Apt. 102,Angelashire,FL,30338,366-276-6506x180,35,1,2019-01-19,2022-08-23
+86,2914126243,Jaclyn,Jones,Rheumatology,,"Rodriguez, Buchanan and Turner Medical Group",7660 Moore Forges,Lake Peter,MA,72030,824-350-8821x0099,17,1,2020-10-19,2024-02-21
+87,6952291828,Kevin,Goodman,Hematology,,"Cooper, Gutierrez and Brewer Medical Group",23943 Howard Union,Port Karenside,VA,60959,+1-581-341-4139x7552,20,0,2021-11-24,2024-02-07
+88,7208619610,Justin,Jones,Cardiology,Pediatric,Stewart Group Medical Group,492 Aguirre Meadow Apt. 053,Lake Jodi,IL,57664,452-357-7754x781,14,1,2019-06-18,2022-07-16
+89,3290101581,Meagan,Trevino,Pulmonology,Pediatric,Vance and Sons Medical Group,110 Lisa Prairie Suite 930,Amyside,FL,62380,+1-725-263-9427x8816,15,1,2021-05-18,2022-08-01
+90,8624454880,Elaine,Charles,Gastroenterology,Pediatric,"Sutton, Todd and Taylor Medical Group",99275 Jeffery Oval,North Joseph,VA,31174,7383567700,11,0,2020-11-10,2022-03-19
+91,1314597900,Jane,Boyd,Hematology,Adult,Davenport-Baker Medical Group,6591 Bennett Fork,Gomezstad,WA,64314,490.482.7231x8432,18,1,2020-04-11,2023-06-14
+92,6961554653,Michael,Love,Oncology,Academic,Guerrero Group Medical Group,177 Clark Estates Suite 030,New Brittany,OH,18159,+1-280-692-0242x8699,22,0,2019-08-31,2024-12-31
+93,3655790301,Stacey,Robinson,Neurology,,"Haney, Dillon and Jackson Medical Group",292 Jackson Spur Suite 799,East Nicholasberg,TX,14731,9382862912,6,1,2021-10-26,2022-08-06
+94,5666504394,Natalie,Schmidt,Endocrinology,Academic,Davis Ltd Medical Group,806 Wood Cape,Perezfort,OH,50470,(899)616-2473x149,27,1,2019-03-05,2024-08-28
+95,3291226621,Jacob,Fletcher,Pulmonology,Adult,Lane Inc Medical Group,3565 Eric Run,Joseside,VA,56018,001-959-446-3688,27,1,2020-08-27,2022-10-23
+96,5077921573,Mitchell,Peters,Endocrinology,,Hinton-Lane Medical Group,213 Logan Estates Apt. 386,Laurenton,AZ,21569,(201)827-9611x4351,11,1,2019-01-11,2024-03-18
+97,5660584367,Sarah,Morales,Cardiology,Adult,"Meyer, Dawson and Harper Medical Group",770 Melissa Unions,Jameshaven,VA,68109,001-739-820-5302x146,24,1,2021-11-15,2022-10-19
+98,1790242728,Richard,Gonzalez,Pulmonology,,Mclaughlin Inc Medical Group,489 Bailey Via,Jeremyborough,AZ,60107,(390)642-6818x1845,18,1,2020-01-07,2022-04-22
+99,3360791536,Nancy,Li,Cardiology,General,"Wright, Ramos and Bennett Medical Group",57790 Wilson Cliff Suite 335,Moseshaven,NJ,70709,4439416518,6,1,2020-02-09,2024-09-24
+100,2533897596,Lee,Robinson,Rheumatology,Adult,"Adams, Valentine and Vega Medical Group",3334 Jermaine Village,Port Christine,CA,20947,001-611-917-9080x759,20,1,2020-02-01,2023-10-13
+101,7230477043,Ian,Duran,Genetics,,"Ramirez, Walker and Ray Medical Group",678 Wayne Lock,South Tiffany,NJ,92021,675.500.3691x55942,21,1,2019-11-09,2024-01-17
+102,9412376000,Joseph,Mullen,Rheumatology,Adult,Diaz-Jimenez Medical Group,5564 White Curve,Port Cory,TX,35883,486.863.2270,22,1,2020-03-29,2024-06-12
+103,8903212516,Victor,Cowan,Endocrinology,Adult,"Holmes, Le and Floyd Medical Group",8906 Hannah Circle Apt. 471,Garnerview,NJ,47813,(488)645-0615x939,23,1,2021-08-05,2024-07-01
+104,8622566062,Michael,Nunez,Rheumatology,Academic,Hampton-Griffin Medical Group,9472 Danielle Junction,Welchshire,NC,53555,812-653-5544,8,1,2019-06-17,2023-07-29
+105,6138636031,Pam,Norman,Pulmonology,Pediatric,Adkins-Meyer Medical Group,2202 Ebony Summit Apt. 326,North Calebfort,VA,72385,3068811492,6,1,2021-11-04,2022-03-05
+106,7781327255,Kyle,Wright,Nephrology,,Ramos-Martinez Medical Group,05577 Dunn Dale,New Carla,FL,83213,001-796-888-4578x317,4,1,2021-08-24,2022-11-01
+107,2685767569,Jordan,Torres,Rheumatology,,Mills and Sons Medical Group,7807 Evans Trafficway Suite 493,New Nathanielchester,VA,73973,(663)626-6341x63894,20,1,2021-10-23,2024-11-11
+108,6999146585,Robert,Castaneda,Hematology,,Taylor Inc Medical Group,749 Lopez Brook Apt. 080,North Julian,TX,16890,001-970-731-2073x564,17,1,2019-12-06,2024-11-18
+109,2916502228,Steven,Moody,Pulmonology,Adult,Miller-Christensen Medical Group,46187 James Ville,Lisatown,MI,16486,001-736-473-0371x837,11,1,2021-09-17,2024-01-05
+110,3094407076,Crystal,Williams,Neurology,Pediatric,"Meyer, King and Little Medical Group",0313 Nguyen Expressway,Brendafurt,IL,32363,4099792513,25,1,2020-02-28,2024-11-26
+111,6961814514,Christopher,Montgomery,Rheumatology,Academic,"Brown, Kelly and Moore Medical Group",73585 Quinn Brooks,Howardberg,MA,33360,4777848739,4,1,2020-10-25,2022-07-31
+112,8481445242,Mario,Mcdonald,Cardiology,,"Rocha, Spencer and Jones Medical Group",4485 Smith Route,Grosstown,NC,81730,(693)751-8638x782,13,1,2021-02-14,2024-01-19
+113,4588312351,Robert,Morris,Nephrology,,Mills Inc Medical Group,20317 Corey Ports,Barretthaven,IL,82286,001-994-205-3910x371,26,1,2020-04-01,2024-11-23
+114,9021793855,Michael,Paul,Oncology,Academic,Short-Bauer Medical Group,480 Mary Club,New Colton,WA,95550,886.333.8392,32,1,2019-01-14,2024-10-24
+115,2889350539,Katie,Ray,Pulmonology,Adult,"Ellis, Ortega and Andrade Medical Group",86852 Mahoney Island,Meganchester,CA,83501,(259)239-8368x45776,34,1,2020-03-09,2022-11-04
+116,5970811968,Tonya,Larson,Pulmonology,,"Taylor, Zamora and Smith Medical Group",50488 Clinton Mount,Ericview,VA,48615,001-533-344-1969,9,1,2021-04-29,2023-11-08
+117,7351460539,Jennifer,Mcguire,Hematology,Adult,Freeman Ltd Medical Group,409 Miller Centers,Michaelchester,MI,55095,739-406-0480,12,1,2021-04-21,2022-02-15
+118,1185303518,Mark,Wolfe,Gastroenterology,,Williams Ltd Medical Group,9981 Ryan Turnpike Suite 225,South Ashleyton,MI,72348,(541)568-6227x8376,12,1,2021-11-15,2022-03-22
+119,1630780803,John,Adams,Nephrology,Adult,Morris-Glass Medical Group,66553 Cooper Shoal,Port Kevinstad,IL,81270,592.470.3352x110,13,1,2021-04-10,2022-02-08
+120,5068424407,Misty,Wilkins,Endocrinology,Adult,Cooper Inc Medical Group,7053 James Pike Suite 879,Lake Holly,GA,02911,(298)304-2043x9407,32,1,2019-12-16,2023-03-26
+121,3580582653,Paul,Nelson,Oncology,,"Ward, Rodriguez and Carter Medical Group",68157 Jacob Parkway Suite 800,New Kevin,AZ,64717,(220)655-5438x4046,13,1,2021-11-12,2023-06-26
+122,3536590481,Jeremiah,Peterson,Pulmonology,Adult,Sandoval-Miller Medical Group,936 Ashley Meadow Suite 957,East Denise,OH,76657,+1-432-748-2629,26,1,2019-02-03,2023-02-19
+123,1413599241,Carlos,Patel,Cardiology,Academic,"Wilson, Stewart and Hobbs Medical Group",6647 Hernandez Field,East Jackview,MA,79878,001-993-493-3051,4,1,2021-12-24,2024-10-27
+124,5695215151,Wayne,Jacobs,Hematology,Adult,"Banks, White and Hughes Medical Group",23306 Sara Loop Apt. 331,South Michelle,MA,64718,001-257-336-6096x569,2,1,2021-06-02,2024-12-05
+125,9776500600,Shannon,Wilcox,Oncology,,Rich and Sons Medical Group,086 James Mill Suite 447,South Kelly,OH,07650,001-882-877-1812x982,16,1,2021-09-14,2024-02-20
+126,5714658227,Marcus,Johnson,Rheumatology,Adult,Garza-Marquez Medical Group,1452 Christopher Squares,Waltersland,IL,69158,001-468-492-6860x259,32,1,2019-06-21,2023-08-04
+127,7050091525,Misty,White,Nephrology,Adult,"Williams, Parker and Cross Medical Group",2123 Cindy Glen Apt. 777,New Nicolebury,TX,28927,001-577-667-1990,2,1,2019-08-30,2024-11-30
+128,8749354330,Christine,Grant,Neurology,Academic,Williams and Sons Medical Group,502 Elizabeth Villages,Markland,PA,06927,462-924-9998,8,1,2020-06-03,2023-06-20
+129,8218146534,Kara,Ward,Cardiology,Adult,Davis LLC Medical Group,6168 Kelly Dale Apt. 458,Warrenborough,OH,80724,7196817946,32,1,2021-09-17,2023-06-04
+130,7775960117,Alicia,Carney,Endocrinology,Academic,Ho-Mendez Medical Group,772 Jeanette Fields Apt. 107,Lake Melaniechester,VA,54770,3556830344,10,1,2019-09-01,2023-04-16
+131,5076977004,Kevin,Pierce,Genetics,Pediatric,Wilson LLC Medical Group,9902 Mark Junction Suite 702,Mooremouth,FL,70882,776-308-4958x80395,34,1,2020-11-24,2022-04-17
+132,3731069282,Tara,Ramirez,Pulmonology,Pediatric,Morgan Group Medical Group,962 Michelle Terrace,Janetmouth,AZ,93541,5466173574,11,1,2021-06-10,2022-06-30
+133,2129971523,Gregory,Brooks,Hematology,General,Strickland Inc Medical Group,078 James Orchard Suite 521,East Jenny,CA,60711,(681)204-0915x7018,4,1,2021-03-31,2024-12-03
+134,3566125120,Becky,Collins,Endocrinology,Adult,Flores and Sons Medical Group,8571 Hernandez Harbor Apt. 098,East Amyside,NJ,42245,224-493-2149x587,33,1,2020-02-18,2024-11-27
+135,1836429847,Anthony,Berger,Endocrinology,,Rodriguez Inc Medical Group,6299 Jensen Inlet,Lisaside,NC,10796,001-679-721-7174x773,35,1,2019-12-14,2022-03-15
+136,1676220116,Philip,Lyons,Rheumatology,General,"Rivera, Valencia and Nguyen Medical Group",17157 Singleton Haven Suite 992,South Lisaville,WA,43213,+1-514-487-6963,27,1,2021-03-20,2024-04-10
+137,9655933303,Terri,Reyes,Nephrology,Pediatric,Clark-Benson Medical Group,9583 Elaine Club Suite 199,Nguyenville,MA,58856,(946)219-1965,7,1,2020-12-13,2023-12-13
+138,5136298935,Christopher,Montoya,Endocrinology,Academic,"Berger, Fields and Smith Medical Group",278 Price Ports,Gonzalezmouth,MA,39787,001-846-451-9098,27,1,2020-06-18,2022-12-25
+139,3174276085,Melissa,Brown,Oncology,,"Faulkner, Smith and Castro Medical Group",40369 Garrett Station Suite 666,Lake Glenn,CA,18729,286.356.2422,34,1,2019-08-28,2024-11-17
+140,7764117705,Deborah,Thomas,Endocrinology,Academic,Barrett-Proctor Medical Group,26796 Shawn Manors,Cruzbury,OH,24853,(990)797-3846x89500,32,1,2020-11-26,2024-07-28
+141,4702361794,Daniel,Olson,Genetics,Academic,"Miller, Cross and Fox Medical Group",8189 John Roads Apt. 894,West Amandatown,CA,61956,687.695.6544x209,18,1,2020-03-27,2023-04-16
+142,3300607428,Bryan,Kennedy,Rheumatology,General,Berry Ltd Medical Group,904 Miller Parkways Apt. 442,Joshuaview,FL,02362,001-219-729-2752x437,20,1,2020-12-01,2022-06-05
+143,5000316394,Tracey,Coffey,Cardiology,Academic,"Peck, Moore and Crawford Medical Group",3723 Brown Greens Apt. 027,Alvarezfort,PA,98300,001-783-266-7428x604,24,1,2020-07-05,2023-01-10
+144,1857561275,Connor,Schmidt,Gastroenterology,Adult,Blanchard-Reynolds Medical Group,4414 Murray Spring Apt. 938,Ericaburgh,AZ,41561,+1-900-710-6181,18,1,2020-02-20,2023-05-27
+145,2529125930,Jeffrey,Campbell,Nephrology,Pediatric,Johnson PLC Medical Group,93911 Melissa Curve,Douglasshire,CA,24718,724-647-1746,7,1,2021-10-05,2022-01-14
+146,5114549022,Fernando,Jones,Cardiology,Academic,Reyes LLC Medical Group,4271 Krause Flats,Whitefort,PA,14713,(286)339-1741,22,1,2020-07-16,2024-10-02
+147,6498703287,Chad,Luna,Pulmonology,Adult,Smith-Jimenez Medical Group,64256 Zachary Trail,Mendozafurt,WA,95890,001-218-330-6719x855,10,1,2021-05-16,2024-09-06
+148,9729790084,Michael,Castaneda,Cardiology,General,Miller-Stevens Medical Group,328 Tammy Shore Apt. 461,Tommouth,OH,96881,320.630.9376,13,1,2019-09-04,2024-11-27
+149,1036157653,Victor,Hanna,Genetics,Adult,Levy-Smith Medical Group,50613 Bentley Ways Apt. 931,Lake Donaldtown,OH,62264,+1-303-320-2041x792,8,1,2020-06-15,2023-01-19
+150,2128928014,Danny,Larson,Cardiology,General,"Walker, Brock and Simmons Medical Group",1982 Copeland Underpass Apt. 092,Bryanview,GA,19013,001-462-258-2739x021,23,1,2021-10-18,2024-05-18

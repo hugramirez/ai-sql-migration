@@ -1,0 +1,501 @@
+sk_patient_id,patient_external_id,first_name,last_name,date_of_birth,age,gender,ethnicity,state,zip_code,enrollment_date,primary_rare_disease,secondary_conditions,is_active,created_date,updated_date
+1,PAT-000001,Danielle,Johnson,1997-05-13,28,Non-binary,Hispanic,FL,36549,2020-08-16,Gaucher Disease,None,1,2020-08-16,2020-08-16
+2,PAT-000002,John,Taylor,1949-03-12,77,Unknown,White,TX,13935,2023-10-17,Alagille Syndrome,Hypertension,1,2023-10-17,2023-10-17
+3,PAT-000003,Erica,Mcclain,1960-11-14,65,Female,Unknown,NJ,11896,2022-10-31,Dravet Syndrome,Hypertension,1,2022-10-31,2022-10-31
+4,PAT-000004,Brittany,Johnson,1977-08-20,48,Non-binary,White,WA,12781,2021-03-27,Niemann-Pick Disease,None,1,2021-03-27,2021-03-27
+5,PAT-000005,Jeffery,Wagner,2002-08-19,23,Female,Hispanic,WA,03979,2022-05-15,Hereditary Angioedema,Depression,1,2022-05-15,2022-05-15
+6,PAT-000006,Anna,Baldwin,1948-04-27,78,Non-binary,Other,IL,92425,2022-02-17,MPS I,Depression,1,2022-02-17,2022-02-17
+7,PAT-000007,Amy,Robinson,2005-06-19,20,Unknown,White,NC,77737,2022-07-29,Alagille Syndrome,Hypertension,1,2022-07-29,2022-07-29
+8,PAT-000008,Joshua,Booth,1996-05-25,29,Female,Unknown,CA,21427,2023-06-20,Paroxysmal Nocturnal Hemoglobinuria,None,0,2023-06-20,2023-06-20
+9,PAT-000009,Helen,Peterson,1960-06-11,65,Female,White,OH,20880,2024-05-02,PKU,Hypertension,1,2024-05-02,2024-05-02
+10,PAT-000010,Jason,Gallagher,1997-01-11,29,Non-binary,Black or African American,FL,13897,2024-09-04,Paroxysmal Nocturnal Hemoglobinuria,Type 2 Diabetes,1,2024-09-04,2024-09-04
+11,PAT-000011,Christopher,Davis,2002-12-18,23,Female,Other,VA,45583,2025-04-02,Pompe Disease,None,1,2025-04-02,2025-04-02
+12,PAT-000012,Cassandra,Roman,1981-06-21,44,Female,Unknown,PA,96148,2022-02-16,Hemophilia B,None,1,2022-02-16,2022-02-16
+13,PAT-000013,Stephen,Martinez,2009-08-13,16,Male,Black or African American,OH,50116,2020-04-24,Hemophilia A,None,1,2020-04-24,2020-04-24
+14,PAT-000014,Christian,Carter,1958-12-05,67,Non-binary,Hispanic,NJ,82898,2025-02-13,Short Bowel Syndrome,None,1,2025-02-13,2025-02-13
+15,PAT-000015,Christine,Hensley,1997-09-02,28,Female,Hispanic,VA,76175,2022-07-28,MPS II,Depression,1,2022-07-28,2022-07-28
+16,PAT-000016,James,Jones,1963-07-28,62,Unknown,Black or African American,FL,87174,2024-03-09,Short Bowel Syndrome,Anxiety,1,2024-03-09,2024-03-09
+17,PAT-000017,Jeremy,Roberts,1952-05-29,73,Male,White,NY,10959,2022-11-09,Wilson Disease,Hypertension,1,2022-11-09,2022-11-09
+18,PAT-000018,Melissa,Delacruz,2001-01-18,25,Unknown,Asian,MI,50324,2022-05-14,Dravet Syndrome,Hypertension,1,2022-05-14,2022-05-14
+19,PAT-000019,Joshua,Reid,1987-06-21,38,Male,Unknown,VA,48320,2021-05-29,Alagille Syndrome,None,1,2021-05-29,2021-05-29
+20,PAT-000020,Francisco,Kelly,1988-03-04,38,Non-binary,White,IL,88342,2024-03-17,Hemophilia B,None,1,2024-03-17,2024-03-17
+21,PAT-000021,Joseph,Zuniga,1980-09-14,45,Female,Other,MA,85440,2020-01-07,Hemophilia B,None,1,2020-01-07,2020-01-07
+22,PAT-000022,Charles,Reid,1996-02-05,30,Female,Hispanic,PA,70511,2021-09-03,Alpha-1 Antitrypsin Deficiency,None,1,2021-09-03,2021-09-03
+23,PAT-000023,Jessica,Martin,1988-05-22,37,Non-binary,Asian,TX,50236,2025-05-06,Alpha-1 Antitrypsin Deficiency,Hypertension,1,2025-05-06,2025-05-06
+24,PAT-000024,Joseph,Schaefer,1972-07-25,53,Male,Hispanic,MA,90699,2024-12-04,PKU,Type 2 Diabetes,1,2024-12-04,2024-12-04
+25,PAT-000025,Angela,Cohen,1947-01-24,79,Male,Other,WA,07832,2020-06-24,Wilson Disease,None,1,2020-06-24,2020-06-24
+26,PAT-000026,Jeremy,Johnson,1999-03-10,27,Non-binary,Other,AZ,41848,2022-08-31,Alagille Syndrome,Type 2 Diabetes,1,2022-08-31,2022-08-31
+27,PAT-000027,Richard,Jones,1959-01-01,67,Female,Unknown,IL,74842,2025-03-17,Alagille Syndrome,None,1,2025-03-17,2025-03-17
+28,PAT-000028,Nancy,Edwards,2000-04-04,26,Unknown,White,FL,86410,2023-08-23,Paroxysmal Nocturnal Hemoglobinuria,Anxiety,1,2023-08-23,2023-08-23
+29,PAT-000029,Victor,Wilkerson,1970-05-01,56,Female,Other,FL,84760,2020-02-13,Short Bowel Syndrome,None,0,2020-02-13,2020-02-13
+30,PAT-000030,Stephen,Baker,2003-07-03,22,Male,White,AZ,32826,2023-07-16,Fabry Disease,Type 2 Diabetes,1,2023-07-16,2023-07-16
+31,PAT-000031,Julie,Ryan,1986-02-15,40,Unknown,Hispanic,NC,98413,2021-05-02,Hemophilia B,None,1,2021-05-02,2021-05-02
+32,PAT-000032,Brenda,Hurst,1991-03-25,35,Unknown,Asian,FL,52851,2023-03-26,Wilson Disease,Type 2 Diabetes,1,2023-03-26,2023-03-26
+33,PAT-000033,Michael,Osborn,1999-02-13,27,Unknown,Asian,AZ,18632,2022-06-01,Paroxysmal Nocturnal Hemoglobinuria,Anxiety,1,2022-06-01,2022-06-01
+34,PAT-000034,William,Davis,2000-05-29,25,Unknown,Unknown,PA,06676,2023-08-31,MPS I,Hypertension,1,2023-08-31,2023-08-31
+35,PAT-000035,Michelle,Hernandez,1949-10-20,76,Unknown,Hispanic,OH,21470,2021-05-24,Spinal Muscular Atrophy,Type 2 Diabetes,1,2021-05-24,2021-05-24
+36,PAT-000036,Laura,Henderson,1981-07-03,44,Male,White,NJ,08827,2021-05-26,Pompe Disease,Anxiety,1,2021-05-26,2021-05-26
+37,PAT-000037,Paul,Carlson,1941-04-28,85,Female,Hispanic,OH,61849,2025-06-07,Pompe Disease,None,1,2025-06-07,2025-06-07
+38,PAT-000038,Allison,Maddox,1959-03-06,67,Female,Asian,TX,02005,2024-11-05,Pulmonary Arterial Hypertension,Hypertension,1,2024-11-05,2024-11-05
+39,PAT-000039,Erin,Wilson,1963-10-17,62,Unknown,Unknown,VA,70882,2025-03-12,Niemann-Pick Disease,Depression,1,2025-03-12,2025-03-12
+40,PAT-000040,Karen,Mack,1989-11-10,36,Female,Black or African American,FL,45088,2023-09-17,Wilson Disease,Type 2 Diabetes,1,2023-09-17,2023-09-17
+41,PAT-000041,Daniel,Graham,1991-12-17,34,Non-binary,White,TX,59971,2024-02-15,Alagille Syndrome,Hypertension,1,2024-02-15,2024-02-15
+42,PAT-000042,Aaron,Bowen,1985-02-10,41,Male,Other,CA,94830,2025-02-25,Alpha-1 Antitrypsin Deficiency,Type 2 Diabetes,1,2025-02-25,2025-02-25
+43,PAT-000043,Jose,Mason,1946-02-23,80,Female,Asian,CA,23917,2023-05-03,Pompe Disease,None,1,2023-05-03,2023-05-03
+44,PAT-000044,William,Rodriguez,1991-02-09,35,Male,Other,CA,82460,2021-05-19,Short Bowel Syndrome,None,1,2021-05-19,2021-05-19
+45,PAT-000045,Kenneth,Fowler,1992-05-12,33,Non-binary,Hispanic,NJ,80319,2023-03-03,Alpha-1 Antitrypsin Deficiency,Depression,1,2023-03-03,2023-03-03
+46,PAT-000046,James,Brooks,1961-05-31,64,Non-binary,Asian,PA,21675,2021-06-27,Pulmonary Arterial Hypertension,Type 2 Diabetes,1,2021-06-27,2021-06-27
+47,PAT-000047,Amber,Osborne,1946-07-05,79,Male,White,NC,70015,2020-01-20,Niemann-Pick Disease,None,1,2020-01-20,2020-01-20
+48,PAT-000048,Samantha,George,1963-10-17,62,Female,Black or African American,IL,64543,2020-09-28,Paroxysmal Nocturnal Hemoglobinuria,Hypertension,1,2020-09-28,2020-09-28
+49,PAT-000049,Andrew,Hickman,1988-09-25,37,Male,Unknown,AZ,40807,2023-12-11,PKU,None,1,2023-12-11,2023-12-11
+50,PAT-000050,John,Allen,1999-07-07,26,Male,White,VA,74865,2020-07-31,MPS II,Depression,1,2020-07-31,2020-07-31
+51,PAT-000051,Stacey,Miller,1964-06-07,61,Non-binary,Hispanic,NJ,64200,2021-07-31,Dravet Syndrome,Type 2 Diabetes,1,2021-07-31,2021-07-31
+52,PAT-000052,Lisa,Spence,1963-09-07,62,Male,White,NJ,70323,2022-11-01,Wilson Disease,Depression,1,2022-11-01,2022-11-01
+53,PAT-000053,Katie,Anderson,1964-10-27,61,Female,Unknown,IL,62797,2020-03-31,Gaucher Disease,Depression,1,2020-03-31,2020-03-31
+54,PAT-000054,Stacey,Martin,1979-08-22,46,Male,White,CA,69664,2023-02-03,Amyloidosis,None,1,2023-02-03,2023-02-03
+55,PAT-000055,Monique,Henderson,2001-12-29,24,Male,Black or African American,MI,28261,2025-01-25,MPS II,None,1,2025-01-25,2025-01-25
+56,PAT-000056,Sarah,Campos,1978-07-23,47,Non-binary,White,MA,90923,2020-09-18,Fabry Disease,Depression,1,2020-09-18,2020-09-18
+57,PAT-000057,James,Collins,2001-03-10,25,Unknown,Other,VA,88540,2021-05-26,MPS I,Depression,1,2021-05-26,2021-05-26
+58,PAT-000058,Debra,Kim,1961-03-28,65,Female,Asian,TX,68340,2024-11-05,Cystic Fibrosis,None,1,2024-11-05,2024-11-05
+59,PAT-000059,Shannon,Wright,1969-10-20,56,Female,Black or African American,NY,08893,2024-05-21,Amyloidosis,None,1,2024-05-21,2024-05-21
+60,PAT-000060,Matthew,Chapman,1949-09-12,76,Unknown,Hispanic,FL,30662,2022-02-22,Fabry Disease,None,1,2022-02-22,2022-02-22
+61,PAT-000061,Brianna,Smith,1981-04-18,45,Female,Hispanic,TX,93279,2021-12-17,PKU,None,1,2021-12-17,2021-12-17
+62,PAT-000062,Crystal,Perez,1975-09-30,50,Male,Black or African American,PA,04618,2021-11-03,Hemophilia B,None,1,2021-11-03,2021-11-03
+63,PAT-000063,Michele,Jones,1975-11-09,50,Male,White,MA,31696,2023-10-23,Alagille Syndrome,Depression,1,2023-10-23,2023-10-23
+64,PAT-000064,Joshua,Washington,1956-01-08,70,Male,Other,OH,71179,2023-04-04,Hemophilia B,Hypertension,1,2023-04-04,2023-04-04
+65,PAT-000065,David,Walls,2010-07-21,15,Male,Asian,MA,75348,2021-10-04,Amyloidosis,None,1,2021-10-04,2021-10-04
+66,PAT-000066,Barbara,Sanchez,1962-11-07,63,Female,Black or African American,OH,62494,2020-03-31,Amyloidosis,Hypertension,1,2020-03-31,2020-03-31
+67,PAT-000067,Lindsey,Lee,1999-08-04,26,Non-binary,Unknown,AZ,13205,2025-02-28,Hereditary Angioedema,None,1,2025-02-28,2025-02-28
+68,PAT-000068,Donna,Gomez,1966-12-10,59,Unknown,Black or African American,OH,54384,2022-11-04,PKU,None,1,2022-11-04,2022-11-04
+69,PAT-000069,Stuart,Daniel,1989-09-26,36,Unknown,Unknown,VA,88760,2020-09-17,Spinal Muscular Atrophy,Anxiety,1,2020-09-17,2020-09-17
+70,PAT-000070,Denise,Lucas,1995-03-22,31,Male,Black or African American,IL,08445,2023-03-11,PKU,Anxiety,1,2023-03-11,2023-03-11
+71,PAT-000071,Richard,Morgan,2010-06-29,15,Non-binary,Asian,GA,14823,2023-04-02,Dravet Syndrome,None,1,2023-04-02,2023-04-02
+72,PAT-000072,John,Lee,1959-03-04,67,Female,Unknown,CA,59301,2022-11-12,Wilson Disease,None,1,2022-11-12,2022-11-12
+73,PAT-000073,Donald,White,1999-07-23,26,Male,Hispanic,NJ,61138,2023-07-20,Dravet Syndrome,Depression,1,2023-07-20,2023-07-20
+74,PAT-000074,John,Leblanc,1957-11-12,68,Female,Asian,MI,58583,2020-10-28,Gaucher Disease,Hypertension,1,2020-10-28,2020-10-28
+75,PAT-000075,Lindsey,Chase,1946-07-14,79,Female,Unknown,VA,13334,2022-07-21,Amyloidosis,None,1,2022-07-21,2022-07-21
+76,PAT-000076,Brent,Kidd,1975-11-08,50,Male,White,WA,02435,2021-05-14,MPS II,None,1,2021-05-14,2021-05-14
+77,PAT-000077,Tanya,House,1955-10-12,70,Male,Other,FL,31483,2024-07-04,Alpha-1 Antitrypsin Deficiency,Anxiety,1,2024-07-04,2024-07-04
+78,PAT-000078,Gabriel,Tucker,1950-11-20,75,Unknown,Unknown,NC,28517,2022-07-23,MPS II,None,1,2022-07-23,2022-07-23
+79,PAT-000079,Michelle,Barrera,1993-06-02,32,Unknown,Other,GA,22080,2021-10-11,Niemann-Pick Disease,None,1,2021-10-11,2021-10-11
+80,PAT-000080,Nicholas,Galloway,2006-09-19,19,Non-binary,Hispanic,AZ,35261,2024-10-30,Wilson Disease,Anxiety,1,2024-10-30,2024-10-30
+81,PAT-000081,Sara,Glover,2008-09-14,17,Female,Black or African American,GA,37889,2024-05-11,Alpha-1 Antitrypsin Deficiency,Anxiety,1,2024-05-11,2024-05-11
+82,PAT-000082,Rodney,Bernard,1965-08-19,60,Non-binary,Other,CA,73346,2021-04-25,Hemophilia B,Depression,1,2021-04-25,2021-04-25
+83,PAT-000083,Dorothy,Tucker,1960-09-29,65,Female,White,OH,25391,2022-02-23,MPS II,None,1,2022-02-23,2022-02-23
+84,PAT-000084,Kenneth,Novak,1988-09-05,37,Female,Asian,OH,76415,2022-08-12,Amyloidosis,Hypertension,1,2022-08-12,2022-08-12
+85,PAT-000085,Jill,Brown,1992-05-26,33,Unknown,Asian,TX,41605,2025-04-21,Gaucher Disease,None,1,2025-04-21,2025-04-21
+86,PAT-000086,Brian,Silva,1966-10-15,59,Unknown,Other,VA,66410,2024-03-23,Pulmonary Arterial Hypertension,None,1,2024-03-23,2024-03-23
+87,PAT-000087,Samantha,Schmidt,1994-02-13,32,Female,Black or African American,OH,07956,2025-01-12,Hemophilia A,Anxiety,1,2025-01-12,2025-01-12
+88,PAT-000088,Susan,Miller,1974-11-20,51,Female,Asian,MA,24857,2021-11-19,Pulmonary Arterial Hypertension,None,1,2021-11-19,2021-11-19
+89,PAT-000089,Casey,Jones,1995-10-29,30,Male,White,NJ,31329,2022-12-29,Gaucher Disease,Anxiety,1,2022-12-29,2022-12-29
+90,PAT-000090,Richard,David,1981-06-02,44,Unknown,Black or African American,FL,75169,2021-01-07,Fabry Disease,Depression,1,2021-01-07,2021-01-07
+91,PAT-000091,John,Wheeler,1970-04-12,56,Unknown,Black or African American,AZ,81684,2024-04-07,Pulmonary Arterial Hypertension,Depression,1,2024-04-07,2024-04-07
+92,PAT-000092,Christopher,Sandoval,1941-09-27,84,Non-binary,Hispanic,NJ,74586,2024-03-14,Alagille Syndrome,Hypertension,1,2024-03-14,2024-03-14
+93,PAT-000093,Alexandra,Donovan,1998-06-21,27,Female,White,MI,27273,2020-03-23,Gaucher Disease,Type 2 Diabetes,1,2020-03-23,2020-03-23
+94,PAT-000094,Elizabeth,Edwards,1951-04-29,75,Female,Asian,VA,35315,2022-08-27,MPS I,None,1,2022-08-27,2022-08-27
+95,PAT-000095,Randy,Powers,1973-02-03,53,Male,Hispanic,IL,39822,2020-12-09,Dravet Syndrome,None,1,2020-12-09,2020-12-09
+96,PAT-000096,Stephen,Hickman,1942-04-21,84,Unknown,Asian,VA,10009,2025-03-17,PKU,None,1,2025-03-17,2025-03-17
+97,PAT-000097,Albert,Howell,1993-02-12,33,Non-binary,Unknown,MI,74293,2023-11-15,Hemophilia A,Hypertension,1,2023-11-15,2023-11-15
+98,PAT-000098,Wendy,Jones,1990-10-09,35,Unknown,Unknown,PA,28439,2024-05-21,Fabry Disease,Depression,1,2024-05-21,2024-05-21
+99,PAT-000099,William,Anderson,1998-02-03,28,Unknown,Asian,CA,46246,2021-11-29,Gaucher Disease,None,1,2021-11-29,2021-11-29
+100,PAT-000100,Nicole,Suarez,1972-06-29,53,Female,Asian,NY,48935,2023-07-25,Niemann-Pick Disease,None,1,2023-07-25,2023-07-25
+101,PAT-000101,Justin,Kim,1998-05-10,27,Unknown,Asian,OH,71701,2021-07-07,Dravet Syndrome,None,1,2021-07-07,2021-07-07
+102,PAT-000102,Jade,Carr,1993-02-25,33,Female,White,IL,86218,2021-07-03,Hereditary Angioedema,None,1,2021-07-03,2021-07-03
+103,PAT-000103,Allison,Contreras,1961-11-16,64,Unknown,Black or African American,TX,73193,2024-03-16,Niemann-Pick Disease,None,1,2024-03-16,2024-03-16
+104,PAT-000104,Kevin,Alvarado,1969-02-27,57,Non-binary,Black or African American,PA,18102,2021-01-07,Wilson Disease,Type 2 Diabetes,1,2021-01-07,2021-01-07
+105,PAT-000105,Joseph,Preston,1993-06-25,32,Male,Other,FL,97811,2023-12-07,Hemophilia B,None,1,2023-12-07,2023-12-07
+106,PAT-000106,Angela,Nelson,2004-08-07,21,Female,Unknown,GA,79777,2022-04-12,Wilson Disease,None,1,2022-04-12,2022-04-12
+107,PAT-000107,Jason,Cooper,1984-01-13,42,Non-binary,Hispanic,OH,90612,2022-07-06,Gaucher Disease,Hypertension,1,2022-07-06,2022-07-06
+108,PAT-000108,Cynthia,Baker,1967-06-21,58,Unknown,Other,NC,64533,2023-09-21,Short Bowel Syndrome,Depression,1,2023-09-21,2023-09-21
+109,PAT-000109,John,Odonnell,2006-12-02,19,Unknown,Black or African American,IL,07159,2023-02-01,Hereditary Angioedema,Depression,1,2023-02-01,2023-02-01
+110,PAT-000110,Christopher,Henderson,1950-10-28,75,Male,Unknown,NC,36766,2024-01-17,Spinal Muscular Atrophy,Depression,1,2024-01-17,2024-01-17
+111,PAT-000111,Bradley,Cook,2001-12-01,24,Unknown,Black or African American,VA,17647,2021-01-14,Spinal Muscular Atrophy,Type 2 Diabetes,1,2021-01-14,2021-01-14
+112,PAT-000112,Dana,Green,2008-03-14,18,Male,Hispanic,IL,97655,2022-12-10,Dravet Syndrome,Depression,1,2022-12-10,2022-12-10
+113,PAT-000113,Scott,Thornton,1956-02-05,70,Female,Black or African American,TX,74020,2021-09-11,Gaucher Disease,None,1,2021-09-11,2021-09-11
+114,PAT-000114,Alec,Jones,1989-08-23,36,Unknown,White,AZ,91074,2021-08-21,MPS II,None,0,2021-08-21,2021-08-21
+115,PAT-000115,Rebecca,Gardner,1965-07-05,60,Non-binary,Hispanic,TX,48894,2022-08-19,Wilson Disease,Anxiety,1,2022-08-19,2022-08-19
+116,PAT-000116,Brandi,Hernandez,1982-11-10,43,Unknown,White,MI,17205,2020-08-21,Pompe Disease,Anxiety,1,2020-08-21,2020-08-21
+117,PAT-000117,Bobby,Diaz,1944-10-22,81,Non-binary,White,FL,05730,2020-11-06,MPS II,None,1,2020-11-06,2020-11-06
+118,PAT-000118,Rachel,Clark,2008-07-31,17,Female,Other,OH,33207,2022-05-02,Dravet Syndrome,None,1,2022-05-02,2022-05-02
+119,PAT-000119,Elizabeth,Gomez,1979-09-20,46,Non-binary,Other,MI,73886,2021-08-31,Short Bowel Syndrome,Anxiety,1,2021-08-31,2021-08-31
+120,PAT-000120,Nicole,Russell,2006-05-25,19,Female,Black or African American,NJ,81852,2020-07-22,Spinal Muscular Atrophy,None,1,2020-07-22,2020-07-22
+121,PAT-000121,Kara,Frost,1961-07-08,64,Female,White,OH,31530,2020-12-21,Alagille Syndrome,Hypertension,1,2020-12-21,2020-12-21
+122,PAT-000122,Michelle,Cherry,1993-04-10,33,Female,Black or African American,VA,23707,2022-08-20,PKU,Hypertension,1,2022-08-20,2022-08-20
+123,PAT-000123,Nicole,Johnson,1980-09-24,45,Female,Asian,CA,97043,2020-05-25,Hemophilia A,Depression,1,2020-05-25,2020-05-25
+124,PAT-000124,Sandra,Patton,1998-02-06,28,Female,White,TX,54465,2020-11-01,Hemophilia B,None,1,2020-11-01,2020-11-01
+125,PAT-000125,Leah,Shields,1967-08-06,58,Unknown,White,GA,33028,2023-05-03,Short Bowel Syndrome,Depression,1,2023-05-03,2023-05-03
+126,PAT-000126,Joseph,Cobb,2002-10-10,23,Unknown,Asian,CA,14669,2022-04-04,Hemophilia B,None,1,2022-04-04,2022-04-04
+127,PAT-000127,Patrick,Williams,1978-10-04,47,Non-binary,White,CA,62195,2024-02-13,Hereditary Angioedema,None,1,2024-02-13,2024-02-13
+128,PAT-000128,Jeffrey,Velasquez,2000-06-29,25,Male,Unknown,AZ,60833,2024-09-08,Short Bowel Syndrome,None,1,2024-09-08,2024-09-08
+129,PAT-000129,Michael,Hoover,1943-08-11,82,Unknown,Black or African American,NY,30332,2024-04-11,Cystic Fibrosis,Anxiety,1,2024-04-11,2024-04-11
+130,PAT-000130,Jeffrey,Keller,1979-02-08,47,Unknown,Black or African American,OH,52728,2023-07-24,Wilson Disease,Hypertension,1,2023-07-24,2023-07-24
+131,PAT-000131,Mark,Lin,2000-02-13,26,Unknown,Unknown,GA,37086,2020-08-02,Cystic Fibrosis,Depression,1,2020-08-02,2020-08-02
+132,PAT-000132,Michael,Hicks,1975-12-05,50,Unknown,White,PA,89566,2024-07-24,Alagille Syndrome,Hypertension,1,2024-07-24,2024-07-24
+133,PAT-000133,Tina,Herrera,1950-05-26,75,Male,Unknown,AZ,04118,2025-06-09,Pulmonary Arterial Hypertension,None,1,2025-06-09,2025-06-09
+134,PAT-000134,Darrell,Waller,1977-01-27,49,Non-binary,Other,WA,23906,2020-04-21,Spinal Muscular Atrophy,None,1,2020-04-21,2020-04-21
+135,PAT-000135,Beverly,Terrell,1979-08-28,46,Non-binary,Other,NY,05515,2024-04-05,Fabry Disease,Type 2 Diabetes,1,2024-04-05,2024-04-05
+136,PAT-000136,Daniel,Hamilton,1979-04-22,47,Male,Unknown,MI,95992,2024-12-08,Wilson Disease,Hypertension,1,2024-12-08,2024-12-08
+137,PAT-000137,Kristin,Graham,2003-09-05,22,Male,Other,OH,67534,2020-11-20,PKU,None,1,2020-11-20,2020-11-20
+138,PAT-000138,Darrell,Lam,1950-03-06,76,Female,Asian,MA,25415,2022-08-03,MPS I,None,1,2022-08-03,2022-08-03
+139,PAT-000139,Jonathan,Fletcher,1985-08-26,40,Unknown,Asian,FL,00722,2023-12-15,Hemophilia B,Anxiety,1,2023-12-15,2023-12-15
+140,PAT-000140,April,Drake,1952-12-22,73,Female,White,IL,90528,2022-02-24,Spinal Muscular Atrophy,None,1,2022-02-24,2022-02-24
+141,PAT-000141,Jennifer,Harmon,1977-03-23,49,Male,Black or African American,VA,88401,2021-11-27,Alpha-1 Antitrypsin Deficiency,Depression,1,2021-11-27,2021-11-27
+142,PAT-000142,James,Reynolds,1992-08-27,33,Female,Asian,NC,87563,2023-04-02,Wilson Disease,None,1,2023-04-02,2023-04-02
+143,PAT-000143,Samantha,Hanson,1969-10-28,56,Unknown,Black or African American,AZ,87452,2023-02-04,Alagille Syndrome,Anxiety,1,2023-02-04,2023-02-04
+144,PAT-000144,Melanie,Cortez,2002-07-29,23,Female,Asian,TX,39864,2021-05-04,Short Bowel Syndrome,Anxiety,1,2021-05-04,2021-05-04
+145,PAT-000145,William,Estrada,1982-06-07,43,Female,Asian,TX,43254,2023-12-15,Pulmonary Arterial Hypertension,Anxiety,1,2023-12-15,2023-12-15
+146,PAT-000146,Richard,Phillips,1992-12-12,33,Unknown,White,NC,17184,2021-11-10,MPS I,None,1,2021-11-10,2021-11-10
+147,PAT-000147,James,Ortega,1941-05-17,84,Female,White,GA,50196,2024-01-19,MPS II,Anxiety,1,2024-01-19,2024-01-19
+148,PAT-000148,Erica,Orr,1963-10-11,62,Unknown,Unknown,CA,81177,2021-11-24,Dravet Syndrome,None,1,2021-11-24,2021-11-24
+149,PAT-000149,Ashley,Sullivan,2000-07-01,25,Non-binary,Unknown,VA,00554,2024-10-25,Alagille Syndrome,Anxiety,1,2024-10-25,2024-10-25
+150,PAT-000150,Kevin,Clark,1983-10-11,42,Male,Hispanic,NJ,76520,2024-11-21,Alagille Syndrome,Hypertension,1,2024-11-21,2024-11-21
+151,PAT-000151,Catherine,Morris,1965-10-12,60,Male,Unknown,VA,58406,2021-04-10,Pompe Disease,Anxiety,1,2021-04-10,2021-04-10
+152,PAT-000152,Scott,Lewis,1979-10-21,46,Male,Black or African American,WA,62522,2020-12-06,PKU,Hypertension,1,2020-12-06,2020-12-06
+153,PAT-000153,Laura,Moyer,1972-02-28,54,Female,Other,OH,96964,2022-02-06,Amyloidosis,Type 2 Diabetes,1,2022-02-06,2022-02-06
+154,PAT-000154,Gene,Miller,1956-02-26,70,Unknown,Other,NJ,68062,2020-12-14,Cystic Fibrosis,Hypertension,1,2020-12-14,2020-12-14
+155,PAT-000155,Elizabeth,Harvey,1992-04-25,34,Non-binary,Asian,IL,12741,2020-10-20,Hemophilia A,Anxiety,1,2020-10-20,2020-10-20
+156,PAT-000156,Loretta,Potter,1981-09-27,44,Female,White,GA,88685,2025-01-19,PKU,None,1,2025-01-19,2025-01-19
+157,PAT-000157,Lance,Drake,1992-09-17,33,Non-binary,Asian,AZ,19814,2021-09-04,Amyloidosis,None,1,2021-09-04,2021-09-04
+158,PAT-000158,Andrew,Sanchez,1974-07-06,51,Female,Asian,MI,62778,2024-10-13,Wilson Disease,Hypertension,1,2024-10-13,2024-10-13
+159,PAT-000159,Cheryl,Mack,1966-07-18,59,Unknown,Black or African American,TX,60193,2023-12-03,PKU,Hypertension,1,2023-12-03,2023-12-03
+160,PAT-000160,Robert,Soto,2001-07-11,24,Unknown,Black or African American,WA,25986,2024-05-12,Fabry Disease,None,1,2024-05-12,2024-05-12
+161,PAT-000161,Jennifer,Cruz,1994-06-18,31,Female,Other,IL,52884,2024-06-30,Paroxysmal Nocturnal Hemoglobinuria,Type 2 Diabetes,1,2024-06-30,2024-06-30
+162,PAT-000162,John,Douglas,2004-09-04,21,Male,Unknown,NJ,01227,2024-04-20,MPS II,None,0,2024-04-20,2024-04-20
+163,PAT-000163,Patricia,Dalton,2010-10-01,15,Non-binary,Unknown,NY,14471,2022-06-21,Fabry Disease,None,1,2022-06-21,2022-06-21
+164,PAT-000164,Kimberly,Robinson,1966-06-23,59,Female,Hispanic,WA,91715,2021-10-31,Amyloidosis,Type 2 Diabetes,1,2021-10-31,2021-10-31
+165,PAT-000165,April,Williams,1972-10-27,53,Female,Black or African American,MA,33163,2022-12-23,Alpha-1 Antitrypsin Deficiency,Depression,1,2022-12-23,2022-12-23
+166,PAT-000166,Samantha,Martinez,1983-03-25,43,Non-binary,White,GA,17978,2025-06-04,PKU,None,1,2025-06-04,2025-06-04
+167,PAT-000167,Laurie,Contreras,1952-08-17,73,Unknown,Other,PA,73760,2024-03-24,Hemophilia A,None,1,2024-03-24,2024-03-24
+168,PAT-000168,Caitlin,Dodson,1975-05-26,50,Male,Asian,PA,58509,2020-01-29,Hemophilia B,None,1,2020-01-29,2020-01-29
+169,PAT-000169,Cheyenne,Ball,2000-04-26,25,Non-binary,White,NJ,66663,2021-06-20,Short Bowel Syndrome,Anxiety,1,2021-06-20,2021-06-20
+170,PAT-000170,Ronald,Meadows,1942-03-31,84,Female,Unknown,CA,58947,2023-06-22,Alagille Syndrome,Depression,1,2023-06-22,2023-06-22
+171,PAT-000171,Phyllis,Manning,1981-08-26,44,Unknown,White,NY,62717,2025-02-05,PKU,None,0,2025-02-05,2025-02-05
+172,PAT-000172,Shannon,Walton,1943-05-04,83,Male,Hispanic,MA,84080,2021-09-15,Wilson Disease,Hypertension,1,2021-09-15,2021-09-15
+173,PAT-000173,Joshua,Strickland,1974-11-13,51,Unknown,Other,VA,64018,2022-07-18,Paroxysmal Nocturnal Hemoglobinuria,None,1,2022-07-18,2022-07-18
+174,PAT-000174,Courtney,Hill,1977-03-21,49,Unknown,Other,OH,10656,2023-09-03,MPS I,None,1,2023-09-03,2023-09-03
+175,PAT-000175,Jennifer,Young,1965-02-04,61,Unknown,Asian,FL,44521,2020-03-08,Paroxysmal Nocturnal Hemoglobinuria,Type 2 Diabetes,1,2020-03-08,2020-03-08
+176,PAT-000176,Luis,Fernandez,1948-11-29,77,Non-binary,White,OH,18637,2023-11-05,Paroxysmal Nocturnal Hemoglobinuria,None,1,2023-11-05,2023-11-05
+177,PAT-000177,Edward,Reyes,1950-12-16,75,Female,Unknown,NJ,20529,2025-04-27,Niemann-Pick Disease,Hypertension,1,2025-04-27,2025-04-27
+178,PAT-000178,Jasmine,Brown,1941-11-30,84,Female,Other,FL,53925,2020-04-13,Hereditary Angioedema,Type 2 Diabetes,1,2020-04-13,2020-04-13
+179,PAT-000179,Mark,Owens,2008-08-23,17,Female,Hispanic,PA,08662,2023-02-09,Spinal Muscular Atrophy,None,1,2023-02-09,2023-02-09
+180,PAT-000180,Jamie,Fisher,2010-10-02,15,Non-binary,Hispanic,NY,77057,2025-01-18,Dravet Syndrome,Hypertension,1,2025-01-18,2025-01-18
+181,PAT-000181,Sophia,Smith,1955-08-27,70,Male,Black or African American,WA,75957,2020-08-13,Gaucher Disease,Type 2 Diabetes,1,2020-08-13,2020-08-13
+182,PAT-000182,Omar,Smith,1992-10-29,33,Non-binary,White,NY,46606,2021-10-25,Gaucher Disease,Type 2 Diabetes,1,2021-10-25,2021-10-25
+183,PAT-000183,Kenneth,Price,1987-03-13,39,Unknown,Black or African American,NC,55422,2020-08-20,Pompe Disease,Anxiety,1,2020-08-20,2020-08-20
+184,PAT-000184,Amanda,Navarro,1980-07-20,45,Male,Unknown,WA,79570,2022-10-28,Hemophilia A,None,1,2022-10-28,2022-10-28
+185,PAT-000185,Rachael,Freeman,1999-02-10,27,Male,White,GA,36275,2022-12-03,PKU,Anxiety,1,2022-12-03,2022-12-03
+186,PAT-000186,Ryan,Johnson,1978-03-30,48,Unknown,White,MA,44558,2023-11-06,MPS I,Anxiety,1,2023-11-06,2023-11-06
+187,PAT-000187,Elizabeth,Yates,1994-07-28,31,Non-binary,Other,NJ,95420,2020-10-30,Pompe Disease,Type 2 Diabetes,1,2020-10-30,2020-10-30
+188,PAT-000188,Frederick,Mcdonald,2003-11-21,22,Non-binary,Asian,NC,17229,2021-10-27,Pulmonary Arterial Hypertension,None,1,2021-10-27,2021-10-27
+189,PAT-000189,Tina,Ferguson,1948-11-23,77,Female,Asian,GA,52146,2024-06-12,MPS I,None,1,2024-06-12,2024-06-12
+190,PAT-000190,Brittany,Alvarado,1977-02-14,49,Unknown,Unknown,CA,11504,2021-11-25,Niemann-Pick Disease,Anxiety,1,2021-11-25,2021-11-25
+191,PAT-000191,Dawn,Taylor,1968-01-14,58,Female,Unknown,MA,61016,2023-09-24,Hemophilia B,Depression,1,2023-09-24,2023-09-24
+192,PAT-000192,Hunter,Green,1948-03-08,78,Unknown,White,VA,43407,2024-08-30,Pompe Disease,Hypertension,1,2024-08-30,2024-08-30
+193,PAT-000193,Jason,Murphy,1951-09-03,74,Non-binary,Unknown,CA,50193,2023-02-13,Fabry Disease,None,1,2023-02-13,2023-02-13
+194,PAT-000194,Joshua,Bean,1999-09-09,26,Male,Black or African American,MI,55756,2025-04-11,Amyloidosis,None,1,2025-04-11,2025-04-11
+195,PAT-000195,Johnny,Miller,1949-04-17,77,Female,Unknown,GA,03041,2023-03-29,Alpha-1 Antitrypsin Deficiency,Type 2 Diabetes,1,2023-03-29,2023-03-29
+196,PAT-000196,Kaitlyn,Williams,1949-09-16,76,Male,Black or African American,MI,46371,2021-12-18,Alagille Syndrome,Depression,1,2021-12-18,2021-12-18
+197,PAT-000197,Jeffrey,Jones,1978-07-01,47,Male,Other,MA,85927,2024-09-26,Alagille Syndrome,None,1,2024-09-26,2024-09-26
+198,PAT-000198,Billy,Johnson,2002-03-19,24,Non-binary,Unknown,WA,32912,2021-07-01,Gaucher Disease,Type 2 Diabetes,1,2021-07-01,2021-07-01
+199,PAT-000199,James,Smith,1970-06-27,55,Female,Other,NJ,20474,2021-12-19,Gaucher Disease,Type 2 Diabetes,1,2021-12-19,2021-12-19
+200,PAT-000200,John,Wells,1952-09-22,73,Female,Asian,OH,15494,2024-02-26,Gaucher Disease,Hypertension,1,2024-02-26,2024-02-26
+201,PAT-000201,Anne,Robinson,1954-02-13,72,Non-binary,Other,MI,92181,2022-01-27,PKU,None,1,2022-01-27,2022-01-27
+202,PAT-000202,Jonathan,Wood,1944-09-19,81,Male,Unknown,CA,79916,2020-11-14,Cystic Fibrosis,None,1,2020-11-14,2020-11-14
+203,PAT-000203,Catherine,Adkins,1999-05-21,26,Unknown,Asian,IL,15513,2022-05-18,Wilson Disease,None,1,2022-05-18,2022-05-18
+204,PAT-000204,Kimberly,Martin,1985-12-18,40,Male,Black or African American,NJ,41269,2020-08-21,Paroxysmal Nocturnal Hemoglobinuria,Anxiety,1,2020-08-21,2020-08-21
+205,PAT-000205,Daniel,Johnson,1983-08-28,42,Female,Asian,MI,41389,2022-12-15,PKU,Hypertension,1,2022-12-15,2022-12-15
+206,PAT-000206,Barbara,Odonnell,1958-05-04,68,Female,Black or African American,IL,49693,2021-09-09,Spinal Muscular Atrophy,None,1,2021-09-09,2021-09-09
+207,PAT-000207,Randy,Espinoza,1940-09-10,85,Female,Asian,NC,10462,2022-10-15,Amyloidosis,Type 2 Diabetes,1,2022-10-15,2022-10-15
+208,PAT-000208,Brittany,Rivas,1984-11-17,41,Unknown,Unknown,TX,32331,2023-02-18,Paroxysmal Nocturnal Hemoglobinuria,Hypertension,1,2023-02-18,2023-02-18
+209,PAT-000209,Curtis,Barton,1981-03-31,45,Non-binary,Other,OH,90188,2025-03-01,Pompe Disease,None,1,2025-03-01,2025-03-01
+210,PAT-000210,Caroline,Martinez,2003-08-26,22,Male,Asian,TX,74678,2023-08-04,Amyloidosis,Depression,1,2023-08-04,2023-08-04
+211,PAT-000211,Kimberly,Reed,1955-06-02,70,Non-binary,White,OH,56649,2024-06-29,Dravet Syndrome,Anxiety,1,2024-06-29,2024-06-29
+212,PAT-000212,Doris,Jones,1961-10-29,64,Male,Asian,AZ,85375,2022-06-11,Short Bowel Syndrome,Anxiety,1,2022-06-11,2022-06-11
+213,PAT-000213,Matthew,Atkinson,1970-06-17,55,Female,White,NC,64752,2021-03-29,Hereditary Angioedema,None,1,2021-03-29,2021-03-29
+214,PAT-000214,Daniel,Yu,1987-08-08,38,Non-binary,Black or African American,VA,83808,2022-11-10,Spinal Muscular Atrophy,None,1,2022-11-10,2022-11-10
+215,PAT-000215,Patricia,Stevens,1997-11-26,28,Male,Hispanic,IL,20553,2024-07-27,MPS II,Type 2 Diabetes,1,2024-07-27,2024-07-27
+216,PAT-000216,Ryan,Gross,1994-01-16,32,Unknown,Asian,WA,85757,2020-11-09,Pompe Disease,Type 2 Diabetes,1,2020-11-09,2020-11-09
+217,PAT-000217,Joseph,Morton,1991-12-27,34,Non-binary,Unknown,PA,71040,2022-07-08,Short Bowel Syndrome,None,1,2022-07-08,2022-07-08
+218,PAT-000218,Kim,Marshall,1946-02-15,80,Non-binary,Black or African American,MI,96318,2022-08-18,Niemann-Pick Disease,None,1,2022-08-18,2022-08-18
+219,PAT-000219,Brittany,Morris,1985-07-07,40,Unknown,White,TX,32678,2020-05-31,PKU,Anxiety,1,2020-05-31,2020-05-31
+220,PAT-000220,Mariah,Miller,1965-10-02,60,Unknown,Asian,MI,59588,2020-06-06,Pompe Disease,None,1,2020-06-06,2020-06-06
+221,PAT-000221,John,Marshall,2006-04-16,20,Female,Black or African American,MI,80498,2025-01-08,Fabry Disease,Anxiety,1,2025-01-08,2025-01-08
+222,PAT-000222,Elizabeth,Rogers,1953-07-14,72,Male,Black or African American,VA,65290,2025-05-15,Fabry Disease,Anxiety,1,2025-05-15,2025-05-15
+223,PAT-000223,Melissa,White,1997-12-19,28,Unknown,Asian,NC,28303,2020-12-19,Fabry Disease,Type 2 Diabetes,1,2020-12-19,2020-12-19
+224,PAT-000224,Michael,Green,1954-03-29,72,Unknown,Asian,WA,37156,2022-01-15,Paroxysmal Nocturnal Hemoglobinuria,Depression,1,2022-01-15,2022-01-15
+225,PAT-000225,Nicole,Haynes,1993-08-21,32,Non-binary,White,NC,36712,2020-04-17,Hereditary Angioedema,Hypertension,1,2020-04-17,2020-04-17
+226,PAT-000226,Angela,Black,1965-06-28,60,Female,Black or African American,CA,25543,2021-05-31,Dravet Syndrome,None,1,2021-05-31,2021-05-31
+227,PAT-000227,Christopher,Cortez,1952-09-08,73,Unknown,Hispanic,MI,64539,2025-02-20,Paroxysmal Nocturnal Hemoglobinuria,Depression,1,2025-02-20,2025-02-20
+228,PAT-000228,Angela,Allen,1947-08-08,78,Non-binary,Hispanic,NJ,62903,2021-09-26,Alagille Syndrome,Anxiety,1,2021-09-26,2021-09-26
+229,PAT-000229,Debbie,Henry,2006-04-12,20,Unknown,Other,PA,02761,2023-11-04,Alpha-1 Antitrypsin Deficiency,Hypertension,0,2023-11-04,2023-11-04
+230,PAT-000230,Christopher,Walker,1967-09-16,58,Unknown,Hispanic,FL,91174,2021-01-04,Spinal Muscular Atrophy,Depression,1,2021-01-04,2021-01-04
+231,PAT-000231,John,Beck,1953-11-25,72,Male,Other,WA,48869,2020-06-07,PKU,None,1,2020-06-07,2020-06-07
+232,PAT-000232,Thomas,Schmidt,2006-04-07,20,Non-binary,Other,NY,56272,2024-12-14,Alpha-1 Antitrypsin Deficiency,Hypertension,1,2024-12-14,2024-12-14
+233,PAT-000233,Wendy,Pierce,1953-11-02,72,Female,Unknown,GA,46613,2020-11-28,Cystic Fibrosis,None,0,2020-11-28,2020-11-28
+234,PAT-000234,Jacqueline,Nelson,1972-09-06,53,Non-binary,Unknown,WA,33452,2023-10-17,Hemophilia A,Anxiety,1,2023-10-17,2023-10-17
+235,PAT-000235,Jerry,Griffith,1987-11-28,38,Unknown,Hispanic,PA,41860,2021-05-04,PKU,None,1,2021-05-04,2021-05-04
+236,PAT-000236,David,Herrera,1991-03-05,35,Non-binary,Asian,NC,90962,2022-06-21,Niemann-Pick Disease,None,1,2022-06-21,2022-06-21
+237,PAT-000237,Jacob,Robinson,1954-07-16,71,Female,Black or African American,TX,63965,2024-07-30,Spinal Muscular Atrophy,None,1,2024-07-30,2024-07-30
+238,PAT-000238,Joshua,Lawrence,1973-04-20,53,Male,Black or African American,CA,69266,2023-02-09,MPS I,None,1,2023-02-09,2023-02-09
+239,PAT-000239,Candice,Hooper,1964-06-21,61,Unknown,White,MA,25944,2022-07-09,Alpha-1 Antitrypsin Deficiency,Type 2 Diabetes,1,2022-07-09,2022-07-09
+240,PAT-000240,Kenneth,Ward,1980-06-21,45,Unknown,White,OH,40119,2024-12-16,Paroxysmal Nocturnal Hemoglobinuria,Hypertension,1,2024-12-16,2024-12-16
+241,PAT-000241,Alexis,Ferguson,1961-02-24,65,Female,White,PA,36455,2022-03-01,Pompe Disease,Depression,1,2022-03-01,2022-03-01
+242,PAT-000242,Brandon,Brown,2004-02-13,22,Female,Hispanic,TX,38791,2023-08-24,Hereditary Angioedema,None,1,2023-08-24,2023-08-24
+243,PAT-000243,Heidi,Martinez,1982-05-21,43,Unknown,Asian,MI,99170,2023-11-26,MPS II,None,0,2023-11-26,2023-11-26
+244,PAT-000244,Travis,Salas,1947-02-09,79,Female,Other,VA,75744,2020-02-08,Hemophilia B,Type 2 Diabetes,1,2020-02-08,2020-02-08
+245,PAT-000245,Justin,Mendoza,1977-12-21,48,Non-binary,White,TX,45158,2020-08-15,PKU,Type 2 Diabetes,1,2020-08-15,2020-08-15
+246,PAT-000246,Jack,Williams,1997-04-28,28,Male,White,AZ,63117,2024-06-13,Dravet Syndrome,Anxiety,1,2024-06-13,2024-06-13
+247,PAT-000247,Danny,Jones,1993-07-14,32,Female,Unknown,NY,64955,2023-01-02,Gaucher Disease,None,1,2023-01-02,2023-01-02
+248,PAT-000248,Charles,Soto,1940-02-21,86,Unknown,Hispanic,NJ,07527,2023-06-13,Paroxysmal Nocturnal Hemoglobinuria,Type 2 Diabetes,1,2023-06-13,2023-06-13
+249,PAT-000249,Edward,Shepherd,1986-12-18,39,Male,Asian,AZ,40325,2025-06-19,Paroxysmal Nocturnal Hemoglobinuria,Hypertension,1,2025-06-19,2025-06-19
+250,PAT-000250,Christopher,Wright,1997-01-10,29,Male,Black or African American,WA,73648,2022-03-03,Paroxysmal Nocturnal Hemoglobinuria,Depression,1,2022-03-03,2022-03-03
+251,PAT-000251,Kathy,Obrien,1961-08-19,64,Non-binary,Hispanic,TX,81558,2024-02-10,MPS I,None,1,2024-02-10,2024-02-10
+252,PAT-000252,Jeremiah,Mills,1970-05-16,55,Unknown,Unknown,GA,59550,2024-07-24,Cystic Fibrosis,None,1,2024-07-24,2024-07-24
+253,PAT-000253,Rebekah,Evans,1952-02-05,74,Non-binary,Hispanic,TX,77640,2020-05-09,Niemann-Pick Disease,Hypertension,1,2020-05-09,2020-05-09
+254,PAT-000254,Veronica,Torres,1943-10-05,82,Unknown,Other,GA,81900,2021-10-08,PKU,None,1,2021-10-08,2021-10-08
+255,PAT-000255,Brian,Choi,2007-07-31,18,Non-binary,White,AZ,13507,2023-08-17,Spinal Muscular Atrophy,Depression,1,2023-08-17,2023-08-17
+256,PAT-000256,Stacey,Clark,1964-07-05,61,Unknown,Unknown,GA,28160,2020-09-11,Paroxysmal Nocturnal Hemoglobinuria,Anxiety,1,2020-09-11,2020-09-11
+257,PAT-000257,Joseph,Miller,1974-09-08,51,Unknown,Black or African American,MA,31940,2021-11-25,Cystic Fibrosis,Anxiety,1,2021-11-25,2021-11-25
+258,PAT-000258,Glenn,Jones,1963-12-05,62,Unknown,White,OH,00851,2024-06-28,Pompe Disease,None,1,2024-06-28,2024-06-28
+259,PAT-000259,Ricky,Norris,1956-03-10,70,Male,White,PA,62093,2023-01-22,PKU,Depression,1,2023-01-22,2023-01-22
+260,PAT-000260,Kelly,Hall,1967-07-01,58,Unknown,Hispanic,VA,93163,2022-07-02,Dravet Syndrome,None,1,2022-07-02,2022-07-02
+261,PAT-000261,Justin,Heath,1980-02-11,46,Unknown,Black or African American,NJ,09830,2020-03-27,Paroxysmal Nocturnal Hemoglobinuria,None,1,2020-03-27,2020-03-27
+262,PAT-000262,Grace,Bradshaw,1945-02-22,81,Female,White,NY,82428,2020-06-02,Pulmonary Arterial Hypertension,Depression,1,2020-06-02,2020-06-02
+263,PAT-000263,Brittany,Lara,2000-10-31,25,Female,White,FL,26429,2024-05-19,Niemann-Pick Disease,Hypertension,1,2024-05-19,2024-05-19
+264,PAT-000264,Ronald,Stephens,1972-11-11,53,Male,Other,NY,85387,2022-01-11,Pulmonary Arterial Hypertension,None,1,2022-01-11,2022-01-11
+265,PAT-000265,Edward,Baker,1973-04-12,53,Male,Other,NY,19144,2022-01-31,Niemann-Pick Disease,None,1,2022-01-31,2022-01-31
+266,PAT-000266,Charles,Martin,1975-09-16,50,Male,White,VA,40820,2021-10-05,Hemophilia B,Type 2 Diabetes,1,2021-10-05,2021-10-05
+267,PAT-000267,Brooke,Holloway,1986-06-13,39,Non-binary,Black or African American,VA,38329,2022-03-03,Alagille Syndrome,Hypertension,1,2022-03-03,2022-03-03
+268,PAT-000268,Scott,Harrison,1994-11-22,31,Male,Hispanic,AZ,40358,2021-08-07,Wilson Disease,Type 2 Diabetes,1,2021-08-07,2021-08-07
+269,PAT-000269,Holly,Bender,1955-06-28,70,Non-binary,Unknown,PA,66098,2025-01-14,Niemann-Pick Disease,Hypertension,1,2025-01-14,2025-01-14
+270,PAT-000270,Amber,Kim,1989-05-05,36,Female,Unknown,VA,78886,2023-01-15,PKU,Depression,1,2023-01-15,2023-01-15
+271,PAT-000271,Bill,Reynolds,1997-03-18,29,Female,White,FL,42748,2020-12-22,Paroxysmal Nocturnal Hemoglobinuria,None,1,2020-12-22,2020-12-22
+272,PAT-000272,Cassandra,Johnson,1961-03-28,65,Non-binary,Other,MI,30506,2024-06-06,Wilson Disease,Hypertension,1,2024-06-06,2024-06-06
+273,PAT-000273,Suzanne,Huff,1989-06-28,36,Male,Black or African American,OH,75893,2020-09-22,Dravet Syndrome,Hypertension,1,2020-09-22,2020-09-22
+274,PAT-000274,Brenda,Smith,2004-06-28,21,Unknown,Other,CA,88618,2022-09-07,Alpha-1 Antitrypsin Deficiency,Anxiety,1,2022-09-07,2022-09-07
+275,PAT-000275,Lori,Johnston,1968-06-10,57,Unknown,Unknown,NC,99626,2023-08-08,Pompe Disease,Anxiety,1,2023-08-08,2023-08-08
+276,PAT-000276,Gregory,Stone,2009-12-31,16,Female,Asian,NC,58464,2023-02-03,Short Bowel Syndrome,Type 2 Diabetes,1,2023-02-03,2023-02-03
+277,PAT-000277,Sabrina,White,1944-12-20,81,Female,Black or African American,NY,77221,2024-08-29,MPS I,None,1,2024-08-29,2024-08-29
+278,PAT-000278,Ryan,Olsen,2003-08-21,22,Non-binary,White,IL,12460,2021-04-06,Paroxysmal Nocturnal Hemoglobinuria,None,1,2021-04-06,2021-04-06
+279,PAT-000279,Theodore,Ortiz,1989-06-01,36,Non-binary,Other,NC,42582,2021-07-16,MPS II,None,1,2021-07-16,2021-07-16
+280,PAT-000280,Elizabeth,Hodge,1997-07-03,28,Female,Hispanic,NJ,43729,2020-12-11,Short Bowel Syndrome,None,1,2020-12-11,2020-12-11
+281,PAT-000281,Robert,Simpson,1994-04-16,32,Male,White,TX,87347,2021-11-22,Short Bowel Syndrome,Hypertension,1,2021-11-22,2021-11-22
+282,PAT-000282,Sierra,Cervantes,2009-03-03,17,Female,Other,OH,72603,2023-03-27,Hemophilia B,None,1,2023-03-27,2023-03-27
+283,PAT-000283,Benjamin,Miller,1942-09-19,83,Non-binary,Asian,FL,33583,2022-10-16,Alagille Syndrome,Depression,1,2022-10-16,2022-10-16
+284,PAT-000284,Marcus,Cordova,2001-06-14,24,Male,Unknown,TX,53477,2022-04-11,PKU,Anxiety,1,2022-04-11,2022-04-11
+285,PAT-000285,Michelle,Bryan,1977-04-15,49,Non-binary,Other,NY,00651,2022-09-18,Niemann-Pick Disease,Type 2 Diabetes,1,2022-09-18,2022-09-18
+286,PAT-000286,Diane,Daniels,2004-06-12,21,Female,Black or African American,NC,54666,2021-10-15,Paroxysmal Nocturnal Hemoglobinuria,Anxiety,1,2021-10-15,2021-10-15
+287,PAT-000287,Brian,Stone,1968-08-17,57,Non-binary,Asian,FL,82110,2021-05-10,Niemann-Pick Disease,Hypertension,1,2021-05-10,2021-05-10
+288,PAT-000288,Katherine,Garrett,1944-07-16,81,Unknown,Hispanic,AZ,07265,2021-08-17,Pulmonary Arterial Hypertension,None,1,2021-08-17,2021-08-17
+289,PAT-000289,James,Dunn,1969-05-17,56,Non-binary,Hispanic,WA,38253,2025-03-27,Short Bowel Syndrome,None,1,2025-03-27,2025-03-27
+290,PAT-000290,Samuel,Wolfe,1986-03-06,40,Unknown,White,CA,16416,2022-08-14,Wilson Disease,Depression,1,2022-08-14,2022-08-14
+291,PAT-000291,Anthony,Mccoy,1985-05-06,40,Non-binary,White,TX,31866,2022-07-25,Hemophilia A,Type 2 Diabetes,1,2022-07-25,2022-07-25
+292,PAT-000292,Jennifer,Collins,1993-08-09,32,Male,White,OH,02293,2024-12-12,Wilson Disease,Depression,1,2024-12-12,2024-12-12
+293,PAT-000293,Andrea,Davis,1963-09-23,62,Unknown,Black or African American,TX,15372,2024-01-29,Paroxysmal Nocturnal Hemoglobinuria,None,1,2024-01-29,2024-01-29
+294,PAT-000294,Steven,Wilson,1991-02-28,35,Non-binary,White,OH,20682,2023-02-24,Spinal Muscular Atrophy,Depression,1,2023-02-24,2023-02-24
+295,PAT-000295,Tyrone,Moran,2008-07-29,17,Male,Hispanic,CA,67199,2023-01-31,Hemophilia B,None,1,2023-01-31,2023-01-31
+296,PAT-000296,Janice,Perry,1970-06-03,55,Female,Hispanic,MI,63743,2023-02-16,Paroxysmal Nocturnal Hemoglobinuria,None,1,2023-02-16,2023-02-16
+297,PAT-000297,Tina,Sanchez,1984-11-11,41,Female,Unknown,PA,72756,2020-03-23,Fabry Disease,Hypertension,1,2020-03-23,2020-03-23
+298,PAT-000298,Duane,Lee,1986-08-04,39,Female,Black or African American,MA,79062,2022-07-24,MPS II,None,1,2022-07-24,2022-07-24
+299,PAT-000299,William,Suarez,1954-07-30,71,Non-binary,Other,PA,09651,2022-03-15,Dravet Syndrome,None,1,2022-03-15,2022-03-15
+300,PAT-000300,Joshua,Tyler,1985-09-23,40,Non-binary,Asian,AZ,54888,2022-12-26,Wilson Disease,None,0,2022-12-26,2022-12-26
+301,PAT-000301,Matthew,French,1969-09-19,56,Non-binary,Unknown,AZ,35519,2023-10-11,MPS I,Anxiety,1,2023-10-11,2023-10-11
+302,PAT-000302,Lori,Campbell,1942-05-23,83,Female,Unknown,TX,39633,2023-05-07,Wilson Disease,Depression,1,2023-05-07,2023-05-07
+303,PAT-000303,Mary,Carpenter,1955-04-19,71,Unknown,Hispanic,AZ,87000,2022-12-09,Dravet Syndrome,None,1,2022-12-09,2022-12-09
+304,PAT-000304,Tracy,Hernandez,1942-10-31,83,Male,Asian,PA,71093,2023-03-18,MPS I,Type 2 Diabetes,1,2023-03-18,2023-03-18
+305,PAT-000305,Todd,Cook,1977-01-17,49,Unknown,Unknown,VA,71729,2023-11-15,Spinal Muscular Atrophy,Anxiety,1,2023-11-15,2023-11-15
+306,PAT-000306,Nicholas,Cantu,1952-05-21,73,Non-binary,Unknown,GA,25228,2022-11-28,Spinal Muscular Atrophy,None,1,2022-11-28,2022-11-28
+307,PAT-000307,Tina,Allen,1968-02-24,58,Non-binary,Other,PA,50697,2025-05-13,Cystic Fibrosis,Anxiety,1,2025-05-13,2025-05-13
+308,PAT-000308,Jesus,Rowe,2004-09-04,21,Unknown,Hispanic,FL,06221,2023-10-26,Hemophilia B,None,1,2023-10-26,2023-10-26
+309,PAT-000309,Louis,Kennedy,1966-10-12,59,Non-binary,Unknown,FL,50469,2021-04-05,PKU,None,1,2021-04-05,2021-04-05
+310,PAT-000310,Paul,Alvarado,1983-11-14,42,Non-binary,Black or African American,CA,85962,2021-10-11,Wilson Disease,Depression,1,2021-10-11,2021-10-11
+311,PAT-000311,Tina,Simpson,1988-09-24,37,Non-binary,Hispanic,IL,05353,2022-02-16,Pulmonary Arterial Hypertension,None,0,2022-02-16,2022-02-16
+312,PAT-000312,David,Sanford,2004-01-25,22,Non-binary,Unknown,GA,44016,2020-06-10,Paroxysmal Nocturnal Hemoglobinuria,Anxiety,1,2020-06-10,2020-06-10
+313,PAT-000313,Molly,Sawyer,1988-04-26,38,Non-binary,Hispanic,CA,58212,2021-07-09,Alagille Syndrome,None,1,2021-07-09,2021-07-09
+314,PAT-000314,Cory,Lozano,1992-08-24,33,Female,Unknown,FL,02512,2021-05-05,Hemophilia A,Hypertension,1,2021-05-05,2021-05-05
+315,PAT-000315,Jennifer,Ortiz,1977-01-29,49,Female,White,NC,86324,2021-11-07,Wilson Disease,Hypertension,1,2021-11-07,2021-11-07
+316,PAT-000316,Tara,Jones,1954-03-03,72,Female,Black or African American,PA,35238,2022-04-13,Wilson Disease,Anxiety,1,2022-04-13,2022-04-13
+317,PAT-000317,Matthew,Schwartz,1945-04-22,81,Female,Other,VA,85676,2025-02-02,Pompe Disease,None,1,2025-02-02,2025-02-02
+318,PAT-000318,Christopher,Murphy,1943-05-07,83,Female,White,AZ,88890,2025-02-13,Cystic Fibrosis,Anxiety,1,2025-02-13,2025-02-13
+319,PAT-000319,Michele,James,1984-06-10,41,Male,Black or African American,MI,42006,2021-01-16,PKU,Hypertension,1,2021-01-16,2021-01-16
+320,PAT-000320,Courtney,Clay,1970-01-21,56,Unknown,Hispanic,AZ,64457,2021-08-05,Niemann-Pick Disease,None,1,2021-08-05,2021-08-05
+321,PAT-000321,Monique,Johnson,1964-06-23,61,Female,Unknown,GA,09469,2021-01-29,MPS I,Depression,1,2021-01-29,2021-01-29
+322,PAT-000322,Jimmy,Cohen,2004-06-20,21,Non-binary,Black or African American,MI,38168,2021-01-16,Gaucher Disease,None,1,2021-01-16,2021-01-16
+323,PAT-000323,Wendy,Francis,1957-04-30,69,Unknown,Asian,NC,57382,2020-12-25,Dravet Syndrome,None,1,2020-12-25,2020-12-25
+324,PAT-000324,Tiffany,Hodges,1975-12-17,50,Female,Asian,PA,92761,2023-10-02,MPS I,Type 2 Diabetes,1,2023-10-02,2023-10-02
+325,PAT-000325,Monique,Wallace,1940-08-11,85,Unknown,Black or African American,PA,91465,2021-06-18,Pulmonary Arterial Hypertension,Type 2 Diabetes,1,2021-06-18,2021-06-18
+326,PAT-000326,Kevin,Johnson,2004-11-07,21,Non-binary,Unknown,FL,43017,2023-03-19,Gaucher Disease,Depression,1,2023-03-19,2023-03-19
+327,PAT-000327,Laura,Carter,1950-08-09,75,Unknown,Unknown,NC,49632,2022-08-11,PKU,Type 2 Diabetes,1,2022-08-11,2022-08-11
+328,PAT-000328,Ryan,Sanchez,2003-02-13,23,Male,Unknown,MA,54509,2024-04-25,PKU,None,1,2024-04-25,2024-04-25
+329,PAT-000329,Ashlee,Sparks,1972-12-21,53,Female,Asian,NY,22781,2023-06-12,Hemophilia A,Type 2 Diabetes,1,2023-06-12,2023-06-12
+330,PAT-000330,Gregory,Lynch,1994-05-05,31,Unknown,Other,WA,50641,2022-02-04,Amyloidosis,None,1,2022-02-04,2022-02-04
+331,PAT-000331,Christine,Allen,1959-08-05,66,Male,Other,GA,76936,2024-04-09,Hemophilia A,None,1,2024-04-09,2024-04-09
+332,PAT-000332,Douglas,Murray,1972-06-15,53,Male,Other,MA,33790,2020-06-08,Short Bowel Syndrome,Hypertension,1,2020-06-08,2020-06-08
+333,PAT-000333,Steve,Estrada,1991-05-19,34,Non-binary,Other,GA,61482,2023-01-04,MPS II,Type 2 Diabetes,1,2023-01-04,2023-01-04
+334,PAT-000334,Rachel,Byrd,1958-06-05,67,Male,Other,GA,21207,2024-01-08,Short Bowel Syndrome,Anxiety,1,2024-01-08,2024-01-08
+335,PAT-000335,Charles,Landry,1980-09-05,45,Unknown,Other,TX,77515,2020-09-27,Alpha-1 Antitrypsin Deficiency,Anxiety,1,2020-09-27,2020-09-27
+336,PAT-000336,Kevin,Hayden,2000-05-10,25,Male,Asian,IL,90981,2024-07-10,PKU,None,1,2024-07-10,2024-07-10
+337,PAT-000337,John,Bruce,2006-11-28,19,Male,Asian,PA,26612,2021-03-22,Short Bowel Syndrome,Hypertension,1,2021-03-22,2021-03-22
+338,PAT-000338,Yvonne,Castaneda,1988-07-19,37,Male,Black or African American,OH,14480,2020-05-03,Pompe Disease,Anxiety,1,2020-05-03,2020-05-03
+339,PAT-000339,John,Armstrong,1952-02-24,74,Unknown,Asian,AZ,75842,2024-04-17,Amyloidosis,Depression,1,2024-04-17,2024-04-17
+340,PAT-000340,Kenneth,Lyons,1973-11-12,52,Female,Unknown,AZ,03376,2022-02-08,Pompe Disease,None,1,2022-02-08,2022-02-08
+341,PAT-000341,Tiffany,Barrett,1956-01-05,70,Female,Unknown,FL,36477,2023-01-05,Pulmonary Arterial Hypertension,None,1,2023-01-05,2023-01-05
+342,PAT-000342,Alan,Grimes,2007-11-03,18,Unknown,Other,OH,98106,2020-02-16,PKU,Anxiety,1,2020-02-16,2020-02-16
+343,PAT-000343,Teresa,Lozano,1962-03-16,64,Non-binary,Hispanic,MA,98172,2022-08-01,Paroxysmal Nocturnal Hemoglobinuria,Type 2 Diabetes,1,2022-08-01,2022-08-01
+344,PAT-000344,Tyler,Strong,2008-09-03,17,Unknown,Other,WA,38013,2020-08-19,Fabry Disease,None,1,2020-08-19,2020-08-19
+345,PAT-000345,Kimberly,Hall,1941-05-27,84,Male,Other,TX,46680,2021-05-07,Spinal Muscular Atrophy,Hypertension,1,2021-05-07,2021-05-07
+346,PAT-000346,Jeffery,Lee,2000-04-15,26,Male,Asian,GA,33351,2023-12-11,Fabry Disease,Type 2 Diabetes,1,2023-12-11,2023-12-11
+347,PAT-000347,Erica,Le,1959-06-29,66,Non-binary,Hispanic,AZ,86901,2024-03-24,Fabry Disease,Type 2 Diabetes,1,2024-03-24,2024-03-24
+348,PAT-000348,Erin,Taylor,1991-09-07,34,Non-binary,Hispanic,IL,13236,2021-10-15,Short Bowel Syndrome,None,1,2021-10-15,2021-10-15
+349,PAT-000349,Rebecca,Lucas,1999-03-25,27,Non-binary,Black or African American,TX,40993,2022-12-03,Hemophilia A,Anxiety,1,2022-12-03,2022-12-03
+350,PAT-000350,Kristina,Johnson,1993-01-29,33,Unknown,Other,GA,48324,2024-12-06,Cystic Fibrosis,None,0,2024-12-06,2024-12-06
+351,PAT-000351,Jessica,Davis,1970-11-24,55,Non-binary,Unknown,OH,39181,2025-04-12,Pulmonary Arterial Hypertension,None,1,2025-04-12,2025-04-12
+352,PAT-000352,Mark,Perry,1966-11-26,59,Unknown,Hispanic,AZ,26819,2022-02-09,Cystic Fibrosis,None,1,2022-02-09,2022-02-09
+353,PAT-000353,David,Ryan,2003-06-24,22,Unknown,Asian,NC,48454,2020-10-22,Niemann-Pick Disease,Hypertension,1,2020-10-22,2020-10-22
+354,PAT-000354,Alyssa,Mcintyre,1974-11-05,51,Non-binary,Unknown,CA,22068,2021-05-12,Hemophilia B,Type 2 Diabetes,1,2021-05-12,2021-05-12
+355,PAT-000355,Jonathan,Summers,1973-04-16,53,Female,White,IL,63657,2020-07-08,Alagille Syndrome,None,1,2020-07-08,2020-07-08
+356,PAT-000356,Tammy,Phillips,1994-04-10,32,Male,Hispanic,WA,44897,2023-05-19,Fabry Disease,None,1,2023-05-19,2023-05-19
+357,PAT-000357,Linda,Mcdonald,2004-12-24,21,Unknown,Hispanic,AZ,10370,2023-10-07,Alagille Syndrome,Type 2 Diabetes,1,2023-10-07,2023-10-07
+358,PAT-000358,Donald,Levy,1967-03-14,59,Female,Unknown,CA,89148,2025-05-13,Gaucher Disease,Type 2 Diabetes,1,2025-05-13,2025-05-13
+359,PAT-000359,Jennifer,Whitney,2007-09-03,18,Female,Asian,MA,73549,2022-09-07,Hemophilia A,None,1,2022-09-07,2022-09-07
+360,PAT-000360,Michael,Gibbs,1968-11-07,57,Unknown,Other,NJ,02325,2024-05-07,PKU,Anxiety,1,2024-05-07,2024-05-07
+361,PAT-000361,Joseph,Martinez,1963-06-19,62,Unknown,White,WA,48812,2022-01-06,Alpha-1 Antitrypsin Deficiency,Anxiety,1,2022-01-06,2022-01-06
+362,PAT-000362,Emily,Chambers,1982-02-13,44,Non-binary,Black or African American,OH,77120,2024-04-08,Hereditary Angioedema,Type 2 Diabetes,0,2024-04-08,2024-04-08
+363,PAT-000363,Parker,Little,1959-11-07,66,Non-binary,Other,MA,49190,2024-02-27,MPS II,Hypertension,1,2024-02-27,2024-02-27
+364,PAT-000364,Daniel,Hall,2004-08-05,21,Female,Black or African American,FL,03781,2022-05-05,PKU,Type 2 Diabetes,1,2022-05-05,2022-05-05
+365,PAT-000365,Christine,Hahn,1962-01-17,64,Non-binary,Black or African American,WA,43493,2022-10-19,Alagille Syndrome,None,1,2022-10-19,2022-10-19
+366,PAT-000366,Rose,Walker,2004-11-29,21,Female,Unknown,WA,08786,2023-08-07,Wilson Disease,Anxiety,1,2023-08-07,2023-08-07
+367,PAT-000367,Cynthia,Marshall,1952-07-22,73,Female,Other,NJ,92392,2024-01-15,Alagille Syndrome,Anxiety,1,2024-01-15,2024-01-15
+368,PAT-000368,Kevin,Ortiz,1987-01-02,39,Male,White,OH,18821,2020-03-10,Pompe Disease,None,1,2020-03-10,2020-03-10
+369,PAT-000369,Brandon,Johnson,1996-07-31,29,Female,White,FL,65070,2021-04-18,Pompe Disease,None,1,2021-04-18,2021-04-18
+370,PAT-000370,Darren,Young,1973-06-25,52,Unknown,Unknown,GA,70958,2020-05-03,Dravet Syndrome,None,0,2020-05-03,2020-05-03
+371,PAT-000371,Derek,Chavez,1987-09-30,38,Male,Other,VA,88382,2023-02-03,Amyloidosis,Hypertension,1,2023-02-03,2023-02-03
+372,PAT-000372,Stacy,Horton,1965-09-20,60,Unknown,Hispanic,CA,71305,2020-02-05,Alpha-1 Antitrypsin Deficiency,None,1,2020-02-05,2020-02-05
+373,PAT-000373,Robert,Newton,1987-01-17,39,Non-binary,Black or African American,IL,20754,2020-10-31,Hemophilia A,Type 2 Diabetes,1,2020-10-31,2020-10-31
+374,PAT-000374,Nicole,Pena,1947-02-02,79,Female,Unknown,FL,64640,2022-02-03,Pulmonary Arterial Hypertension,Anxiety,1,2022-02-03,2022-02-03
+375,PAT-000375,Christina,Crosby,1947-03-26,79,Unknown,Asian,OH,37167,2023-08-31,Fabry Disease,Hypertension,1,2023-08-31,2023-08-31
+376,PAT-000376,Antonio,Wood,1945-01-12,81,Female,White,GA,58616,2023-07-28,Gaucher Disease,None,1,2023-07-28,2023-07-28
+377,PAT-000377,Sean,Young,1997-11-09,28,Male,Other,MA,48038,2024-05-25,Hereditary Angioedema,None,0,2024-05-25,2024-05-25
+378,PAT-000378,Cory,Jennings,1958-12-19,67,Non-binary,White,MA,71865,2025-01-19,Short Bowel Syndrome,Anxiety,1,2025-01-19,2025-01-19
+379,PAT-000379,Rachel,Newman,1965-02-25,61,Male,Hispanic,MA,08437,2025-01-15,Alagille Syndrome,None,1,2025-01-15,2025-01-15
+380,PAT-000380,Raymond,Lopez,1941-05-28,84,Female,Unknown,AZ,16512,2025-05-23,Spinal Muscular Atrophy,None,1,2025-05-23,2025-05-23
+381,PAT-000381,Stacy,Holloway,1946-11-26,79,Female,Other,AZ,12516,2021-09-04,Cystic Fibrosis,None,1,2021-09-04,2021-09-04
+382,PAT-000382,Elizabeth,May,2000-09-27,25,Unknown,Unknown,NY,78770,2025-01-10,Alagille Syndrome,Depression,1,2025-01-10,2025-01-10
+383,PAT-000383,Tasha,Williams,2001-11-03,24,Non-binary,White,CA,44214,2024-01-23,Pompe Disease,None,1,2024-01-23,2024-01-23
+384,PAT-000384,John,Martinez,1946-10-26,79,Unknown,Black or African American,TX,74501,2021-11-28,Dravet Syndrome,None,1,2021-11-28,2021-11-28
+385,PAT-000385,Jamie,Gallegos,2010-04-18,16,Non-binary,Other,OH,73142,2022-07-11,Wilson Disease,Type 2 Diabetes,1,2022-07-11,2022-07-11
+386,PAT-000386,Jamie,Robinson,2000-12-23,25,Non-binary,Hispanic,VA,31040,2023-04-14,Pulmonary Arterial Hypertension,Hypertension,1,2023-04-14,2023-04-14
+387,PAT-000387,Mark,Hernandez,1964-01-15,62,Female,Unknown,OH,78617,2020-11-11,Pulmonary Arterial Hypertension,None,1,2020-11-11,2020-11-11
+388,PAT-000388,Aaron,Garrison,1949-07-23,76,Unknown,Black or African American,WA,19465,2020-07-06,Gaucher Disease,Depression,1,2020-07-06,2020-07-06
+389,PAT-000389,Vanessa,Fernandez,1951-11-20,74,Unknown,Other,NC,23372,2020-06-27,Cystic Fibrosis,Anxiety,1,2020-06-27,2020-06-27
+390,PAT-000390,Daniel,Delacruz,1949-04-07,77,Male,Other,MI,17776,2020-02-23,Pompe Disease,Depression,1,2020-02-23,2020-02-23
+391,PAT-000391,Alexis,Tyler,1974-07-24,51,Unknown,White,VA,31687,2020-01-26,PKU,Anxiety,1,2020-01-26,2020-01-26
+392,PAT-000392,Brianna,Smith,1961-10-11,64,Unknown,Hispanic,NY,35283,2023-03-17,Alpha-1 Antitrypsin Deficiency,Type 2 Diabetes,1,2023-03-17,2023-03-17
+393,PAT-000393,Brian,Harmon,1964-01-30,62,Female,Asian,IL,69456,2022-10-06,MPS II,Hypertension,1,2022-10-06,2022-10-06
+394,PAT-000394,Daniel,Brown,1983-06-11,42,Non-binary,Hispanic,VA,59257,2024-05-21,Pompe Disease,Depression,1,2024-05-21,2024-05-21
+395,PAT-000395,Kimberly,Palmer,1993-04-09,33,Male,Hispanic,IL,14794,2023-06-16,Spinal Muscular Atrophy,Anxiety,0,2023-06-16,2023-06-16
+396,PAT-000396,Shannon,Walker,1975-07-02,50,Non-binary,Asian,PA,81124,2021-11-11,Dravet Syndrome,Anxiety,1,2021-11-11,2021-11-11
+397,PAT-000397,Bradley,Logan,1998-05-29,27,Non-binary,Black or African American,MI,86864,2025-06-18,Dravet Syndrome,Type 2 Diabetes,1,2025-06-18,2025-06-18
+398,PAT-000398,Adrienne,Ellis,1958-01-07,68,Unknown,Black or African American,IL,04583,2022-09-08,Hereditary Angioedema,Type 2 Diabetes,1,2022-09-08,2022-09-08
+399,PAT-000399,Bruce,Mendoza,1996-10-11,29,Female,Black or African American,OH,53141,2022-10-02,Short Bowel Syndrome,None,1,2022-10-02,2022-10-02
+400,PAT-000400,Ronald,Rodriguez,2010-07-03,15,Female,Other,NC,93876,2022-03-15,Paroxysmal Nocturnal Hemoglobinuria,Hypertension,1,2022-03-15,2022-03-15
+401,PAT-000401,Renee,Jones,2008-11-12,17,Unknown,Unknown,FL,11090,2023-01-31,Gaucher Disease,None,1,2023-01-31,2023-01-31
+402,PAT-000402,Marc,Hernandez,1966-02-19,60,Unknown,Unknown,GA,17041,2024-08-29,Pompe Disease,None,1,2024-08-29,2024-08-29
+403,PAT-000403,Joshua,Schultz,1967-03-03,59,Female,Unknown,OH,72375,2021-05-10,Hemophilia B,None,1,2021-05-10,2021-05-10
+404,PAT-000404,Jennifer,James,1946-08-20,79,Unknown,Other,NC,78802,2022-07-08,Dravet Syndrome,Anxiety,1,2022-07-08,2022-07-08
+405,PAT-000405,Alyssa,Chavez,2002-01-20,24,Non-binary,Unknown,MA,79855,2022-05-06,Alagille Syndrome,Hypertension,1,2022-05-06,2022-05-06
+406,PAT-000406,Russell,Mcguire,1993-04-10,33,Female,Unknown,NJ,15497,2023-07-30,Pompe Disease,Hypertension,1,2023-07-30,2023-07-30
+407,PAT-000407,Melissa,Curtis,1998-01-16,28,Unknown,Black or African American,WA,72765,2023-06-08,Fabry Disease,None,1,2023-06-08,2023-06-08
+408,PAT-000408,Jennifer,Lewis,1940-12-11,85,Female,Asian,PA,59687,2020-07-20,Hemophilia B,Type 2 Diabetes,1,2020-07-20,2020-07-20
+409,PAT-000409,Pamela,Gutierrez,2009-04-16,17,Female,Black or African American,TX,59942,2023-10-23,Short Bowel Syndrome,None,1,2023-10-23,2023-10-23
+410,PAT-000410,Raymond,Blair,1966-07-03,59,Female,Black or African American,IL,41467,2022-05-01,Pompe Disease,Hypertension,1,2022-05-01,2022-05-01
+411,PAT-000411,Ronald,Ortega,2010-05-11,15,Non-binary,Asian,CA,49561,2021-02-27,Alpha-1 Antitrypsin Deficiency,Anxiety,1,2021-02-27,2021-02-27
+412,PAT-000412,Stephanie,Mcdaniel,2002-07-05,23,Non-binary,White,WA,62664,2022-07-15,Hereditary Angioedema,Hypertension,1,2022-07-15,2022-07-15
+413,PAT-000413,Carlos,Decker,1942-01-10,84,Male,Unknown,WA,12720,2024-10-05,Hereditary Angioedema,None,1,2024-10-05,2024-10-05
+414,PAT-000414,Ryan,Garner,2006-06-07,19,Female,Black or African American,NC,49344,2021-05-14,Alpha-1 Antitrypsin Deficiency,Type 2 Diabetes,1,2021-05-14,2021-05-14
+415,PAT-000415,Lisa,Hawkins,1981-06-14,44,Female,Hispanic,NJ,77370,2021-04-19,Pulmonary Arterial Hypertension,None,1,2021-04-19,2021-04-19
+416,PAT-000416,Sue,Hoffman,1975-06-28,50,Unknown,Other,OH,88320,2020-02-29,Dravet Syndrome,Type 2 Diabetes,1,2020-02-29,2020-02-29
+417,PAT-000417,David,Gomez,2003-03-23,23,Male,Other,CA,87708,2021-03-15,Spinal Muscular Atrophy,Depression,1,2021-03-15,2021-03-15
+418,PAT-000418,Shelley,Henderson,1988-03-01,38,Female,Asian,CA,95011,2021-01-17,Paroxysmal Nocturnal Hemoglobinuria,Depression,1,2021-01-17,2021-01-17
+419,PAT-000419,Brett,Roberts,1983-11-30,42,Unknown,Other,OH,41454,2022-12-16,Hereditary Angioedema,None,1,2022-12-16,2022-12-16
+420,PAT-000420,Michael,Lane,1971-03-19,55,Female,Unknown,VA,28385,2021-12-21,Niemann-Pick Disease,None,1,2021-12-21,2021-12-21
+421,PAT-000421,Eric,Olson,1995-02-16,31,Female,Black or African American,CA,14685,2023-04-23,Pompe Disease,None,1,2023-04-23,2023-04-23
+422,PAT-000422,Michael,Hawkins,1950-06-29,75,Female,Other,OH,15559,2021-01-09,Paroxysmal Nocturnal Hemoglobinuria,None,1,2021-01-09,2021-01-09
+423,PAT-000423,Kathryn,Andrews,1952-05-14,73,Female,Asian,NJ,56745,2023-03-23,Pulmonary Arterial Hypertension,Anxiety,1,2023-03-23,2023-03-23
+424,PAT-000424,Megan,Villegas,1997-11-20,28,Female,Asian,IL,81991,2025-03-21,Cystic Fibrosis,None,1,2025-03-21,2025-03-21
+425,PAT-000425,Christina,Day,1968-03-22,58,Male,Black or African American,TX,03942,2024-09-20,Niemann-Pick Disease,None,1,2024-09-20,2024-09-20
+426,PAT-000426,Chelsea,Barrett,1957-07-03,68,Unknown,Asian,NJ,91395,2024-07-27,Pulmonary Arterial Hypertension,None,1,2024-07-27,2024-07-27
+427,PAT-000427,Joseph,White,2003-09-16,22,Female,White,MI,92605,2024-09-16,Niemann-Pick Disease,Anxiety,0,2024-09-16,2024-09-16
+428,PAT-000428,Kathryn,Dorsey,2008-04-11,18,Non-binary,Hispanic,NC,46510,2021-03-27,PKU,Hypertension,1,2021-03-27,2021-03-27
+429,PAT-000429,Adam,Kane,2010-01-16,16,Unknown,Other,NC,74729,2022-07-25,Short Bowel Syndrome,None,1,2022-07-25,2022-07-25
+430,PAT-000430,Diane,Jones,1950-03-31,76,Non-binary,Other,AZ,97621,2021-07-02,Alagille Syndrome,None,1,2021-07-02,2021-07-02
+431,PAT-000431,Cynthia,Johnson,2008-03-07,18,Female,Asian,CA,98295,2024-01-12,Niemann-Pick Disease,None,1,2024-01-12,2024-01-12
+432,PAT-000432,Alyssa,Bennett,1998-08-23,27,Male,Asian,IL,59961,2024-03-18,Hemophilia A,Depression,1,2024-03-18,2024-03-18
+433,PAT-000433,Matthew,Wood,1947-10-21,78,Female,Hispanic,WA,95082,2022-06-18,MPS I,None,1,2022-06-18,2022-06-18
+434,PAT-000434,Mark,Pugh,2001-10-28,24,Unknown,Hispanic,MI,78649,2021-12-19,Dravet Syndrome,None,1,2021-12-19,2021-12-19
+435,PAT-000435,Christopher,Williams,1958-07-15,67,Male,Other,PA,21133,2024-07-24,Spinal Muscular Atrophy,None,1,2024-07-24,2024-07-24
+436,PAT-000436,Karen,Williams,1993-07-18,32,Non-binary,Black or African American,MI,11194,2023-01-08,Cystic Fibrosis,Depression,1,2023-01-08,2023-01-08
+437,PAT-000437,Joseph,Stanley,1986-02-24,40,Unknown,White,IL,64157,2025-01-17,MPS I,Type 2 Diabetes,1,2025-01-17,2025-01-17
+438,PAT-000438,Catherine,Perry,1951-05-20,74,Female,Unknown,PA,28756,2023-12-07,MPS II,Type 2 Diabetes,1,2023-12-07,2023-12-07
+439,PAT-000439,Kari,Wilson,2008-04-24,17,Female,Other,NJ,56850,2024-09-23,Pulmonary Arterial Hypertension,Anxiety,1,2024-09-23,2024-09-23
+440,PAT-000440,Daniel,Gregory,1977-02-28,49,Male,Asian,NC,78244,2022-02-07,Niemann-Pick Disease,Hypertension,1,2022-02-07,2022-02-07
+441,PAT-000441,Tommy,Estrada,2002-04-29,23,Unknown,Black or African American,MI,06453,2025-04-01,Paroxysmal Nocturnal Hemoglobinuria,Anxiety,0,2025-04-01,2025-04-01
+442,PAT-000442,Jeffrey,Joyce,2009-06-13,16,Unknown,Unknown,NJ,07681,2024-09-30,Pompe Disease,None,1,2024-09-30,2024-09-30
+443,PAT-000443,Adrian,Turner,1945-09-06,80,Female,Asian,AZ,28187,2024-06-17,Alagille Syndrome,Anxiety,1,2024-06-17,2024-06-17
+444,PAT-000444,Katrina,Duran,1964-02-03,62,Female,Other,AZ,38439,2021-10-23,PKU,Depression,1,2021-10-23,2021-10-23
+445,PAT-000445,Mark,Smith,1970-11-02,55,Male,Unknown,WA,98413,2025-01-05,Fabry Disease,Hypertension,1,2025-01-05,2025-01-05
+446,PAT-000446,Ryan,Anderson,1941-06-17,84,Unknown,White,OH,70307,2020-09-11,Cystic Fibrosis,Anxiety,1,2020-09-11,2020-09-11
+447,PAT-000447,Jane,Mason,2001-10-10,24,Non-binary,Hispanic,AZ,88063,2025-02-05,MPS II,None,1,2025-02-05,2025-02-05
+448,PAT-000448,Linda,Jones,1964-08-01,61,Male,Black or African American,NJ,97761,2020-07-10,Paroxysmal Nocturnal Hemoglobinuria,Depression,1,2020-07-10,2020-07-10
+449,PAT-000449,Bobby,Smith,1954-11-06,71,Non-binary,Unknown,VA,10706,2020-04-16,Pulmonary Arterial Hypertension,None,1,2020-04-16,2020-04-16
+450,PAT-000450,Michelle,Johnston,1978-07-05,47,Male,White,FL,75657,2023-09-04,Pompe Disease,None,1,2023-09-04,2023-09-04
+451,PAT-000451,Richard,Bowman,1951-11-27,74,Unknown,White,TX,38448,2023-04-30,Hemophilia A,None,1,2023-04-30,2023-04-30
+452,PAT-000452,Darius,Smith,1950-10-26,75,Female,Asian,CA,43069,2024-10-27,Amyloidosis,None,1,2024-10-27,2024-10-27
+453,PAT-000453,George,Meza,1948-01-06,78,Non-binary,Black or African American,MA,60806,2024-02-05,MPS I,Hypertension,1,2024-02-05,2024-02-05
+454,PAT-000454,Marilyn,Gillespie,1974-05-03,51,Female,White,NC,12052,2024-05-03,MPS II,None,1,2024-05-03,2024-05-03
+455,PAT-000455,Samuel,Rodriguez,1994-10-02,31,Non-binary,Unknown,FL,57605,2023-08-24,Cystic Fibrosis,Anxiety,1,2023-08-24,2023-08-24
+456,PAT-000456,Brianna,Warren,1953-07-31,72,Unknown,Hispanic,CA,52374,2025-02-26,Amyloidosis,None,1,2025-02-26,2025-02-26
+457,PAT-000457,Monica,Reese,1952-07-23,73,Unknown,Black or African American,OH,29542,2024-03-21,MPS I,None,1,2024-03-21,2024-03-21
+458,PAT-000458,Mason,Jackson,1952-07-17,73,Male,Hispanic,NC,67411,2021-05-22,Hemophilia B,None,1,2021-05-22,2021-05-22
+459,PAT-000459,Cynthia,Schmidt,2004-09-12,21,Male,Unknown,MA,25916,2023-05-29,PKU,None,1,2023-05-29,2023-05-29
+460,PAT-000460,Rebecca,Bailey,1986-06-13,39,Unknown,Black or African American,NJ,95840,2023-05-27,Alpha-1 Antitrypsin Deficiency,Type 2 Diabetes,1,2023-05-27,2023-05-27
+461,PAT-000461,Susan,Brewer,1961-06-21,64,Female,Asian,NJ,19859,2022-10-10,Pulmonary Arterial Hypertension,Hypertension,1,2022-10-10,2022-10-10
+462,PAT-000462,Joel,Thomas,1987-05-24,38,Non-binary,Hispanic,OH,26357,2024-12-25,Gaucher Disease,Depression,1,2024-12-25,2024-12-25
+463,PAT-000463,Glenn,Hernandez,1990-12-28,35,Female,Asian,WA,86419,2022-05-11,Paroxysmal Nocturnal Hemoglobinuria,None,1,2022-05-11,2022-05-11
+464,PAT-000464,Charles,Bean,1992-09-10,33,Female,White,MA,82807,2020-05-18,Gaucher Disease,Depression,1,2020-05-18,2020-05-18
+465,PAT-000465,Troy,Webster,2010-10-23,15,Unknown,Asian,VA,76453,2022-03-26,Alpha-1 Antitrypsin Deficiency,Depression,1,2022-03-26,2022-03-26
+466,PAT-000466,Shane,Glass,1997-06-19,28,Female,Black or African American,CA,74490,2023-01-03,Alagille Syndrome,None,1,2023-01-03,2023-01-03
+467,PAT-000467,Dawn,Downs,1985-11-14,40,Female,Other,PA,42864,2025-03-01,Spinal Muscular Atrophy,None,1,2025-03-01,2025-03-01
+468,PAT-000468,Michelle,Burton,1996-11-26,29,Unknown,Unknown,AZ,20287,2024-04-12,Pompe Disease,Depression,1,2024-04-12,2024-04-12
+469,PAT-000469,Scott,Harrison,1961-12-07,64,Unknown,Other,MI,83257,2020-06-25,Amyloidosis,Hypertension,1,2020-06-25,2020-06-25
+470,PAT-000470,Kevin,Hill,1999-10-04,26,Male,Unknown,NY,07863,2024-02-27,Cystic Fibrosis,Hypertension,1,2024-02-27,2024-02-27
+471,PAT-000471,Michael,Jones,1954-09-12,71,Non-binary,Hispanic,PA,61022,2022-10-13,Paroxysmal Nocturnal Hemoglobinuria,None,1,2022-10-13,2022-10-13
+472,PAT-000472,Shannon,Brown,2010-01-28,16,Male,White,PA,38128,2024-11-23,Hemophilia B,None,1,2024-11-23,2024-11-23
+473,PAT-000473,Chase,Lin,1964-05-26,61,Male,Asian,GA,12336,2022-12-08,Pompe Disease,Depression,1,2022-12-08,2022-12-08
+474,PAT-000474,Christina,Hunter,1944-12-21,81,Non-binary,Hispanic,IL,61149,2022-10-20,Short Bowel Syndrome,Type 2 Diabetes,1,2022-10-20,2022-10-20
+475,PAT-000475,Betty,Best,1991-06-27,34,Male,White,AZ,97352,2023-10-12,MPS I,Type 2 Diabetes,1,2023-10-12,2023-10-12
+476,PAT-000476,Paula,Cole,1961-12-09,64,Unknown,Hispanic,NY,75429,2020-04-04,Wilson Disease,Depression,1,2020-04-04,2020-04-04
+477,PAT-000477,Denise,Morris,1943-03-04,83,Non-binary,Hispanic,OH,62842,2023-02-06,Amyloidosis,Type 2 Diabetes,1,2023-02-06,2023-02-06
+478,PAT-000478,Walter,Rosario,1968-09-13,57,Non-binary,White,NC,59551,2021-07-09,Pompe Disease,None,1,2021-07-09,2021-07-09
+479,PAT-000479,Dale,Nolan,1944-09-21,81,Male,Asian,CA,45516,2021-01-02,Hemophilia A,None,1,2021-01-02,2021-01-02
+480,PAT-000480,Toni,Miller,1965-04-29,61,Male,Other,GA,85190,2024-05-03,PKU,Depression,0,2024-05-03,2024-05-03
+481,PAT-000481,Gerald,Wright,1958-01-01,68,Non-binary,Unknown,MI,57878,2021-08-20,Short Bowel Syndrome,None,1,2021-08-20,2021-08-20
+482,PAT-000482,Vickie,Warren,1973-01-14,53,Female,Unknown,MA,80429,2023-04-26,Wilson Disease,None,1,2023-04-26,2023-04-26
+483,PAT-000483,Erik,Watson,1961-12-28,64,Male,Hispanic,NC,37580,2020-11-04,Gaucher Disease,Anxiety,1,2020-11-04,2020-11-04
+484,PAT-000484,Paul,Schroeder,2002-03-19,24,Male,Unknown,OH,89485,2024-12-01,Gaucher Disease,Depression,1,2024-12-01,2024-12-01
+485,PAT-000485,Carla,Mccormick,2005-03-29,21,Female,Asian,GA,85344,2021-09-21,MPS I,Type 2 Diabetes,1,2021-09-21,2021-09-21
+486,PAT-000486,Matthew,Rivera,1952-10-09,73,Male,Hispanic,MA,73634,2023-12-28,Hemophilia B,Hypertension,1,2023-12-28,2023-12-28
+487,PAT-000487,Erika,Mitchell,1977-01-21,49,Male,Other,CA,95362,2023-12-06,Paroxysmal Nocturnal Hemoglobinuria,Anxiety,1,2023-12-06,2023-12-06
+488,PAT-000488,Melissa,Brandt,1997-03-02,29,Male,Asian,NJ,79498,2024-08-06,Pulmonary Arterial Hypertension,Hypertension,1,2024-08-06,2024-08-06
+489,PAT-000489,Morgan,Cook,1961-03-29,65,Non-binary,Asian,VA,76881,2021-08-20,Hemophilia B,None,1,2021-08-20,2021-08-20
+490,PAT-000490,Elizabeth,Rangel,1969-04-08,57,Female,White,FL,41163,2021-10-13,Niemann-Pick Disease,Depression,1,2021-10-13,2021-10-13
+491,PAT-000491,Tammy,Hale,2009-02-03,17,Male,Hispanic,GA,51875,2023-04-12,MPS I,Type 2 Diabetes,1,2023-04-12,2023-04-12
+492,PAT-000492,David,Fletcher,1976-06-20,49,Female,Asian,IL,11605,2020-09-04,Alagille Syndrome,Depression,1,2020-09-04,2020-09-04
+493,PAT-000493,Kyle,Bennett,1950-10-04,75,Non-binary,Unknown,VA,43555,2020-07-04,Cystic Fibrosis,None,1,2020-07-04,2020-07-04
+494,PAT-000494,Lisa,Santiago,1959-04-16,67,Male,Unknown,FL,97333,2024-09-07,Hereditary Angioedema,Type 2 Diabetes,1,2024-09-07,2024-09-07
+495,PAT-000495,Wendy,Gaines,1975-07-20,50,Non-binary,Black or African American,AZ,12750,2022-11-17,Fabry Disease,None,1,2022-11-17,2022-11-17
+496,PAT-000496,Debbie,Henderson,1942-10-15,83,Unknown,Other,VA,47926,2025-05-03,Pulmonary Arterial Hypertension,None,1,2025-05-03,2025-05-03
+497,PAT-000497,Andrew,Parker,1948-06-30,77,Female,White,TX,28575,2022-08-04,MPS I,None,1,2022-08-04,2022-08-04
+498,PAT-000498,Matthew,Miranda,2010-01-23,16,Unknown,Black or African American,NJ,25667,2021-03-31,MPS II,Type 2 Diabetes,1,2021-03-31,2021-03-31
+499,PAT-000499,Jeremy,Taylor,1997-11-02,28,Non-binary,White,TX,10615,2020-06-21,Short Bowel Syndrome,None,1,2020-06-21,2020-06-21
+500,PAT-000500,Kenneth,French,1957-09-27,68,Female,White,MA,67044,2025-01-22,Niemann-Pick Disease,None,1,2025-01-22,2025-01-22

@@ -25,6 +25,10 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+.data
+
+# ai-sql-migration: init_db / data load logs
+ai-sql-migration/logs/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

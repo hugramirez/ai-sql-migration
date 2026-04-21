@@ -1,0 +1,26 @@
+sk_medication_id,ndc_code,medication_name,generic_name,manufacturer,rare_disease_indication,orphan_drug_designation,fda_approval_date,dosage_form,strength,route_of_administration,storage_requirements,avg_wholesale_price,is_active,created_date,updated_date
+1,26059-143-69,Cerdelga,eliglustat,Sanofi,Gaucher Disease,1,2014-11-15,Tablet,200mg,Topical,Store below 25C,124144.38,1,2014-11-15,2014-11-15
+2,75028-130-58,Cerezyme,imiglucerase,Sanofi Genzyme,Gaucher Disease,1,2017-09-19,Patch,200mg,Subcutaneous,Room temperature,136704.11,1,2017-09-19,2017-09-19
+3,46681-556-29,Fabrazyme,agalsidase beta,Sanofi Genzyme,Fabry Disease,1,2012-05-02,Tablet,500mcg,Topical,Room temperature,98855.37,1,2012-05-02,2012-05-02
+4,64000-663-71,Myozyme,alglucosidase alfa,Sanofi Genzyme,Pompe Disease,1,2022-05-18,Tablet,100mg,Subcutaneous,Store below 25C,24899.22,1,2022-05-18,2022-05-18
+5,94233-916-77,Aldurazyme,laronidase,BioMarin,MPS I,1,2008-12-11,Injection,1000IU,Topical,Refrigerate 2-8C,148463.52,1,2008-12-11,2008-12-11
+6,72873-657-72,Elaprase,idursulfase,Takeda,MPS II,1,2016-02-09,Cream,500mcg,Topical,Freeze below -20C,61315.28,1,2016-02-09,2016-02-09
+7,13416-426-86,Trikafta,elexacaftor/tezacaftor/ivacaftor,Vertex,Cystic Fibrosis,1,2008-01-25,Injection,100mg,Subcutaneous,Refrigerate 2-8C,122254.81,1,2008-01-25,2008-01-25
+8,79393-466-84,Spinraza,nusinersen,Biogen,Spinal Muscular Atrophy,1,2021-02-27,Injection,200mg,Oral,Room temperature,100245.34,1,2021-02-27,2021-02-27
+9,79951-935-17,Zolgensma,onasemnogene abeparvovec,Novartis,Spinal Muscular Atrophy,1,2011-12-15,Injection,500mcg,Intramuscular,Freeze below -20C,140604.87,1,2011-12-15,2011-12-15
+10,33081-342-85,Advate,antihemophilic factor,Takeda,Hemophilia A,1,2007-10-17,Cream,1000IU,Inhalation,Freeze below -20C,137527.1,1,2007-10-17,2007-10-17
+11,56095-681-82,BeneFIX,nonacog alfa,Pfizer,Hemophilia B,1,2001-04-07,Solution,500mcg,Intravenous,Store below 25C,83608.07,1,2001-04-07,2001-04-07
+12,74282-138-21,Kuvan,sapropterin,BioMarin,PKU,1,2007-11-16,Tablet,200mg,Topical,Room temperature,7889.56,1,2007-11-16,2007-11-16
+13,10089-439-88,Palynziq,pegvaliase,BioMarin,PKU,1,2021-06-10,Injection,200mg,Subcutaneous,Room temperature,138223.21,1,2021-06-10,2021-06-10
+14,17806-122-28,Haegarda,C1-esterase inhibitor,CSL Behring,Hereditary Angioedema,1,2014-07-07,Solution,100mg,Topical,Freeze below -20C,144281.02,1,2014-07-07,2014-07-07
+15,96787-505-85,Berinert,C1-esterase inhibitor,CSL Behring,Hereditary Angioedema,1,2016-10-03,Capsule,400mg,Subcutaneous,Freeze below -20C,24785.49,1,2016-10-03,2016-10-03
+16,67261-910-91,Soliris,eculizumab,Alexion,PNH,1,2007-01-24,Inhaler,1000IU,Subcutaneous,Room temperature,107541.52,1,2007-01-24,2007-01-24
+17,39260-781-85,Ultomiris,ravulizumab,Alexion,PNH,1,2016-01-03,Solution,10mg/mL,Subcutaneous,Freeze below -20C,23465.51,1,2016-01-03,2016-01-03
+18,85082-500-82,Uptravi,selexipag,Johnson & Johnson,Pulmonary Arterial Hypertension,1,2000-01-30,Tablet,200mg,Topical,Freeze below -20C,138550.54,1,2000-01-30,2000-01-30
+19,93839-679-23,Opsumit,macitentan,Johnson & Johnson,Pulmonary Arterial Hypertension,1,2009-11-28,Inhaler,200mg,Subcutaneous,Refrigerate 2-8C,39509.41,1,2009-11-28,2009-11-28
+20,32005-751-21,Vyndamax,tafamidis,Pfizer,Amyloidosis,1,2014-05-01,Cream,10mg/mL,Oral,Freeze below -20C,35404.22,1,2014-05-01,2014-05-01
+21,55938-362-23,Onpattro,patisiran,Alnylam,Amyloidosis,1,2003-01-15,Tablet,100mg,Intramuscular,Store below 25C,111224.75,1,2003-01-15,2003-01-15
+22,64266-604-58,Brineura,cerliponase alfa,BioMarin,Batten Disease,1,2007-06-18,Cream,500mcg,Intramuscular,Refrigerate 2-8C,125177.01,1,2007-06-18,2007-06-18
+23,31319-562-19,Lumizyme,alglucosidase alfa,Sanofi Genzyme,Pompe Disease,1,2010-02-12,Tablet,400mg,Oral,Freeze below -20C,42863.52,1,2010-02-12,2010-02-12
+24,19725-450-31,Galafold,migalastat,Amicus,Fabry Disease,1,2004-09-11,Patch,200mg,Inhalation,Refrigerate 2-8C,84321.71,1,2004-09-11,2004-09-11
+25,54295-708-88,Naglazyme,galsulfase,BioMarin,MPS VI,1,2004-03-05,Inhaler,1000IU,Oral,Store below 25C,141654.13,1,2004-03-05,2004-03-05
