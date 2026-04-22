@@ -5,15 +5,15 @@
 --   schemas/  bronze/  silver/  gold/  views/
 --
 -- After editing any modular .sql file, refresh this file by concatenating
--- those scripts in dependency order (same order as listed in SOURCE SECTION
--- markers below), or run your CI / local helper to rebuild.
+-- those scripts in dependency order (same order as ``init_db_databricks.PIPELINE_DDL_FILES``).
 --
 -- Catalog: pharmacy (Unity Catalog). Needs CREATE on bronze, silver, gold.
 -- ============================================================================
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: schemas/bronze.sql
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/schemas/bronze.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 CREATE SCHEMA IF NOT EXISTS pharmacy.bronze
@@ -32,8 +32,8 @@ Quality Checks: Schema validation, null checks, duplicate detection
 Lineage: Direct mapping from source system tables';
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: schemas/silver.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/schemas/silver.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 CREATE SCHEMA IF NOT EXISTS pharmacy.silver
@@ -46,8 +46,8 @@ Characteristics:
 Lineage: CTAS / MERGE from pharmacy.bronze raw_* tables';
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: schemas/gold.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/schemas/gold.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 CREATE SCHEMA IF NOT EXISTS pharmacy.gold
@@ -59,11 +59,11 @@ Characteristics:
 Lineage: CTAS from pharmacy.silver *_cleansed tables and views for consumption metrics';
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: bronze/raw_dim_date.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/bronze/raw_dim_date.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 10 — Bronze conformed date dimension (no CDF required for static calendar)
+-- Run order: Bronze conformed date dimension (no CDF required for static calendar)
 CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_date (
     sk_date_id INT COMMENT 'Surrogate key for calendar date',
     full_date DATE COMMENT 'Calendar date',
@@ -87,11 +87,11 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_date (
 );
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: bronze/raw_dim_payer.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/bronze/raw_dim_payer.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 11 — Bronze payer (plan) dimension
+-- Run order: Bronze payer (plan) dimension
 CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_payer (
     sk_payer_id BIGINT COMMENT 'Surrogate key for payer',
     payer_external_id STRING COMMENT 'External payer or plan identifier',
@@ -104,6 +104,7 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_payer (
     specialty_pharmacy_network BOOLEAN COMMENT 'Participates in specialty pharmacy network',
     is_active BOOLEAN COMMENT 'Payer record active flag',
     created_date TIMESTAMP COMMENT 'Record creation timestamp in source system',
+    updated_date TIMESTAMP COMMENT 'Record last update in source system',
     _ingest_timestamp TIMESTAMP COMMENT 'Timestamp when record was ingested' DEFAULT current_timestamp(),
     _source_system STRING COMMENT 'Source system name' DEFAULT 'sqlserver',
     _ingest_batch_id STRING COMMENT 'Batch identifier for ingestion'
@@ -113,11 +114,11 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_payer (
 );
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: bronze/raw_dim_care_team_member.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/bronze/raw_dim_care_team_member.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 12 — Bronze care team member dimension
+-- Run order: Bronze care team member dimension
 CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_care_team_member (
     sk_care_team_member_id BIGINT COMMENT 'Surrogate key for care team member',
     employee_id STRING COMMENT 'Internal employee identifier',
@@ -128,6 +129,7 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_care_team_member (
     hire_date DATE COMMENT 'Hire date',
     is_active BOOLEAN COMMENT 'Active employment or roster flag',
     created_date TIMESTAMP COMMENT 'Record creation timestamp in source system',
+    updated_date TIMESTAMP COMMENT 'Record last update in source system',
     _ingest_timestamp TIMESTAMP COMMENT 'Timestamp when record was ingested' DEFAULT current_timestamp(),
     _source_system STRING COMMENT 'Source system name' DEFAULT 'sqlserver',
     _ingest_batch_id STRING COMMENT 'Batch identifier for ingestion'
@@ -138,11 +140,11 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_care_team_member (
 );
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: bronze/raw_dim_patient.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/bronze/raw_dim_patient.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 13 — Bronze patient dimension
+-- Run order: Bronze patient dimension
 CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_patient (
     sk_patient_id BIGINT COMMENT 'Surrogate key for patient (internal unique identifier)',
     patient_external_id STRING COMMENT 'External patient identifier from source system',
@@ -170,11 +172,11 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_patient (
 );
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: bronze/raw_dim_medication.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/bronze/raw_dim_medication.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 14 — Bronze medication dimension
+-- Run order: Bronze medication dimension
 CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_medication (
     sk_medication_id BIGINT COMMENT 'Surrogate key for medication (internal unique identifier)',
     ndc_code STRING COMMENT 'National Drug Code identifier from source system',
@@ -191,6 +193,7 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_medication (
     avg_wholesale_price DECIMAL(10, 2) COMMENT 'Average wholesale price',
     is_active BOOLEAN COMMENT 'Indicates if medication record is currently active',
     created_date TIMESTAMP COMMENT 'Record creation timestamp in source system',
+    updated_date TIMESTAMP COMMENT 'Record last update in source system',
     _ingest_timestamp TIMESTAMP COMMENT 'Timestamp when record was ingested' DEFAULT current_timestamp(),
     _source_system STRING COMMENT 'Source system name' DEFAULT 'sqlserver',
     _ingest_batch_id STRING COMMENT 'Batch identifier for ingestion'
@@ -200,11 +203,11 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_medication (
 );
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: bronze/raw_dim_prescriber.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/bronze/raw_dim_prescriber.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 15 — Bronze prescriber dimension
+-- Run order: Bronze prescriber dimension
 CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_prescriber (
     sk_prescriber_id BIGINT COMMENT 'Surrogate key for prescriber (internal unique identifier)',
     npi_number STRING COMMENT 'National Provider Identifier (NPI)',
@@ -221,6 +224,7 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_prescriber (
     years_experience INT COMMENT 'Years of professional experience',
     is_active BOOLEAN COMMENT 'Indicates if prescriber record is currently active',
     created_date TIMESTAMP COMMENT 'Record creation timestamp in source system',
+    updated_date TIMESTAMP COMMENT 'Record last update in source system',
     _ingest_timestamp TIMESTAMP COMMENT 'Timestamp when record was ingested' DEFAULT current_timestamp(),
     _source_system STRING COMMENT 'Source system name' DEFAULT 'sqlserver',
     _ingest_batch_id STRING COMMENT 'Batch identifier for ingestion'
@@ -231,12 +235,11 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_prescriber (
 );
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: bronze/raw_fact_prescription.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/bronze/raw_fact_prescription.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 16 — Bronze prescription fact (grain: prescription line or Rx header per source)
--- Lineage: joins raw_dim_patient, raw_dim_medication, raw_dim_prescriber, raw_dim_payer, raw_dim_date (written/filled)
+-- Run order: Bronze prescription fact (aligned to dbo.fact_prescription / raw_data CSV)
 CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_prescription (
     sk_prescription_id BIGINT COMMENT 'Surrogate key for prescription fact',
     prescription_external_id STRING COMMENT 'Natural or business prescription identifier',
@@ -250,122 +253,129 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_prescription (
     filled_date DATE COMMENT 'Date prescription was filled',
     quantity_prescribed DECIMAL(10, 2) COMMENT 'Quantity prescribed',
     days_supply INT COMMENT 'Days supply',
-    refills INT COMMENT 'Refills authorized or remaining',
-    copay DECIMAL(10, 2) COMMENT 'Patient copay amount',
-    insurance_paid DECIMAL(10, 2) COMMENT 'Insurance paid amount',
-    total_cost DECIMAL(10, 2) COMMENT 'Total cost of fill or claim',
-    is_filled BOOLEAN COMMENT 'Filled flag',
-    is_rejected BOOLEAN COMMENT 'Rejection flag',
-    rejection_reason STRING COMMENT 'Rejection reason text',
+    refills_authorized INT COMMENT 'Refills authorized',
+    refills_remaining INT COMMENT 'Refills remaining',
+    copay_amount DECIMAL(10, 2) COMMENT 'Patient copay amount',
+    insurance_paid_amount DECIMAL(12, 2) COMMENT 'Insurance paid amount',
+    total_cost DECIMAL(12, 2) COMMENT 'Total cost',
+    prescription_status STRING COMMENT 'Workflow status in source',
+    therapy_type STRING COMMENT 'Therapy classification',
+    is_specialty BOOLEAN COMMENT 'Specialty medication flag',
+    is_controlled_substance BOOLEAN COMMENT 'Controlled substance flag',
+    prior_authorization_required BOOLEAN COMMENT 'PA required',
+    prior_authorization_approved BOOLEAN COMMENT 'PA approved',
     created_date TIMESTAMP COMMENT 'Record creation timestamp in source system',
+    updated_date TIMESTAMP COMMENT 'Record last update in source system',
     _ingest_timestamp TIMESTAMP COMMENT 'Timestamp when record was ingested' DEFAULT current_timestamp(),
     _source_system STRING COMMENT 'Source system name' DEFAULT 'sqlserver',
     _ingest_batch_id STRING COMMENT 'Batch identifier for ingestion'
-) USING DELTA COMMENT 'Prescription bridge fact at bronze linking patient, drug, prescriber, payer, and date role keys for UC lineage.' TBLPROPERTIES (
+) USING DELTA COMMENT 'Prescription fact at bronze; column names match SQL Server dbo.fact_prescription for CSV ingest.' TBLPROPERTIES (
     'delta.feature.allowColumnDefaults' = 'supported',
     'delta.enableChangeDataFeed' = 'true',
     'classification' = 'pii'
 );
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: bronze/raw_fact_adherence.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/bronze/raw_fact_adherence.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 17 — Bronze adherence measurement fact
--- Lineage: sk_prescription_id -> raw_fact_prescription; patient/medication dimensions
+-- Run order: Bronze adherence fact (aligned to dbo.fact_adherence / raw_data CSV)
 CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_adherence (
     sk_adherence_id BIGINT COMMENT 'Surrogate key for adherence row',
-    sk_prescription_id BIGINT COMMENT 'FK to raw_fact_prescription',
     sk_patient_id BIGINT COMMENT 'FK to raw_dim_patient',
-    sk_medication_id BIGINT COMMENT 'FK to raw_dim_medication',
-    measurement_period_start_date DATE COMMENT 'Start of measurement window',
-    measurement_period_end_date DATE COMMENT 'End of measurement window',
-    days_supplied INT COMMENT 'Days supplied in window',
-    days_covered INT COMMENT 'Days covered by medication',
-    gaps_count INT COMMENT 'Number of gaps in therapy',
-    pdc_ratio DECIMAL(5, 2) COMMENT 'Proportion of days covered (PDC)',
-    mpf_ratio DECIMAL(5, 2) COMMENT 'Medication possession ratio or related metric',
-    refills_count INT COMMENT 'Refills in measurement period',
+    sk_prescription_id BIGINT COMMENT 'FK to raw_fact_prescription',
+    sk_measurement_date_id INT COMMENT 'FK to raw_dim_date (measurement date)',
+    measurement_date DATE COMMENT 'As-of measurement date',
+    measurement_period STRING COMMENT 'Label for evaluation window (e.g. 180-day)',
+    pdc_proportion_days_covered DECIMAL(5, 2) COMMENT 'Proportion of days covered (PDC)',
+    mpf_medication_possession_ratio DECIMAL(5, 2) COMMENT 'Medication possession ratio',
+    gaps_in_therapy_days INT COMMENT 'Gap days in therapy',
+    missed_refills_count INT COMMENT 'Missed refills count',
+    on_time_refills_count INT COMMENT 'On-time refills count',
+    patient_reported_adherence STRING COMMENT 'Patient-reported adherence category',
+    barriers_to_adherence STRING COMMENT 'Barriers text',
     created_date TIMESTAMP COMMENT 'Record creation timestamp in source system',
     _ingest_timestamp TIMESTAMP COMMENT 'Timestamp when record was ingested' DEFAULT current_timestamp(),
     _source_system STRING COMMENT 'Source system name' DEFAULT 'sqlserver',
     _ingest_batch_id STRING COMMENT 'Batch identifier for ingestion'
-) USING DELTA COMMENT 'Therapy adherence metrics at bronze; references prescription and dimension keys for lineage.' TBLPROPERTIES (
+) USING DELTA COMMENT 'Adherence metrics at bronze; matches dbo.fact_adherence for CSV ingest.' TBLPROPERTIES (
     'delta.feature.allowColumnDefaults' = 'supported',
     'delta.enableChangeDataFeed' = 'true',
     'classification' = 'pii'
 );
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: bronze/raw_fact_clinical_interaction.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/bronze/raw_fact_clinical_interaction.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 18 — Bronze clinical interaction fact
--- Lineage: patient, prescriber, care team member, date dimension
+-- Run order: Bronze clinical interaction fact (aligned to dbo.fact_clinical_interaction / raw_data CSV)
 CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_clinical_interaction (
     sk_interaction_id BIGINT COMMENT 'Surrogate key for interaction event',
     sk_patient_id BIGINT COMMENT 'FK to raw_dim_patient',
-    sk_prescriber_id BIGINT COMMENT 'FK to raw_dim_prescriber',
+    sk_prescription_id BIGINT COMMENT 'FK to raw_fact_prescription (nullable in source)',
     sk_care_team_member_id BIGINT COMMENT 'FK to raw_dim_care_team_member',
     sk_interaction_date_id INT COMMENT 'FK to raw_dim_date',
     interaction_date TIMESTAMP COMMENT 'Interaction date and time',
-    interaction_type STRING COMMENT 'Call, visit, message, etc.',
-    interaction_mode STRING COMMENT 'Inbound, outbound, telehealth, etc.',
+    interaction_type STRING COMMENT 'Interaction channel or type',
+    interaction_purpose STRING COMMENT 'Purpose of the interaction',
     duration_minutes INT COMMENT 'Duration in minutes',
-    interaction_notes STRING COMMENT 'Free-text notes',
-    outcome STRING COMMENT 'Interaction outcome category',
     patient_satisfaction_score INT COMMENT 'Satisfaction score if captured',
+    outcome_description STRING COMMENT 'Outcome narrative',
     follow_up_required BOOLEAN COMMENT 'Follow-up required flag',
+    follow_up_date DATE COMMENT 'Planned follow-up date',
     created_date TIMESTAMP COMMENT 'Record creation timestamp in source system',
     _ingest_timestamp TIMESTAMP COMMENT 'Timestamp when record was ingested' DEFAULT current_timestamp(),
     _source_system STRING COMMENT 'Source system name' DEFAULT 'sqlserver',
     _ingest_batch_id STRING COMMENT 'Batch identifier for ingestion'
-) USING DELTA COMMENT 'Clinical or care management touchpoints at bronze; joins dimensions for Unity Catalog column lineage.' TBLPROPERTIES (
+) USING DELTA COMMENT 'Clinical interactions at bronze; matches dbo.fact_clinical_interaction for CSV ingest.' TBLPROPERTIES (
     'delta.feature.allowColumnDefaults' = 'supported',
     'delta.enableChangeDataFeed' = 'true',
     'classification' = 'pii'
 );
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: bronze/raw_fact_shipment.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/bronze/raw_fact_shipment.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 19 — Bronze shipment fact
--- Lineage: prescription and patient dimensions; ship/delivery date roles -> raw_dim_date
+-- Run order: Bronze shipment fact (aligned to dbo.fact_shipment / raw_data CSV)
 CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_shipment (
     sk_shipment_id BIGINT COMMENT 'Surrogate key for shipment',
+    shipment_external_id STRING COMMENT 'Business shipment identifier',
     sk_prescription_id BIGINT COMMENT 'FK to raw_fact_prescription',
     sk_patient_id BIGINT COMMENT 'FK to raw_dim_patient',
     sk_ship_date_id INT COMMENT 'FK to raw_dim_date (ship date)',
     sk_delivery_date_id INT COMMENT 'FK to raw_dim_date (delivery date)',
     ship_date DATE COMMENT 'Shipment date',
-    delivery_date DATE COMMENT 'Delivery or expected delivery date',
-    carrier_name STRING COMMENT 'Carrier name',
+    estimated_delivery_date DATE COMMENT 'Estimated delivery date',
+    actual_delivery_date DATE COMMENT 'Actual delivery date',
+    carrier STRING COMMENT 'Carrier name',
     tracking_number STRING COMMENT 'Tracking identifier',
+    shipment_method STRING COMMENT 'Shipping method',
+    temperature_controlled BOOLEAN COMMENT 'Cold chain flag',
+    signature_required BOOLEAN COMMENT 'Signature required flag',
+    shipment_status STRING COMMENT 'Shipment status',
+    delivery_exception_reason STRING COMMENT 'Exception reason text',
     shipping_cost DECIMAL(10, 2) COMMENT 'Shipping cost',
-    delivery_status STRING COMMENT 'Delivery status',
-    exception_flag BOOLEAN COMMENT 'Exception occurred',
-    exception_reason STRING COMMENT 'Exception reason',
     created_date TIMESTAMP COMMENT 'Record creation timestamp in source system',
+    updated_date TIMESTAMP COMMENT 'Record last update in source system',
     _ingest_timestamp TIMESTAMP COMMENT 'Timestamp when record was ingested' DEFAULT current_timestamp(),
     _source_system STRING COMMENT 'Source system name' DEFAULT 'sqlserver',
     _ingest_batch_id STRING COMMENT 'Batch identifier for ingestion'
-) USING DELTA COMMENT 'Fulfillment and logistics at bronze; ties shipments to prescriptions and patients for lineage.' TBLPROPERTIES (
+) USING DELTA COMMENT 'Shipments at bronze; matches dbo.fact_shipment for CSV ingest.' TBLPROPERTIES (
     'delta.feature.allowColumnDefaults' = 'supported',
     'delta.enableChangeDataFeed' = 'true',
     'classification' = 'pii'
 );
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: bronze/raw_fact_last_event.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/bronze/raw_fact_last_event.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 20 — Bronze last event snapshot per prescription (or source grain)
--- Lineage: prescription and patient; assigned date -> raw_dim_date
+-- Run order: Bronze last-event snapshot (aligned to dbo.fact_last_event / raw_data CSV)
 CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_last_event (
     sk_event_id BIGINT COMMENT 'Surrogate key for event row',
     sk_prescription_id BIGINT COMMENT 'FK to raw_fact_prescription',
@@ -383,18 +393,18 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_last_event (
     _ingest_timestamp TIMESTAMP COMMENT 'Timestamp when record was ingested' DEFAULT current_timestamp(),
     _source_system STRING COMMENT 'Source system name' DEFAULT 'sqlserver',
     _ingest_batch_id STRING COMMENT 'Batch identifier for ingestion'
-) USING DELTA COMMENT 'Workflow or case-management last-event snapshot at bronze; links to prescription and patient.' TBLPROPERTIES (
+) USING DELTA COMMENT 'Last-event snapshot at bronze; matches dbo.fact_last_event for CSV ingest.' TBLPROPERTIES (
     'delta.feature.allowColumnDefaults' = 'supported',
     'delta.enableChangeDataFeed' = 'true',
     'classification' = 'pii'
 );
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: silver/dim_patient_cleansed.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/silver/dim_patient_cleansed.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 21 — Silver patient (latest row per patient_external_id)
+-- Run order: Silver patient (latest row per patient_external_id)
 CREATE OR REPLACE TABLE pharmacy.silver.dim_patient_cleansed
 USING DELTA
 TBLPROPERTIES (
@@ -436,11 +446,11 @@ FROM (
 WHERE ranked._row_num = 1;
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: silver/dim_medication_cleansed.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/silver/dim_medication_cleansed.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 22 — Silver medication (latest row per ndc_code)
+-- Run order: Silver medication (latest row per ndc_code)
 CREATE OR REPLACE TABLE pharmacy.silver.dim_medication_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
@@ -464,6 +474,7 @@ SELECT
     END AS avg_wholesale_price,
     COALESCE(is_active, TRUE) AS is_active,
     created_date,
+    updated_date,
     MD5(CONCAT(ndc_code, medication_name, manufacturer)) AS _record_hash,
     current_timestamp() AS _silver_processed_date
 FROM (
@@ -475,11 +486,11 @@ FROM (
 WHERE ranked._row_num = 1;
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: silver/dim_prescriber_cleansed.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/silver/dim_prescriber_cleansed.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 23 — Silver prescriber (current row per npi_number; SCD2 fields reserved for future)
+-- Run order: Silver prescriber (current row per npi_number; SCD2 fields reserved for future)
 CREATE OR REPLACE TABLE pharmacy.silver.dim_prescriber_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
@@ -500,6 +511,7 @@ SELECT
     years_experience,
     COALESCE(is_active, TRUE) AS is_active,
     created_date,
+    updated_date,
     MD5(CONCAT(npi_number, specialty, practice_name)) AS _record_hash,
     current_timestamp() AS _valid_from,
     CAST(NULL AS TIMESTAMP) AS _valid_to,
@@ -514,11 +526,11 @@ FROM (
 WHERE ranked._row_num = 1;
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: silver/dim_payer_cleansed.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/silver/dim_payer_cleansed.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 24 — Silver payer (latest row per payer_external_id)
+-- Run order: Silver payer (latest row per payer_external_id)
 CREATE OR REPLACE TABLE pharmacy.silver.dim_payer_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
@@ -535,6 +547,7 @@ SELECT
     specialty_pharmacy_network,
     COALESCE(is_active, TRUE) AS is_active,
     created_date,
+    updated_date,
     MD5(CONCAT(payer_external_id, payer_name)) AS _record_hash,
     current_timestamp() AS _silver_processed_date
 FROM (
@@ -546,11 +559,11 @@ FROM (
 WHERE ranked._row_num = 1;
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: silver/dim_care_team_member_cleansed.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/silver/dim_care_team_member_cleansed.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 25 — Silver care team member (latest row per employee_id)
+-- Run order: Silver care team member (latest row per employee_id)
 CREATE OR REPLACE TABLE pharmacy.silver.dim_care_team_member_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
@@ -565,6 +578,7 @@ SELECT
     hire_date,
     COALESCE(is_active, TRUE) AS is_active,
     created_date,
+    updated_date,
     MD5(CONCAT(employee_id, role)) AS _record_hash,
     current_timestamp() AS _silver_processed_date
 FROM (
@@ -576,11 +590,11 @@ FROM (
 WHERE ranked._row_num = 1;
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: silver/dim_date_cleansed.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/silver/dim_date_cleansed.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 26 — Silver date conformed dimension (pass-through from bronze calendar)
+-- Run order: Silver date conformed dimension (pass-through from bronze calendar)
 CREATE OR REPLACE TABLE pharmacy.silver.dim_date_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
@@ -603,11 +617,11 @@ SELECT
 FROM pharmacy.bronze.raw_dim_date;
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: silver/fact_prescription_cleansed.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/silver/fact_prescription_cleansed.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 27 — Silver prescription fact (dedupe by prescription_external_id)
+-- Run order: Silver prescription fact (dedupe by prescription_external_id; analytics columns for gold)
 CREATE OR REPLACE TABLE pharmacy.silver.fact_prescription_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
@@ -624,68 +638,133 @@ SELECT
     written_date,
     filled_date,
     CASE
-        WHEN filled_date IS NULL THEN NULL
+        WHEN filled_date IS NULL OR written_date IS NULL THEN NULL
         ELSE DATEDIFF(filled_date, written_date)
     END AS days_to_fill,
     quantity_prescribed,
     days_supply,
-    refills,
-    COALESCE(copay, 0) AS copay,
-    COALESCE(insurance_paid, 0) AS insurance_paid,
-    COALESCE(total_cost, 0) AS total_cost,
-    COALESCE(is_filled, FALSE) AS is_filled,
-    COALESCE(is_rejected, FALSE) AS is_rejected,
-    rejection_reason,
+    refills_authorized AS refills,
+    copay_amount AS copay,
+    insurance_paid_amount AS insurance_paid,
+    total_cost,
+    CASE
+        WHEN LOWER(TRIM(prescription_status)) IN ('completed', 'active') THEN TRUE
+        ELSE FALSE
+    END AS is_filled,
+    CASE
+        WHEN LOWER(TRIM(prescription_status)) LIKE '%reject%'
+            OR LOWER(TRIM(prescription_status)) LIKE '%denied%' THEN TRUE
+        ELSE FALSE
+    END AS is_rejected,
+    CASE
+        WHEN LOWER(TRIM(prescription_status)) LIKE '%reject%'
+            OR LOWER(TRIM(prescription_status)) LIKE '%denied%' THEN prescription_status
+        ELSE NULL
+    END AS rejection_reason,
+    prescription_status,
+    therapy_type,
+    is_specialty,
+    is_controlled_substance,
+    prior_authorization_required,
+    prior_authorization_approved,
     created_date,
+    updated_date,
     MD5(CONCAT(prescription_external_id, sk_patient_id, sk_medication_id)) AS _record_hash,
     current_timestamp() AS _silver_processed_date
 FROM (
     SELECT
         *,
-        ROW_NUMBER() OVER (PARTITION BY prescription_external_id ORDER BY created_date DESC NULLS LAST) AS _row_num
+        ROW_NUMBER() OVER (PARTITION BY prescription_external_id ORDER BY updated_date DESC NULLS LAST, created_date DESC NULLS LAST) AS _row_num
     FROM pharmacy.bronze.raw_fact_prescription
 ) ranked
 WHERE ranked._row_num = 1;
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: silver/fact_adherence_cleansed.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/silver/fact_adherence_cleansed.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 28 — Silver adherence (enriched; no dedupe key in bronze — pass-through with derived columns)
+-- Run order: Silver adherence (join prescription for sk_medication_id; window derived from measurement_period label)
 CREATE OR REPLACE TABLE pharmacy.silver.fact_adherence_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
+WITH src AS (
+    SELECT
+        a.sk_adherence_id,
+        a.sk_patient_id,
+        a.sk_prescription_id,
+        a.sk_measurement_date_id,
+        a.measurement_date,
+        a.measurement_period,
+        a.pdc_proportion_days_covered,
+        a.mpf_medication_possession_ratio,
+        a.gaps_in_therapy_days,
+        a.missed_refills_count,
+        a.on_time_refills_count,
+        a.patient_reported_adherence,
+        a.barriers_to_adherence,
+        a.created_date,
+        p.sk_medication_id,
+        CAST(
+            LEAST(
+                366,
+                GREATEST(
+                    1,
+                    COALESCE(
+                        TRY_CAST(regexp_extract(a.measurement_period, '([0-9]+)', 1) AS INT),
+                        30
+                    )
+                )
+            ) AS INT
+        ) AS period_days,
+        LEAST(GREATEST(COALESCE(a.pdc_proportion_days_covered, 0), 0), 1) AS pdc_clamped
+    FROM pharmacy.bronze.raw_fact_adherence a
+    LEFT JOIN pharmacy.bronze.raw_fact_prescription p
+        ON p.sk_prescription_id = a.sk_prescription_id
+)
 SELECT
     sk_adherence_id,
     sk_prescription_id,
     sk_patient_id,
     sk_medication_id,
-    measurement_period_start_date,
-    measurement_period_end_date,
-    DATEDIFF(measurement_period_end_date, measurement_period_start_date) AS period_days,
-    days_supplied,
-    days_covered,
-    gaps_count,
-    ROUND(COALESCE(pdc_ratio, 0), 4) AS pdc_ratio,
-    ROUND(COALESCE(mpf_ratio, 0), 4) AS mpf_ratio,
-    refills_count,
+    date_sub(measurement_date, period_days - 1) AS measurement_period_start_date,
+    measurement_date AS measurement_period_end_date,
+    period_days,
+    CAST(
+        LEAST(
+            period_days,
+            GREATEST(0, CAST(ROUND(pdc_clamped * period_days) AS INT))
+        ) AS INT
+    ) AS days_covered,
+    CAST(
+        LEAST(
+            period_days,
+            GREATEST(
+                0,
+                CAST(ROUND(pdc_clamped * period_days) AS INT) + COALESCE(gaps_in_therapy_days, 0)
+            )
+        ) AS INT
+    ) AS days_supplied,
+    COALESCE(gaps_in_therapy_days, 0) AS gaps_count,
+    ROUND(pdc_clamped, 4) AS pdc_ratio,
+    ROUND(LEAST(GREATEST(COALESCE(mpf_medication_possession_ratio, 0), 0), 1), 4) AS mpf_ratio,
+    COALESCE(on_time_refills_count, 0) + COALESCE(missed_refills_count, 0) AS refills_count,
     CASE
-        WHEN COALESCE(pdc_ratio, 0) >= 0.8 THEN 'Adherent'
-        WHEN COALESCE(pdc_ratio, 0) >= 0.5 THEN 'Partial'
+        WHEN pdc_clamped >= 0.8 THEN 'Adherent'
+        WHEN pdc_clamped >= 0.5 THEN 'Partial'
         ELSE 'Non-Adherent'
     END AS adherence_status,
     created_date,
     current_timestamp() AS _silver_processed_date
-FROM pharmacy.bronze.raw_fact_adherence;
+FROM src;
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: silver/fact_clinical_interaction_cleansed.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/silver/fact_clinical_interaction_cleansed.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 29 — Silver clinical interactions (validated scores)
+-- Run order: Silver clinical interactions (aligned to dbo; gold uses legacy interaction_mode / outcome column names)
 CREATE OR REPLACE TABLE pharmacy.silver.fact_clinical_interaction_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
@@ -693,15 +772,15 @@ AS
 SELECT
     sk_interaction_id,
     sk_patient_id,
-    sk_prescriber_id,
+    sk_prescription_id,
     sk_care_team_member_id,
     sk_interaction_date_id,
     interaction_date,
     interaction_type,
-    interaction_mode,
+    CAST(NULL AS STRING) AS interaction_mode,
     duration_minutes,
-    interaction_notes,
-    outcome,
+    interaction_purpose AS interaction_notes,
+    outcome_description AS outcome,
     CASE
         WHEN patient_satisfaction_score <= 0 OR patient_satisfaction_score > 5 THEN NULL
         ELSE patient_satisfaction_score
@@ -712,11 +791,11 @@ SELECT
 FROM pharmacy.bronze.raw_fact_clinical_interaction;
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: silver/fact_shipment_cleansed.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/silver/fact_shipment_cleansed.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 30 — Silver shipments (delivery lag)
+-- Run order: Silver shipments (delivery lag; carrier / exception fields mapped for gold views)
 CREATE OR REPLACE TABLE pharmacy.silver.fact_shipment_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
@@ -728,27 +807,38 @@ SELECT
     sk_ship_date_id,
     sk_delivery_date_id,
     ship_date,
-    delivery_date,
+    COALESCE(actual_delivery_date, estimated_delivery_date) AS delivery_date,
     CASE
-        WHEN delivery_date IS NULL THEN NULL
-        ELSE DATEDIFF(delivery_date, ship_date)
+        WHEN ship_date IS NULL THEN NULL
+        ELSE DATEDIFF(COALESCE(actual_delivery_date, estimated_delivery_date), ship_date)
     END AS delivery_days,
-    carrier_name,
+    carrier AS carrier_name,
     tracking_number,
     shipping_cost,
-    delivery_status,
-    exception_flag,
-    exception_reason,
+    shipment_status AS delivery_status,
+    (
+        LENGTH(TRIM(COALESCE(delivery_exception_reason, ''))) > 0
+        OR LOWER(COALESCE(shipment_status, '')) LIKE '%exception%'
+        OR LOWER(COALESCE(shipment_status, '')) LIKE '%delay%'
+    ) AS exception_flag,
+    delivery_exception_reason AS exception_reason,
+    shipment_external_id,
+    estimated_delivery_date,
+    actual_delivery_date,
+    shipment_method,
+    temperature_controlled,
+    signature_required,
     created_date,
+    updated_date,
     current_timestamp() AS _silver_processed_date
 FROM pharmacy.bronze.raw_fact_shipment;
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: silver/fact_last_event_cleansed.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/silver/fact_last_event_cleansed.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 31 — Silver last event (latest row per sk_prescription_id by assigned time)
+-- Run order: Silver last event (latest row per sk_prescription_id by assigned time)
 CREATE OR REPLACE TABLE pharmacy.silver.fact_last_event_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
@@ -781,11 +871,11 @@ FROM (
 WHERE ranked._row_num = 1;
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: silver/_metadata_pipeline_runs.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/silver/_metadata_pipeline_runs.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 32 — Operational metadata for pipeline runs (optional lineage sidecar)
+-- Run order: Operational metadata for pipeline runs (optional lineage sidecar)
 CREATE OR REPLACE TABLE pharmacy.silver._metadata_pipeline_runs (
     run_id STRING NOT NULL COMMENT 'Unique run identifier',
     pipeline_name STRING NOT NULL COMMENT 'Pipeline or job name',
@@ -805,11 +895,11 @@ CREATE OR REPLACE TABLE pharmacy.silver._metadata_pipeline_runs (
 );
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: silver/_metadata_quality_checks.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/silver/_metadata_quality_checks.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 33 — Data quality check results
+-- Run order: Data quality check results
 CREATE OR REPLACE TABLE pharmacy.silver._metadata_quality_checks (
     table_name STRING NOT NULL COMMENT 'Table or dataset evaluated',
     check_type STRING COMMENT 'Rule or check category',
@@ -824,11 +914,11 @@ CREATE OR REPLACE TABLE pharmacy.silver._metadata_quality_checks (
 );
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: gold/dim_patient.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/gold/dim_patient.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 40 — Gold patient dimension (consumption layer)
+-- Run order: Gold patient dimension (consumption layer)
 CREATE OR REPLACE TABLE pharmacy.gold.dim_patient
 USING DELTA
 TBLPROPERTIES (
@@ -856,11 +946,11 @@ SELECT
 FROM pharmacy.silver.dim_patient_cleansed;
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: gold/dim_medication.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/gold/dim_medication.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 41 — Gold medication dimension
+-- Run order: Gold medication dimension
 CREATE OR REPLACE TABLE pharmacy.gold.dim_medication
 USING DELTA
 TBLPROPERTIES (
@@ -883,15 +973,16 @@ SELECT
     avg_wholesale_price,
     is_active,
     created_date,
+    updated_date,
     current_timestamp() AS _gold_created_date
 FROM pharmacy.silver.dim_medication_cleansed;
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: gold/dim_prescriber.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/gold/dim_prescriber.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 42 — Gold prescriber dimension
+-- Run order: Gold prescriber dimension
 CREATE OR REPLACE TABLE pharmacy.gold.dim_prescriber
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
@@ -912,15 +1003,16 @@ SELECT
     years_experience,
     is_active,
     created_date,
+    updated_date,
     current_timestamp() AS _gold_created_date
 FROM pharmacy.silver.dim_prescriber_cleansed;
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: gold/dim_payer.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/gold/dim_payer.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 43 — Gold payer dimension
+-- Run order: Gold payer dimension
 CREATE OR REPLACE TABLE pharmacy.gold.dim_payer
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
@@ -937,15 +1029,16 @@ SELECT
     specialty_pharmacy_network,
     is_active,
     created_date,
+    updated_date,
     current_timestamp() AS _gold_created_date
 FROM pharmacy.silver.dim_payer_cleansed;
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: gold/dim_date.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/gold/dim_date.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 44 — Gold date dimension
+-- Run order: Gold date dimension
 CREATE OR REPLACE TABLE pharmacy.gold.dim_date
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
@@ -968,11 +1061,11 @@ SELECT
 FROM pharmacy.silver.dim_date_cleansed;
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: gold/dim_care_team_member.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/gold/dim_care_team_member.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 45 — Gold care team member dimension
+-- Run order: Gold care team member dimension
 CREATE OR REPLACE TABLE pharmacy.gold.dim_care_team_member
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
@@ -987,15 +1080,16 @@ SELECT
     hire_date,
     is_active,
     created_date,
+    updated_date,
     current_timestamp() AS _gold_created_date
 FROM pharmacy.silver.dim_care_team_member_cleansed;
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: gold/fact_prescription.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/gold/fact_prescription.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 46 — Gold prescription fact + physical optimization
+-- Run order: Gold prescription fact + physical optimization
 CREATE OR REPLACE TABLE pharmacy.gold.fact_prescription
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
@@ -1022,17 +1116,18 @@ SELECT
     is_rejected,
     rejection_reason,
     created_date,
+    updated_date,
     current_timestamp() AS _gold_created_date
 FROM pharmacy.silver.fact_prescription_cleansed;
 
 OPTIMIZE pharmacy.gold.fact_prescription ZORDER BY (sk_patient_id, written_date);
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: gold/fact_adherence.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/gold/fact_adherence.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 47 — Gold adherence fact
+-- Run order: Gold adherence fact
 CREATE OR REPLACE TABLE pharmacy.gold.fact_adherence
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
@@ -1059,11 +1154,11 @@ FROM pharmacy.silver.fact_adherence_cleansed;
 OPTIMIZE pharmacy.gold.fact_adherence ZORDER BY (sk_patient_id, measurement_period_start_date);
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: gold/fact_clinical_interaction.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/gold/fact_clinical_interaction.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 48 — Gold clinical interaction fact
+-- Run order: Gold clinical interaction fact
 CREATE OR REPLACE TABLE pharmacy.gold.fact_clinical_interaction
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
@@ -1071,7 +1166,7 @@ AS
 SELECT
     sk_interaction_id,
     sk_patient_id,
-    sk_prescriber_id,
+    sk_prescription_id,
     sk_care_team_member_id,
     sk_interaction_date_id,
     interaction_date,
@@ -1089,11 +1184,11 @@ FROM pharmacy.silver.fact_clinical_interaction_cleansed;
 OPTIMIZE pharmacy.gold.fact_clinical_interaction ZORDER BY (sk_patient_id, interaction_date);
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: gold/fact_shipment.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/gold/fact_shipment.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 49 — Gold shipment fact
+-- Run order: Gold shipment fact
 CREATE OR REPLACE TABLE pharmacy.gold.fact_shipment
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
@@ -1114,15 +1209,16 @@ SELECT
     exception_flag,
     exception_reason,
     created_date,
+    updated_date,
     current_timestamp() AS _gold_created_date
 FROM pharmacy.silver.fact_shipment_cleansed;
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: gold/fact_last_event.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/gold/fact_last_event.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 50 — Gold last-event snapshot fact
+-- Run order: Gold last-event snapshot fact
 CREATE OR REPLACE TABLE pharmacy.gold.fact_last_event
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
@@ -1146,11 +1242,11 @@ SELECT
 FROM pharmacy.silver.fact_last_event_cleansed;
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: views/v_patients_by_state.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/views/v_patients_by_state.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 90 — Analytic view: patient counts by state (BI)
+-- Run order: Analytic view: patient counts by state (BI)
 CREATE OR REPLACE VIEW pharmacy.gold.v_patients_by_state AS
 SELECT
     p.state,
@@ -1163,11 +1259,11 @@ WHERE p.state IS NOT NULL
 GROUP BY p.state;
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: views/v_prescription_metrics.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/views/v_prescription_metrics.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 91 — Analytic view: prescription metrics by medication
+-- Run order: Analytic view: prescription metrics by medication
 CREATE OR REPLACE VIEW pharmacy.gold.v_prescription_metrics AS
 SELECT
     m.ndc_code,
@@ -1189,11 +1285,11 @@ WHERE f.written_date >= date_sub(current_date(), 365)
 GROUP BY m.ndc_code, m.medication_name, m.manufacturer;
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: views/v_patient_adherence.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/views/v_patient_adherence.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 92 — Analytic view: adherence summary by patient
+-- Run order: Analytic view: adherence summary by patient
 CREATE OR REPLACE VIEW pharmacy.gold.v_patient_adherence AS
 SELECT
     p.sk_patient_id,
@@ -1212,11 +1308,11 @@ WHERE a.measurement_period_end_date >= date_sub(current_date(), 90)
 GROUP BY p.sk_patient_id, p.patient_external_id, p.first_name, p.last_name;
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: views/v_prescriber_performance.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/views/v_prescriber_performance.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 93 — Analytic view: prescriber performance metrics
+-- Run order: Analytic view: prescriber performance metrics
 CREATE OR REPLACE VIEW pharmacy.gold.v_prescriber_performance AS
 SELECT
     pr.sk_prescriber_id,
@@ -1239,11 +1335,11 @@ WHERE f.written_date >= date_sub(current_date(), 365)
 GROUP BY pr.sk_prescriber_id, pr.npi_number, pr.first_name, pr.last_name, pr.specialty;
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: views/v_shipment_analysis.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/views/v_shipment_analysis.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 94 — Analytic view: shipment volume and performance by period
+-- Run order: Analytic view: shipment volume and performance by period
 CREATE OR REPLACE VIEW pharmacy.gold.v_shipment_analysis AS
 SELECT
     YEAR(s.ship_date) AS ship_year,
@@ -1258,11 +1354,11 @@ WHERE s.ship_date >= date_sub(current_date(), 365)
 GROUP BY YEAR(s.ship_date), MONTH(s.ship_date), s.carrier_name;
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: views/v_data_integrity_check.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/views/v_data_integrity_check.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 95 — Referential integrity checks (orphan keys in gold fact_prescription)
+-- Run order: Referential integrity checks (orphan keys in gold fact_prescription)
 CREATE OR REPLACE VIEW pharmacy.gold.v_data_integrity_check AS
 SELECT
     'fact_prescription' AS table_name,
@@ -1299,11 +1395,11 @@ FROM pharmacy.gold.fact_prescription f
 WHERE f.filled_date IS NOT NULL AND f.written_date IS NOT NULL AND f.filled_date < f.written_date;
 
 
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: views/v_data_statistics.sql
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- SOURCE SECTION: pipelines/src_databricks/views/v_data_statistics.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
--- Run order: 96 — High-level row counts and freshness by entity
+-- Run order: High-level row counts and freshness by entity
 CREATE OR REPLACE VIEW pharmacy.gold.v_data_statistics AS
 SELECT
     'Patients' AS entity,
@@ -1332,21 +1428,3 @@ SELECT
     COUNT(DISTINCT DATE(created_date)),
     MAX(created_date)
 FROM pharmacy.gold.fact_shipment;
-
-
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- SOURCE SECTION: schemas/layer_counts.sql
--- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
--- schemas/layer_counts.sql — Validate table counts per layer (Unity Catalog information_schema)
--- Requires catalog pharmacy and schemas bronze, silver, gold.
-SELECT
-    table_schema AS layer,
-    COUNT(*) AS table_count
-FROM pharmacy.information_schema.tables
-WHERE table_catalog = 'pharmacy'
-  AND table_schema IN ('bronze', 'silver', 'gold')
-  AND table_type = 'BASE TABLE'
-GROUP BY table_schema
-ORDER BY CASE table_schema WHEN 'bronze' THEN 1 WHEN 'silver' THEN 2 WHEN 'gold' THEN 3 ELSE 9 END;
-

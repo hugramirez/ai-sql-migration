@@ -1,5 +1,4 @@
--- Run order: Bronze last event snapshot per prescription (or source grain)
--- Lineage: prescription and patient; assigned date -> raw_dim_date
+-- Run order: Bronze last-event snapshot (aligned to dbo.fact_last_event / raw_data CSV)
 CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_last_event (
     sk_event_id BIGINT COMMENT 'Surrogate key for event row',
     sk_prescription_id BIGINT COMMENT 'FK to raw_fact_prescription',
@@ -17,7 +16,7 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_last_event (
     _ingest_timestamp TIMESTAMP COMMENT 'Timestamp when record was ingested' DEFAULT current_timestamp(),
     _source_system STRING COMMENT 'Source system name' DEFAULT 'sqlserver',
     _ingest_batch_id STRING COMMENT 'Batch identifier for ingestion'
-) USING DELTA COMMENT 'Workflow or case-management last-event snapshot at bronze; links to prescription and patient.' TBLPROPERTIES (
+) USING DELTA COMMENT 'Last-event snapshot at bronze; matches dbo.fact_last_event for CSV ingest.' TBLPROPERTIES (
     'delta.feature.allowColumnDefaults' = 'supported',
     'delta.enableChangeDataFeed' = 'true',
     'classification' = 'pii'

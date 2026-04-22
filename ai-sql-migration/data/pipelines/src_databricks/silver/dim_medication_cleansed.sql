@@ -22,6 +22,7 @@ SELECT
     END AS avg_wholesale_price,
     COALESCE(is_active, TRUE) AS is_active,
     created_date,
+    updated_date,
     MD5(CONCAT(ndc_code, medication_name, manufacturer)) AS _record_hash,
     current_timestamp() AS _silver_processed_date
 FROM (

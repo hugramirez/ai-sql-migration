@@ -15,6 +15,7 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_medication (
     avg_wholesale_price DECIMAL(10, 2) COMMENT 'Average wholesale price',
     is_active BOOLEAN COMMENT 'Indicates if medication record is currently active',
     created_date TIMESTAMP COMMENT 'Record creation timestamp in source system',
+    updated_date TIMESTAMP COMMENT 'Record last update in source system',
     _ingest_timestamp TIMESTAMP COMMENT 'Timestamp when record was ingested' DEFAULT current_timestamp(),
     _source_system STRING COMMENT 'Source system name' DEFAULT 'sqlserver',
     _ingest_batch_id STRING COMMENT 'Batch identifier for ingestion'

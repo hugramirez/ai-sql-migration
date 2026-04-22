@@ -31,6 +31,6 @@ BEGIN
     DROP INDEX IF EXISTS idx_fact_adherence_prescription ON dbo.fact_adherence; CREATE INDEX idx_fact_adherence_prescription ON dbo.fact_adherence(sk_prescription_id);
     DROP INDEX IF EXISTS idx_fact_adherence_measurement_date ON dbo.fact_adherence; CREATE INDEX idx_fact_adherence_measurement_date ON dbo.fact_adherence(sk_measurement_date_id);
 
-    PRINT '✅ fact_adherence';
+    PRINT 'fact_adherence';
 END
 GO

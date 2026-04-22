@@ -6,7 +6,7 @@ AS
 SELECT
     sk_interaction_id,
     sk_patient_id,
-    sk_prescriber_id,
+    sk_prescription_id,
     sk_care_team_member_id,
     sk_interaction_date_id,
     interaction_date,

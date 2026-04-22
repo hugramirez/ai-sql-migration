@@ -11,6 +11,7 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_payer (
     specialty_pharmacy_network BOOLEAN COMMENT 'Participates in specialty pharmacy network',
     is_active BOOLEAN COMMENT 'Payer record active flag',
     created_date TIMESTAMP COMMENT 'Record creation timestamp in source system',
+    updated_date TIMESTAMP COMMENT 'Record last update in source system',
     _ingest_timestamp TIMESTAMP COMMENT 'Timestamp when record was ingested' DEFAULT current_timestamp(),
     _source_system STRING COMMENT 'Source system name' DEFAULT 'sqlserver',
     _ingest_batch_id STRING COMMENT 'Batch identifier for ingestion'

@@ -19,6 +19,7 @@ SELECT
     years_experience,
     COALESCE(is_active, TRUE) AS is_active,
     created_date,
+    updated_date,
     MD5(CONCAT(npi_number, specialty, practice_name)) AS _record_hash,
     current_timestamp() AS _valid_from,
     CAST(NULL AS TIMESTAMP) AS _valid_to,

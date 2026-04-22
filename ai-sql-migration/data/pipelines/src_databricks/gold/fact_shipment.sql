@@ -19,5 +19,6 @@ SELECT
     exception_flag,
     exception_reason,
     created_date,
+    updated_date,
     current_timestamp() AS _gold_created_date
 FROM pharmacy.silver.fact_shipment_cleansed;

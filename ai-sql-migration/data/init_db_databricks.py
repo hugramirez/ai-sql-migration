@@ -5,11 +5,11 @@ Uses ``databricks-sql-connector`` (SQL warehouse). Environment (from ``ai-sql-mi
 - ``DATABRICKS_HOST`` — workspace URL, e.g. ``https://adb-....azuredatabricks.net``
 - ``DATABRICKS_TOKEN`` — personal access token or OAuth token
 - ``DATABRICKS_WAREHOUSE_ID`` — SQL warehouse ID (UUID)
-- ``DATABRICKS_MAX_ROWS_PER_TABLE`` (optional) — positive integer caps CSV rows loaded **per bronze dimension table** (dev/smoke tests). Omit or empty = load all rows.
+- ``DATABRICKS_MAX_ROWS_PER_TABLE`` (optional) — positive integer caps CSV rows loaded **per bronze dimension and fact table** (dev/smoke tests). Omit or empty = load all rows.
 
 The Unity Catalog ``pharmacy`` must exist (and your principal needs ``USE CATALOG`` + DDL on it).
-Bronze fact tables are left empty by this loader: SQL Server ``raw_data/*.csv`` does not match
-bronze fact schemas (different column model). Load facts separately (Spark / COPY INTO / ETL).
+Bronze fact DDL matches ``dbo.fact_*`` / ``raw_data/fact_*.csv``; this loader truncates and inserts
+those CSVs after dimensions (same optional row cap per table).
 
 See also: ``data/pipelines/src_databricks/run.sql`` (concatenated reference).
 """
@@ -60,7 +60,7 @@ def _resolve_bronze_row_cap(max_rows_per_table: int | None) -> int | None:
     return max_rows_per_table
 
 
-# Same CSV order as SQL Server init (dimensions only are loaded here)
+# Same CSV order as SQL Server init (dimensions first, then facts — FK-friendly order)
 DIM_LOAD_ORDER = [
     "dim_patient",
     "dim_medication",
@@ -70,7 +70,17 @@ DIM_LOAD_ORDER = [
     "dim_care_team_member",
 ]
 
-CSV_TO_BRONZE = {name: f"pharmacy.bronze.raw_{name}" for name in DIM_LOAD_ORDER}
+FACT_LOAD_ORDER = [
+    "fact_prescription",
+    "fact_adherence",
+    "fact_clinical_interaction",
+    "fact_shipment",
+    "fact_last_event",
+]
+
+CSV_TO_BRONZE = {
+    name: f"pharmacy.bronze.raw_{name}" for name in (*DIM_LOAD_ORDER, *FACT_LOAD_ORDER)
+}
 
 # Schemas + bronze DDL only (run before loading CSVs into bronze).
 PIPELINE_BRONZE_PHASE = [
@@ -334,15 +344,17 @@ def _boolean_columns(cursor, catalog: str, schema: str, table: str) -> set[str]:
     return {r[0] for r in cursor.fetchall()}
 
 
-def load_bronze_dimensions(
+def load_bronze_csv_tables(
     conn,
+    table_names: list[str],
     data_path: str = "raw_data",
     batch_size: int = 80,
     max_rows_per_table: int | None = None,
 ) -> dict[str, int]:
-    """Truncate and load dimension CSVs into ``pharmacy.bronze.raw_*`` (ingest columns use defaults).
+    """Truncate and load CSVs into ``pharmacy.bronze.raw_*`` (ingest columns use defaults).
 
     Args:
+        table_names: Logical table names matching ``raw_data/{name}.csv`` and ``raw_{name}`` Delta tables.
         max_rows_per_table: If set, only the first N rows of each CSV are inserted (after read).
             ``None`` loads every row.
     """
@@ -350,7 +362,7 @@ def load_bronze_dimensions(
     counts: dict[str, int] = {}
 
     with conn.cursor() as cursor:
-        for dim in DIM_LOAD_ORDER:
+        for dim in table_names:
             bronze_fqn = CSV_TO_BRONZE[dim]
             parts = bronze_fqn.replace("`", "").split(".")
             if len(parts) != 3:
@@ -416,24 +428,56 @@ def load_bronze_dimensions(
     return counts
 
 
+def load_bronze_dimensions(
+    conn,
+    data_path: str = "raw_data",
+    batch_size: int = 80,
+    max_rows_per_table: int | None = None,
+) -> dict[str, int]:
+    """Load dimension CSVs (see ``DIM_LOAD_ORDER``)."""
+    return load_bronze_csv_tables(
+        conn,
+        DIM_LOAD_ORDER,
+        data_path=data_path,
+        batch_size=batch_size,
+        max_rows_per_table=max_rows_per_table,
+    )
+
+
+def load_bronze_facts(
+    conn,
+    data_path: str = "raw_data",
+    batch_size: int = 80,
+    max_rows_per_table: int | None = None,
+) -> dict[str, int]:
+    """Load fact CSVs (see ``FACT_LOAD_ORDER``)."""
+    return load_bronze_csv_tables(
+        conn,
+        FACT_LOAD_ORDER,
+        data_path=data_path,
+        batch_size=batch_size,
+        max_rows_per_table=max_rows_per_table,
+    )
+
+
 def init(
     data_path: str = "raw_data",
     *,
     skip_ensure_catalog: bool = False,
     max_rows_per_table: int | None = None,
 ) -> None:
-    """Bronze DDL → load dimension CSVs into bronze → silver/gold/views DDL + layer counts.
+    """Bronze DDL → load dimension and fact CSVs into bronze → silver/gold/views DDL + layer counts.
 
     Args:
         max_rows_per_table: ``None`` → read cap from ``DATABRICKS_MAX_ROWS_PER_TABLE`` if set;
-            ``<= 0`` → no cap; ``> 0`` → insert at most that many rows per dimension CSV.
+            ``<= 0`` → no cap; ``> 0`` → insert at most that many rows per dimension/fact CSV.
     """
     log_path = _setup_logging()
     logging.info("Databricks pipeline log: %s", log_path)
 
     row_cap = _resolve_bronze_row_cap(max_rows_per_table)
     if row_cap is not None:
-        logging.info("Bronze dimension load capped at %s rows per table", row_cap)
+        logging.info("Bronze dimension/fact load capped at %s rows per table", row_cap)
 
     with get_connection() as conn:
         if not skip_ensure_catalog:
@@ -441,6 +485,8 @@ def init(
         run_ddl_pipeline(conn, PIPELINE_BRONZE_PHASE)
         logging.info("Loading bronze dimensions from %s", data_path)
         load_bronze_dimensions(conn, data_path=data_path, max_rows_per_table=row_cap)
+        logging.info("Loading bronze facts from %s", data_path)
+        load_bronze_facts(conn, data_path=data_path, max_rows_per_table=row_cap)
         run_ddl_pipeline(conn, PIPELINE_DOWNSTREAM_PHASE)
         try:
             rows = run_layer_counts(conn)
@@ -451,14 +497,14 @@ def init(
 
 def _parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(
-        description="Databricks UC pharmacy pipeline (DDL + bronze dimensions)."
+        description="Databricks UC pharmacy pipeline (DDL + bronze dimensions and facts)."
     )
     p.add_argument(
         "command",
         nargs="?",
         default="init",
         choices=("init", "ddl-only", "load-dims", "layer-counts"),
-        help="init: DDL + load dimensions; ddl-only; load-dims; layer-counts",
+        help="init: DDL + load dimensions and facts; ddl-only; load-dims (CSV → bronze dims+facts); layer-counts",
     )
     p.add_argument(
         "--data-path",
@@ -476,7 +522,7 @@ def _parse_args() -> argparse.Namespace:
         default=None,
         metavar="N",
         help=(
-            "Max CSV rows to load per bronze dimension table. "
+            "Max CSV rows to load per bronze dimension or fact table. "
             "Omit to use DATABRICKS_MAX_ROWS_PER_TABLE from .env; "
             "use 0 to disable cap even if env is set."
         ),
@@ -505,12 +551,15 @@ if __name__ == "__main__":
             _setup_logging()
             row_cap = _resolve_bronze_row_cap(args.max_rows)
             if row_cap is not None:
-                logging.info("Bronze dimension load capped at %s rows per table", row_cap)
+                logging.info("Bronze CSV load capped at %s rows per table", row_cap)
             with get_connection() as conn:
                 load_bronze_dimensions(
                     conn, data_path=args.data_path, max_rows_per_table=row_cap
                 )
-            print("\nBronze dimensions loaded.")
+                load_bronze_facts(
+                    conn, data_path=args.data_path, max_rows_per_table=row_cap
+                )
+            print("\nBronze dimensions and facts loaded.")
         else:
             _setup_logging()
             with get_connection() as conn:

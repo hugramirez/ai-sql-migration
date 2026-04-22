@@ -1,4 +1,4 @@
--- Run order: Silver shipments (delivery lag)
+-- Run order: Silver shipments (delivery lag; carrier / exception fields mapped for gold views)
 CREATE OR REPLACE TABLE pharmacy.silver.fact_shipment_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
@@ -10,17 +10,28 @@ SELECT
     sk_ship_date_id,
     sk_delivery_date_id,
     ship_date,
-    delivery_date,
+    COALESCE(actual_delivery_date, estimated_delivery_date) AS delivery_date,
     CASE
-        WHEN delivery_date IS NULL THEN NULL
-        ELSE DATEDIFF(delivery_date, ship_date)
+        WHEN ship_date IS NULL THEN NULL
+        ELSE DATEDIFF(COALESCE(actual_delivery_date, estimated_delivery_date), ship_date)
     END AS delivery_days,
-    carrier_name,
+    carrier AS carrier_name,
     tracking_number,
     shipping_cost,
-    delivery_status,
-    exception_flag,
-    exception_reason,
+    shipment_status AS delivery_status,
+    (
+        LENGTH(TRIM(COALESCE(delivery_exception_reason, ''))) > 0
+        OR LOWER(COALESCE(shipment_status, '')) LIKE '%exception%'
+        OR LOWER(COALESCE(shipment_status, '')) LIKE '%delay%'
+    ) AS exception_flag,
+    delivery_exception_reason AS exception_reason,
+    shipment_external_id,
+    estimated_delivery_date,
+    actual_delivery_date,
+    shipment_method,
+    temperature_controlled,
+    signature_required,
     created_date,
+    updated_date,
     current_timestamp() AS _silver_processed_date
 FROM pharmacy.bronze.raw_fact_shipment;

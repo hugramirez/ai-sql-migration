@@ -15,6 +15,7 @@ SELECT
     specialty_pharmacy_network,
     COALESCE(is_active, TRUE) AS is_active,
     created_date,
+    updated_date,
     MD5(CONCAT(payer_external_id, payer_name)) AS _record_hash,
     current_timestamp() AS _silver_processed_date
 FROM (

@@ -9,6 +9,7 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_care_team_member (
     hire_date DATE COMMENT 'Hire date',
     is_active BOOLEAN COMMENT 'Active employment or roster flag',
     created_date TIMESTAMP COMMENT 'Record creation timestamp in source system',
+    updated_date TIMESTAMP COMMENT 'Record last update in source system',
     _ingest_timestamp TIMESTAMP COMMENT 'Timestamp when record was ingested' DEFAULT current_timestamp(),
     _source_system STRING COMMENT 'Source system name' DEFAULT 'sqlserver',
     _ingest_batch_id STRING COMMENT 'Batch identifier for ingestion'

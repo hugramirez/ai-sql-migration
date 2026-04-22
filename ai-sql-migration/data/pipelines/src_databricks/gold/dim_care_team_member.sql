@@ -13,5 +13,6 @@ SELECT
     hire_date,
     is_active,
     created_date,
+    updated_date,
     current_timestamp() AS _gold_created_date
 FROM pharmacy.silver.dim_care_team_member_cleansed;

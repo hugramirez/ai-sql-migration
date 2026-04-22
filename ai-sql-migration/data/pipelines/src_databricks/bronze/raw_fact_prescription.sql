@@ -1,5 +1,4 @@
--- Run order: Bronze prescription fact (grain: prescription line or Rx header per source)
--- Lineage: joins raw_dim_patient, raw_dim_medication, raw_dim_prescriber, raw_dim_payer, raw_dim_date (written/filled)
+-- Run order: Bronze prescription fact (aligned to dbo.fact_prescription / raw_data CSV)
 CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_prescription (
     sk_prescription_id BIGINT COMMENT 'Surrogate key for prescription fact',
     prescription_external_id STRING COMMENT 'Natural or business prescription identifier',
@@ -13,18 +12,23 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_prescription (
     filled_date DATE COMMENT 'Date prescription was filled',
     quantity_prescribed DECIMAL(10, 2) COMMENT 'Quantity prescribed',
     days_supply INT COMMENT 'Days supply',
-    refills INT COMMENT 'Refills authorized or remaining',
-    copay DECIMAL(10, 2) COMMENT 'Patient copay amount',
-    insurance_paid DECIMAL(10, 2) COMMENT 'Insurance paid amount',
-    total_cost DECIMAL(10, 2) COMMENT 'Total cost of fill or claim',
-    is_filled BOOLEAN COMMENT 'Filled flag',
-    is_rejected BOOLEAN COMMENT 'Rejection flag',
-    rejection_reason STRING COMMENT 'Rejection reason text',
+    refills_authorized INT COMMENT 'Refills authorized',
+    refills_remaining INT COMMENT 'Refills remaining',
+    copay_amount DECIMAL(10, 2) COMMENT 'Patient copay amount',
+    insurance_paid_amount DECIMAL(12, 2) COMMENT 'Insurance paid amount',
+    total_cost DECIMAL(12, 2) COMMENT 'Total cost',
+    prescription_status STRING COMMENT 'Workflow status in source',
+    therapy_type STRING COMMENT 'Therapy classification',
+    is_specialty BOOLEAN COMMENT 'Specialty medication flag',
+    is_controlled_substance BOOLEAN COMMENT 'Controlled substance flag',
+    prior_authorization_required BOOLEAN COMMENT 'PA required',
+    prior_authorization_approved BOOLEAN COMMENT 'PA approved',
     created_date TIMESTAMP COMMENT 'Record creation timestamp in source system',
+    updated_date TIMESTAMP COMMENT 'Record last update in source system',
     _ingest_timestamp TIMESTAMP COMMENT 'Timestamp when record was ingested' DEFAULT current_timestamp(),
     _source_system STRING COMMENT 'Source system name' DEFAULT 'sqlserver',
     _ingest_batch_id STRING COMMENT 'Batch identifier for ingestion'
-) USING DELTA COMMENT 'Prescription bridge fact at bronze linking patient, drug, prescriber, payer, and date role keys for UC lineage.' TBLPROPERTIES (
+) USING DELTA COMMENT 'Prescription fact at bronze; column names match SQL Server dbo.fact_prescription for CSV ingest.' TBLPROPERTIES (
     'delta.feature.allowColumnDefaults' = 'supported',
     'delta.enableChangeDataFeed' = 'true',
     'classification' = 'pii'
