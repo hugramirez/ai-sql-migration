@@ -16,10 +16,39 @@ def _to_bool(value: str, default: bool = True) -> bool:
     return value.strip().lower() in {"1", "true", "yes", "on"}
 
 
-_TABLE_MAP: dict[str, str] = {
-    r"\[PANTHERx\]\.\[cpr\]\.\[dim_patient\]": "workspace.default.dim_patient",
-    r"PANTHERx\.cpr\.dim_patient": "workspace.default.dim_patient",
-}
+def _migration_uc_prefix() -> str:
+    """Unity Catalog prefix for pharmacy warehouse objects (no trailing dot)."""
+    raw = os.environ.get("SQL_MIGRATION_UC_PREFIX", "pharmacy.gold").strip()
+    return raw.rstrip(".").strip() or "pharmacy.gold"
+
+
+# Tables aligned with data/pipelines (SQL Server dbo.* → same logical name under UC prefix)
+_PHARMACY_DBO_TABLES: tuple[str, ...] = (
+    "dim_patient",
+    "dim_medication",
+    "dim_prescriber",
+    "dim_payer",
+    "dim_date",
+    "dim_care_team_member",
+    "fact_prescription",
+    "fact_adherence",
+    "fact_clinical_interaction",
+    "fact_shipment",
+    "fact_last_event",
+)
+
+
+def _table_rewrite_pairs() -> list[tuple[str, str]]:
+    """Longest-match-friendly (pharmacy_db.dbo.* before bare dbo.*)."""
+    prefix = _migration_uc_prefix()
+    pairs: list[tuple[str, str]] = []
+    for t in _PHARMACY_DBO_TABLES:
+        target = f"{prefix}.{t}"
+        pairs.append((rf"\[pharmacy_db\]\.\[dbo\]\.\[{t}\]", target))
+        pairs.append((rf"pharmacy_db\.dbo\.{t}\b", target))
+        pairs.append((rf"(?<![\w])dbo\.{t}\b", target))
+    pairs.sort(key=lambda x: len(x[0]), reverse=True)
+    return pairs
 
 
 def _rewrite_tsql_to_sparksql(query: str) -> tuple[str, list[str]]:
@@ -49,8 +78,16 @@ def _rewrite_tsql_to_sparksql(query: str) -> tuple[str, list[str]]:
         rewritten = getdate_pattern.sub("current_timestamp()", rewritten)
         warnings.append("Applied GETDATE() -> current_timestamp() rewrite.")
 
-    # Remap known SQL Edge table references to Databricks catalog paths
-    for pattern, replacement in _TABLE_MAP.items():
+    # OFFSET n ROWS FETCH NEXT m ROWS ONLY (T-SQL) -> LIMIT m (Spark SQL)
+    off_fetch = re.compile(
+        r"(?is)\bOFFSET\s+\d+\s+ROWS\s+FETCH\s+NEXT\s+(\d+)\s+ROWS\s+ONLY\s*$"
+    )
+    if off_fetch.search(rewritten):
+        rewritten = off_fetch.sub(r"LIMIT \1", rewritten).strip()
+        warnings.append("Applied OFFSET/FETCH -> LIMIT rewrite.")
+
+    # Remap pharmacy dbo.* → Unity Catalog gold (or SQL_MIGRATION_UC_PREFIX)
+    for pattern, replacement in _table_rewrite_pairs():
         new_sql = re.sub(pattern, replacement, rewritten, flags=re.IGNORECASE)
         if new_sql != rewritten:
             warnings.append(f"Remapped table reference -> {replacement}.")
@@ -62,7 +99,30 @@ def _rewrite_tsql_to_sparksql(query: str) -> tuple[str, list[str]]:
         rewritten = bracket_pattern.sub(r"\1", rewritten)
         warnings.append("Stripped T-SQL bracket notation.")
 
+    # T-SQL string concat: expr + 'literal' + expr -> Spark concat / concat_ws
+    _three_term_plus = re.compile(r"([\w.]+)\s*\+\s*('(?:[^']|'')*')\s*\+\s*([\w.]+)")
+    did_plus_concat = False
+    while True:
+        m = _three_term_plus.search(rewritten)
+        if not m:
+            break
+        if m.group(2) == "' '":
+            rewritten = _three_term_plus.sub(r"concat_ws(' ', \1, \3)", rewritten, count=1)
+        else:
+            rewritten = _three_term_plus.sub(r"concat(\1, \2, \3)", rewritten, count=1)
+        did_plus_concat = True
+    if did_plus_concat:
+        warnings.append("Applied T-SQL + string concat between expressions -> concat/concat_ws.")
+
     return rewritten, warnings
+
+
+def parse_migrated_sql_line(tool_output: str) -> str | None:
+    """Extract SQL from a ``migrate_sql_query`` tool result line ``MIGRATED_SQL: ...``."""
+    for line in tool_output.strip().splitlines():
+        if line.startswith("MIGRATED_SQL:"):
+            return line[len("MIGRATED_SQL:") :].strip()
+    return None
 
 
 def _format_violations(violations: Iterable) -> str:
