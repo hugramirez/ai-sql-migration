@@ -28,9 +28,10 @@ def _guard_select_only(query: str) -> str:
     if not q:
         raise ValueError("Query is empty.")
     first = q.split(maxsplit=1)[0].upper()
-    allowed = {"SELECT", "SHOW", "DESCRIBE"}
+    # WITH ... AS (...) SELECT ... is read-only and common for reports
+    allowed = {"SELECT", "WITH", "SHOW", "DESCRIBE", "EXPLAIN"}
     if first not in allowed:
-        raise ValueError("Only SELECT/SHOW/DESCRIBE queries are allowed.")
+        raise ValueError("Only SELECT/WITH/SHOW/DESCRIBE/EXPLAIN queries are allowed.")
     return q
 
 
