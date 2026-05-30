@@ -10,6 +10,7 @@ AI-powered SQL migration agent that uses [LangGraph](https://github.com/langchai
 - An Anthropic API key
 - Docker running `azure-sql-edge` (for SQL Edge tools)
 - A Databricks workspace with a SQL warehouse (for Databricks tools)
+  - **Required**: A Unity Catalog (`localuc` by default) must exist before using Databricks features
 
 ## Setup
 
@@ -47,6 +48,17 @@ cp .env.example .env
 | `SQLFLUFF_ENABLED` | Enable SQL migration lint/fix flow (`true`/`false`) |
 | `SQLFLUFF_SOURCE_DIALECT` | Source SQL dialect for migration (default: `tsql`) |
 | `SQLFLUFF_TARGET_DIALECT` | Target SQL dialect for migration (default: `sparksql`) |
+
+### Databricks Unity Catalog Setup (Required)
+
+Before using Databricks features, ensure the Unity Catalog exists and you have access:
+
+```sql
+CREATE CATALOG IF NOT EXISTS localuc;
+GRANT USE CATALOG ON CATALOG localuc TO `user@enterprise.com`;
+```
+
+Run these commands in your **Databricks workspace SQL editor** before initializing the database pipeline or querying Databricks with the agent. Replace `user@enterprise.com` with your actual Databricks principal (user email or service principal name).
 
 ## Running
 

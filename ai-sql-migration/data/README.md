@@ -4,7 +4,20 @@ Database initialization (`init_db.py`) and SQL pipelines under `pipelines/`.
 
 ## Databricks (Unity Catalog)
 
-From **`ai-sql-migration`**, set `DATABRICKS_HOST`, `DATABRICKS_TOKEN`, and `DATABRICKS_WAREHOUSE_ID` in `.env`. The catalog **`localuc`** must exist (or be creatable by your user). `DATABRICKS_WAREHOUSE_ID` must be the **full** SQL warehouse UUID (32 hex characters, with or without hyphens); a truncated ID usually yields HTTP 400 on connect.
+From **`ai-sql-migration`**, set `DATABRICKS_HOST`, `DATABRICKS_TOKEN`, and `DATABRICKS_WAREHOUSE_ID` in `.env`. The catalog **`localuc`** must exist and you must have `USE CATALOG` permission.
+
+### Prerequisites: Create the `localuc` Catalog (Required)
+
+Before running `init_db_databricks.py`, the Unity Catalog **must exist**. Run these SQL commands in your **Databricks workspace SQL editor**:
+
+```sql
+CREATE CATALOG IF NOT EXISTS localuc;
+GRANT USE CATALOG ON CATALOG localuc TO `user@enterprise.com`;
+```
+
+Replace `user@enterprise.com` with your Databricks principal (user email or service principal). Without this step, `init_db_databricks.py` will fail with permission or "catalog not found" errors.
+
+`DATABRICKS_WAREHOUSE_ID` must be the **full** SQL warehouse UUID (32 hex characters, with or without hyphens); a truncated ID usually yields HTTP 400 on connect.
 
 Optional: `DATABRICKS_MAX_ROWS_PER_TABLE=100` limits bronze **dimension** CSV loads to the first *N* rows per table (smoke tests). Omit for a full load. CLI: `uv run python data/init_db_databricks.py init --max-rows 100` (use `--max-rows 0` to ignore the env cap for that run).
 

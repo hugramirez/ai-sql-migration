@@ -79,6 +79,17 @@ Defined in `settings.py`. Key rules agent sees:
 - **Tools**: Five tools bound to model; LangGraph router decides tool-call vs. END.
 - **Graph**: START → llm_call → [tool_node or END] → llm_call (loop until no more tool calls).
 
+## Databricks Unity Catalog Setup
+
+Before initializing the Databricks pipeline, ensure the `localuc` catalog exists and your user has access:
+
+```sql
+CREATE CATALOG IF NOT EXISTS localuc;
+GRANT USE CATALOG ON CATALOG localuc TO `user@enterprise.com`;
+```
+
+Run these commands in your Databricks workspace SQL editor **before** running `data/init_db_databricks.py`. The pipeline expects `localuc` to exist and will create schemas (`bronze`, `silver`, `gold`) and tables within it.
+
 ## Common Mistakes
 
 1. **Missing `.env`** — Will fail at import time (no fallback).
@@ -86,3 +97,4 @@ Defined in `settings.py`. Key rules agent sees:
 3. **Forgetting table mapping** — `pharmacy_db.dbo.dim_patient` must be rewritten to `pharmacy.gold.dim_patient` before running in Databricks.
 4. **SQLFluff disabled** — Set `SQLFLUFF_ENABLED=true` in `.env`.
 5. **Stale env overrides** — If testing with `SQL_MIGRATION_UC_PREFIX`, remember it affects all migrations in that session.
+6. **Missing Databricks catalog** — `localuc` must exist before running `init_db_databricks.py`; create it with the SQL commands above.

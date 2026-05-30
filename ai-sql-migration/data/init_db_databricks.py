@@ -1,5 +1,11 @@
 """Databricks Unity Catalog pipeline: DDL from modular SQL + bronze dimension loads.
 
+REQUIRED: The Unity Catalog ``localuc`` must exist before running this script. Create it with:
+  CREATE CATALOG IF NOT EXISTS localuc;
+  GRANT USE CATALOG ON CATALOG localuc TO `user@enterprise.com`;
+
+Run these SQL commands in your Databricks workspace SQL editor first.
+
 Uses ``databricks-sql-connector`` (SQL warehouse). Environment (from ``ai-sql-migration/.env``):
 
 - ``DATABRICKS_HOST`` — workspace URL, e.g. ``https://adb-....azuredatabricks.net``
