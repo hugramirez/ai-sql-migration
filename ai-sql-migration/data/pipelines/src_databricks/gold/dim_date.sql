@@ -1,5 +1,5 @@
 -- Run order: Gold date dimension
-CREATE OR REPLACE TABLE pharmacy.gold.dim_date
+CREATE OR REPLACE TABLE localuc.gold.dim_date
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -18,4 +18,4 @@ SELECT
     is_weekend,
     is_holiday,
     current_timestamp() AS _gold_created_date
-FROM pharmacy.silver.dim_date_cleansed;
+FROM localuc.silver.dim_date_cleansed;

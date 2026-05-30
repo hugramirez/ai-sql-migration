@@ -36,14 +36,14 @@ Critical for agent operation:
 - `ANTHROPIC_API_KEY` — Required.
 - `SQLEDGE_*` — SQL Edge connection (Docker running `azure-sql-edge`).
 - `DATABRICKS_*` — Databricks SQL Warehouse.
-- `UC_*` — Unity Catalog (tables remapped via `SQL_MIGRATION_UC_PREFIX` env var, default: `pharmacy.gold.*`).
+- `UC_*` — Unity Catalog (tables remapped via `SQL_MIGRATION_UC_PREFIX` env var, default: `localuc.gold.*`).
 - `SQLFLUFF_*` — Controls SQL migration: `ENABLED`, `SOURCE_DIALECT=tsql`, `TARGET_DIALECT=sparksql`.
 
 ### SQL Migration (SQLFluff)
 `migrate_sql_query` in `src/tools/sql_migration.py`:
 - Uses SQLFluff lint + rewrite rules to convert T-SQL to Spark SQL.
 - Rewrites: `TOP N` → `LIMIT`, `ISNULL()` → `COALESCE()`, `GETDATE()` → `current_timestamp()`.
-- **Table remapping**: `pharmacy_db.dbo.dim_*` → `pharmacy.gold.dim_*` (or `SQL_MIGRATION_UC_PREFIX` override).
+- **Table remapping**: `localuc_db.dbo.dim_*` → `localuc.gold.dim_*` (or `SQL_MIGRATION_UC_PREFIX` override).
 - Output: string with `MIGRATED_SQL:` marker line (parsed by `parse_migrated_sql_line`).
 - Tests use `monkeypatch` to override `SQL_MIGRATION_UC_PREFIX` env var.
 
@@ -67,7 +67,7 @@ pytest
 ## Agent System Prompt
 
 Defined in `settings.py`. Key rules agent sees:
-- Two data sources: SQL Edge (T-SQL, `pharmacy_db.dbo.*`) and Databricks (Spark SQL, `pharmacy.gold.*`).
+- Two data sources: SQL Edge (T-SQL, `localuc_db.dbo.*`) and Databricks (Spark SQL, `localuc.gold.*`).
 - For migration: call `migrate_sql_query`, extract SQL from `MIGRATED_SQL:` line, then call `run_sql_query`.
 - Always use correct tool for correct data source (ambiguous → prefer SQL Edge).
 - Read-only queries only (no INSERT/UPDATE/DELETE/DDL).
@@ -83,6 +83,6 @@ Defined in `settings.py`. Key rules agent sees:
 
 1. **Missing `.env`** — Will fail at import time (no fallback).
 2. **Wrong data source** — Agent defaults to SQL Edge if ambiguous; must be explicit if using Databricks.
-3. **Forgetting table mapping** — `pharmacy_db.dbo.dim_patient` must be rewritten to `pharmacy.gold.dim_patient` before running in Databricks.
+3. **Forgetting table mapping** — `localuc_db.dbo.dim_patient` must be rewritten to `localuc.gold.dim_patient` before running in Databricks.
 4. **SQLFluff disabled** — Set `SQLFLUFF_ENABLED=true` in `.env`.
 5. **Stale env overrides** — If testing with `SQL_MIGRATION_UC_PREFIX`, remember it affects all migrations in that session.

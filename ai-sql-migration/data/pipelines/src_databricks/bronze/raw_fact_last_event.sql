@@ -1,5 +1,5 @@
 -- Run order: Bronze last-event snapshot (aligned to dbo.fact_last_event / raw_data CSV)
-CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_last_event (
+CREATE OR REPLACE TABLE localuc.bronze.raw_fact_last_event (
     sk_event_id BIGINT COMMENT 'Surrogate key for event row',
     sk_prescription_id BIGINT COMMENT 'FK to raw_fact_prescription',
     sk_patient_id BIGINT COMMENT 'FK to raw_dim_patient',

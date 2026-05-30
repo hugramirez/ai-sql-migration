@@ -1,5 +1,5 @@
 -- Run order: Bronze prescription fact (aligned to dbo.fact_prescription / raw_data CSV)
-CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_prescription (
+CREATE OR REPLACE TABLE localuc.bronze.raw_fact_prescription (
     sk_prescription_id BIGINT COMMENT 'Surrogate key for prescription fact',
     prescription_external_id STRING COMMENT 'Natural or business prescription identifier',
     sk_patient_id BIGINT COMMENT 'FK to raw_dim_patient',

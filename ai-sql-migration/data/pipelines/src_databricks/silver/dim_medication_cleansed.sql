@@ -1,5 +1,5 @@
 -- Run order: Silver medication (latest row per ndc_code)
-CREATE OR REPLACE TABLE pharmacy.silver.dim_medication_cleansed
+CREATE OR REPLACE TABLE localuc.silver.dim_medication_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -29,6 +29,6 @@ FROM (
     SELECT
         *,
         ROW_NUMBER() OVER (PARTITION BY ndc_code ORDER BY created_date DESC NULLS LAST) AS _row_num
-    FROM pharmacy.bronze.raw_dim_medication
+    FROM localuc.bronze.raw_dim_medication
 ) ranked
 WHERE ranked._row_num = 1;

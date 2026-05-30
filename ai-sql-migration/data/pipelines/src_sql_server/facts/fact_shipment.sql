@@ -2,7 +2,7 @@
 -- Grain: One row per shipment
 -- Fact Type: Additive
 
-USE pharmacy_db;
+USE localuc_db;
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'fact_shipment' AND schema_id = SCHEMA_ID('dbo'))

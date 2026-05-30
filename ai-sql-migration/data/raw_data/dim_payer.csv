@@ -1,4 +1,4 @@
-sk_payer_id,payer_external_id,payer_name,payer_type,bin_number,pcn_number,group_number,contact_phone,specialty_pharmacy_network,is_active,created_date,updated_date
+sk_payer_id,payer_external_id,payer_name,payer_type,bin_number,pcn_number,group_number,contact_phone,specialty_localuc_network,is_active,created_date,updated_date
 1,PAY-0001,United Healthcare,Commercial,320759,PCN7866,GRP-58799,610.902.1946x7232,1,1,2020-02-15,2022-07-27
 2,PAY-0002,Cigna,Commercial,572623,PCN3947,GRP-84895,(532)590-9279x14560,0,1,2020-08-12,2022-04-14
 3,PAY-0003,Aetna,Commercial,953740,PCN2636,GRP-45382,581-695-8837,1,1,2020-07-22,2023-06-05

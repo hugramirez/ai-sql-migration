@@ -1,5 +1,5 @@
 -- Run order: Silver shipments (delivery lag; carrier / exception fields mapped for gold views)
-CREATE OR REPLACE TABLE pharmacy.silver.fact_shipment_cleansed
+CREATE OR REPLACE TABLE localuc.silver.fact_shipment_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -34,4 +34,4 @@ SELECT
     created_date,
     updated_date,
     current_timestamp() AS _silver_processed_date
-FROM pharmacy.bronze.raw_fact_shipment;
+FROM localuc.bronze.raw_fact_shipment;

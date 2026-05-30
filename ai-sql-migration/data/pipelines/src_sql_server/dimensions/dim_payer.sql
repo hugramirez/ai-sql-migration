@@ -2,7 +2,7 @@
 -- Grain: One row per payer/plan
 -- SCD Type: Type 1
 
-USE pharmacy_db;
+USE localuc_db;
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'dim_payer' AND schema_id = SCHEMA_ID('dbo'))
@@ -16,7 +16,7 @@ BEGIN
         pcn_number varchar(20),
         group_number varchar(50),
         contact_phone varchar(20),
-        specialty_pharmacy_network bit NOT NULL DEFAULT 0,
+        specialty_localuc_network bit NOT NULL DEFAULT 0,
         is_active bit NOT NULL DEFAULT 1,
         created_date datetime2(3) NOT NULL DEFAULT GETDATE(),
         updated_date datetime2(3) NOT NULL DEFAULT GETDATE()

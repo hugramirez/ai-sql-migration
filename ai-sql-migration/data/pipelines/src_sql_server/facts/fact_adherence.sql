@@ -2,7 +2,7 @@
 -- Grain: One row per patient-prescription-measurement period
 -- Fact Type: Semi-additive
 
-USE pharmacy_db;
+USE localuc_db;
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'fact_adherence' AND schema_id = SCHEMA_ID('dbo'))

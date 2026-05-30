@@ -1,5 +1,5 @@
 -- Run order: Bronze conformed date dimension (no CDF required for static calendar)
-CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_date (
+CREATE OR REPLACE TABLE localuc.bronze.raw_dim_date (
     sk_date_id INT COMMENT 'Surrogate key for calendar date',
     full_date DATE COMMENT 'Calendar date',
     day_of_week INT COMMENT 'Day of week (1–7 per source convention)',

@@ -165,7 +165,7 @@ def _default_demo_query() -> str:
     return (
         "Migrate this SQL Edge query to Databricks using migrate_sql_query, then execute it with run_sql_query: "
         "SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name, ISNULL(last_name, 'unknown') AS last_name, "
-        "GETDATE() AS migrated_at FROM pharmacy_db.dbo.dim_patient;"
+        "GETDATE() AS migrated_at FROM localuc_db.dbo.dim_patient;"
     )
 
 
@@ -175,7 +175,7 @@ def _migration_task_prompt(sql_body: str) -> str:
         "Migrate this T-SQL to Databricks using migrate_sql_query, then execute the migrated SQL with "
         "run_sql_query using exactly the statement from the MIGRATED_SQL: line (only adjust if Databricks "
         "returns a clear syntax error). Do not run exploratory SELECTs (e.g. LIMIT 5 on a single table). "
-        "Use Unity Catalog paths as returned by migrate_sql_query (default pharmacy.gold.*). "
+        "Use Unity Catalog paths as returned by migrate_sql_query (default localuc.gold.*). "
         "Here is the source SQL:\n\n"
         f"{sql_body.strip()}"
     )

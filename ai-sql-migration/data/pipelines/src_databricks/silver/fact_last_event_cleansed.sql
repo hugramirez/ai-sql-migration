@@ -1,5 +1,5 @@
 -- Run order: Silver last event (latest row per sk_prescription_id by assigned time)
-CREATE OR REPLACE TABLE pharmacy.silver.fact_last_event_cleansed
+CREATE OR REPLACE TABLE localuc.silver.fact_last_event_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -26,6 +26,6 @@ FROM (
     SELECT
         *,
         ROW_NUMBER() OVER (PARTITION BY sk_prescription_id ORDER BY last_event_assigned_date DESC NULLS LAST) AS _row_num
-    FROM pharmacy.bronze.raw_fact_last_event
+    FROM localuc.bronze.raw_fact_last_event
 ) ranked
 WHERE ranked._row_num = 1;

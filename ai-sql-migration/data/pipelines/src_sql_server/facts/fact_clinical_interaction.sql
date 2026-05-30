@@ -2,7 +2,7 @@
 -- Grain: One row per interaction event
 -- Fact Type: Additive
 
-USE pharmacy_db;
+USE localuc_db;
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'fact_clinical_interaction' AND schema_id = SCHEMA_ID('dbo'))

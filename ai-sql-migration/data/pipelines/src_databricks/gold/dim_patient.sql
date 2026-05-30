@@ -1,5 +1,5 @@
 -- Run order: Gold patient dimension (consumption layer)
-CREATE OR REPLACE TABLE pharmacy.gold.dim_patient
+CREATE OR REPLACE TABLE localuc.gold.dim_patient
 USING DELTA
 TBLPROPERTIES (
     'delta.enableChangeDataFeed' = 'true'
@@ -23,4 +23,4 @@ SELECT
     created_date,
     updated_date,
     current_timestamp() AS _gold_created_date
-FROM pharmacy.silver.dim_patient_cleansed;
+FROM localuc.silver.dim_patient_cleansed;

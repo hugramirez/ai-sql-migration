@@ -2,7 +2,7 @@
 -- Grain: One row per calendar date
 -- Conformed dimension (all timestamps use this)
 
-USE pharmacy_db;
+USE localuc_db;
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'dim_date' AND schema_id = SCHEMA_ID('dbo'))

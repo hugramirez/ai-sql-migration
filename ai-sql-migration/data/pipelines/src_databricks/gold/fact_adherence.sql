@@ -1,5 +1,5 @@
 -- Run order: Gold adherence fact
-CREATE OR REPLACE TABLE pharmacy.gold.fact_adherence
+CREATE OR REPLACE TABLE localuc.gold.fact_adherence
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -20,6 +20,6 @@ SELECT
     adherence_status,
     created_date,
     current_timestamp() AS _gold_created_date
-FROM pharmacy.silver.fact_adherence_cleansed;
+FROM localuc.silver.fact_adherence_cleansed;
 
-OPTIMIZE pharmacy.gold.fact_adherence ZORDER BY (sk_patient_id, measurement_period_start_date);
+OPTIMIZE localuc.gold.fact_adherence ZORDER BY (sk_patient_id, measurement_period_start_date);

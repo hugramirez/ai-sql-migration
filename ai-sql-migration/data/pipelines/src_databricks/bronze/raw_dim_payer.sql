@@ -1,5 +1,5 @@
 -- Run order: Bronze payer (plan) dimension
-CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_payer (
+CREATE OR REPLACE TABLE localuc.bronze.raw_dim_payer (
     sk_payer_id BIGINT COMMENT 'Surrogate key for payer',
     payer_external_id STRING COMMENT 'External payer or plan identifier',
     payer_name STRING COMMENT 'Payer or plan display name',
@@ -8,7 +8,7 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_payer (
     pcn_number STRING COMMENT 'Processor Control Number (PCN)',
     group_number STRING COMMENT 'Group or plan group number',
     contact_phone STRING COMMENT 'Payer contact phone',
-    specialty_pharmacy_network BOOLEAN COMMENT 'Participates in specialty pharmacy network',
+    specialty_localuc_network BOOLEAN COMMENT 'Participates in specialty localuc network',
     is_active BOOLEAN COMMENT 'Payer record active flag',
     created_date TIMESTAMP COMMENT 'Record creation timestamp in source system',
     updated_date TIMESTAMP COMMENT 'Record last update in source system',

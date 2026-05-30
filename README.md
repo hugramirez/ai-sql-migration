@@ -57,7 +57,7 @@ uv run python main.py
 Override the default query with the `USER_QUERY` environment variable:
 
 ```bash
-USER_QUERY="Use migrate_sql_query for: SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name FROM pharmacy_db.dbo.dim_patient; then run_sql_query on the migrated SQL in Databricks." uv run python main.py
+USER_QUERY="Use migrate_sql_query for: SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name FROM localuc_db.dbo.dim_patient; then run_sql_query on the migrated SQL in Databricks." uv run python main.py
 ```
 
 ## Project Structure
@@ -115,7 +115,7 @@ USER_QUERY="Use describe_table for workspace.default.dim_patient and show me the
 
 **SQL Edge (`run_sqledge_query`)**
 ```bash
-USER_QUERY="Use run_sqledge_query to execute: SELECT TOP (5) [sk_patient_id], [patient_external_id], [first_name], [last_name], [date_of_birth], [age], [gender], [ethnicity], [state], [zip_code], [enrollment_date], [primary_rare_disease], [secondary_conditions], [is_active], [created_date], [updated_date] FROM [pharmacy_db].[dbo].[dim_patient]" uv run python main.py
+USER_QUERY="Use run_sqledge_query to execute: SELECT TOP (5) [sk_patient_id], [patient_external_id], [first_name], [last_name], [date_of_birth], [age], [gender], [ethnicity], [state], [zip_code], [enrollment_date], [primary_rare_disease], [secondary_conditions], [is_active], [created_date], [updated_date] FROM [localuc_db].[dbo].[dim_patient]" uv run python main.py
 ```
 
 **SQL Edge schema (`describe_sqledge_table`)**
@@ -125,12 +125,12 @@ USER_QUERY="Use describe_sqledge_table for dim_patient and list all columns." uv
 
 **SQL Edge active patients (`run_sqledge_query`)**
 ```bash
-USER_QUERY="Use run_sqledge_query to execute: SELECT TOP (5) [sk_patient_id], [first_name], [last_name], [is_active], [updated_date] FROM [pharmacy_db].[dbo].[dim_patient] WHERE [is_active] = 1" uv run python main.py
+USER_QUERY="Use run_sqledge_query to execute: SELECT TOP (5) [sk_patient_id], [first_name], [last_name], [is_active], [updated_date] FROM [localuc_db].[dbo].[dim_patient] WHERE [is_active] = 1" uv run python main.py
 ```
 
 **Migrate SQL Edge -> Databricks (`migrate_sql_query` + `run_sql_query`)**
 ```bash
-export USER_QUERY="Use migrate_sql_query for: SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name, ISNULL(last_name, 'unknown') AS last_name, GETDATE() AS migrated_at FROM pharmacy_db.dbo.dim_patient; then run_sql_query on the migrated SQL in Databricks."
+export USER_QUERY="Use migrate_sql_query for: SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name, ISNULL(last_name, 'unknown') AS last_name, GETDATE() AS migrated_at FROM localuc_db.dbo.dim_patient; then run_sql_query on the migrated SQL in Databricks."
 uv run python main.py
 ```
 
@@ -148,7 +148,7 @@ settings = Settings.from_env()
 agent = build_agent(settings)
 
 result = agent.invoke({
-    "messages": [HumanMessage(content="Migrate this SQL Edge query to Databricks and run it: SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name FROM pharmacy_db.dbo.dim_patient;")]
+    "messages": [HumanMessage(content="Migrate this SQL Edge query to Databricks and run it: SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name FROM localuc_db.dbo.dim_patient;")]
 })
 print(result["messages"][-1].content)
 ```

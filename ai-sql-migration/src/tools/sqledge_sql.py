@@ -12,7 +12,7 @@ def _get_connection():
 
     host = os.environ.get("SQLEDGE_HOST", "localhost").strip()
     port = os.environ.get("SQLEDGE_PORT", "1433").strip()
-    database = os.environ.get("SQLEDGE_DATABASE", "pharmacy_db").strip()
+    database = os.environ.get("SQLEDGE_DATABASE", "localuc_db").strip()
     user = os.environ.get("SQLEDGE_USER", "").strip()
     password = os.environ.get("SQLEDGE_PASSWORD", "").strip()
 
@@ -45,7 +45,7 @@ def _guard_select_only(query: str) -> str:
 
 @tool
 def run_sqledge_query(query: str, limit: int = 100) -> str:
-    """Run a read-only SQL query against the local SQL Edge / SQL Server instance (pharmacy_db by default)."""
+    """Run a read-only SQL query against the local SQL Edge / SQL Server instance (localuc_db by default)."""
     safe_query = _guard_select_only(query)
 
     capped = max(1, min(limit, 1000))

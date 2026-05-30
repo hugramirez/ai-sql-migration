@@ -1,5 +1,5 @@
 -- Run order: Gold clinical interaction fact
-CREATE OR REPLACE TABLE pharmacy.gold.fact_clinical_interaction
+CREATE OR REPLACE TABLE localuc.gold.fact_clinical_interaction
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -19,6 +19,6 @@ SELECT
     follow_up_required,
     created_date,
     current_timestamp() AS _gold_created_date
-FROM pharmacy.silver.fact_clinical_interaction_cleansed;
+FROM localuc.silver.fact_clinical_interaction_cleansed;
 
-OPTIMIZE pharmacy.gold.fact_clinical_interaction ZORDER BY (sk_patient_id, interaction_date);
+OPTIMIZE localuc.gold.fact_clinical_interaction ZORDER BY (sk_patient_id, interaction_date);

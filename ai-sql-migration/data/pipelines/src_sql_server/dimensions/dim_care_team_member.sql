@@ -2,7 +2,7 @@
 -- Grain: One row per unique employee
 -- SCD Type: Type 1
 
-USE pharmacy_db;
+USE localuc_db;
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'dim_care_team_member' AND schema_id = SCHEMA_ID('dbo'))

@@ -41,7 +41,7 @@ IF EXISTS (
 BEGIN
     EXEC sp_updateextendedproperty
         @name = N'Description',
-        @value = N'Pharmacy Comprehensive Platform - dimensional model for pharmacy management',
+        @value = N'Pharmacy Comprehensive Platform - dimensional model for localuc management',
         @level0type = N'SCHEMA',
         @level0name = N'dbo';
 END
@@ -49,7 +49,7 @@ ELSE
 BEGIN
     EXEC sp_addextendedproperty
         @name = N'Description',
-        @value = N'Pharmacy Comprehensive Platform - dimensional model for pharmacy management',
+        @value = N'Pharmacy Comprehensive Platform - dimensional model for localuc management',
         @level0type = N'SCHEMA',
         @level0name = N'dbo';
 END
@@ -187,7 +187,7 @@ BEGIN
         pcn_number varchar(20),
         group_number varchar(50),
         contact_phone varchar(20),
-        specialty_pharmacy_network bit NOT NULL DEFAULT 0,
+        specialty_localuc_network bit NOT NULL DEFAULT 0,
         is_active bit NOT NULL DEFAULT 1,
         created_date datetime2(3) NOT NULL DEFAULT GETDATE(),
         updated_date datetime2(3) NOT NULL DEFAULT GETDATE()

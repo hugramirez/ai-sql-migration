@@ -1,5 +1,5 @@
 -- ============================================================================
--- Pharmacy pipeline — Databricks SQL Editor / SQL Warehouse
+-- localuc pipeline — Databricks SQL Editor / SQL Warehouse
 --
 -- Single batch script. Canonical sources live under:
 --   schemas/  bronze/  silver/  gold/  views/
@@ -7,7 +7,7 @@
 -- After editing any modular .sql file, refresh this file by concatenating
 -- those scripts in dependency order (same order as ``init_db_databricks.PIPELINE_DDL_FILES``).
 --
--- Catalog: pharmacy (Unity Catalog). Needs CREATE on bronze, silver, gold.
+-- Catalog: localuc (Unity Catalog). Needs CREATE on bronze, silver, gold.
 -- ============================================================================
 
 
@@ -16,7 +16,7 @@
 -- SOURCE SECTION: pipelines/src_databricks/schemas/bronze.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-CREATE SCHEMA IF NOT EXISTS pharmacy.bronze
+CREATE SCHEMA IF NOT EXISTS localuc.bronze
 COMMENT 'BRONZE LAYER - Raw Data Ingestion Zone
 Purpose: Stores unprocessed data extracted directly from source systems (SQL Server, APIs, files)
 Characteristics:
@@ -36,27 +36,27 @@ Lineage: Direct mapping from source system tables';
 -- SOURCE SECTION: pipelines/src_databricks/schemas/silver.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-CREATE SCHEMA IF NOT EXISTS pharmacy.silver
+CREATE SCHEMA IF NOT EXISTS localuc.silver
 COMMENT 'SILVER LAYER - Cleansed and conformed data
-Purpose: Deduplicated, validated, and lightly enriched tables sourced from pharmacy.bronze
+Purpose: Deduplicated, validated, and lightly enriched tables sourced from localuc.bronze
 Characteristics:
   - Row-level quality rules and hashes for change detection
   - Surrogate keys preserved from bronze for lineage to gold
   - CDF enabled where tables feed downstream gold or analytics
-Lineage: CTAS / MERGE from pharmacy.bronze raw_* tables';
+Lineage: CTAS / MERGE from localuc.bronze raw_* tables';
 
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 -- SOURCE SECTION: pipelines/src_databricks/schemas/gold.sql
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-CREATE SCHEMA IF NOT EXISTS pharmacy.gold
+CREATE SCHEMA IF NOT EXISTS localuc.gold
 COMMENT 'GOLD LAYER - Analytics-ready dimensional model
 Purpose: Curated dimensions and facts for BI and applications
 Characteristics:
   - One row per business key (or snapshot policy) per entity
   - Optional ZORDER / OPTIMIZE on large facts
-Lineage: CTAS from pharmacy.silver *_cleansed tables and views for consumption metrics';
+Lineage: CTAS from localuc.silver *_cleansed tables and views for consumption metrics';
 
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -64,7 +64,7 @@ Lineage: CTAS from pharmacy.silver *_cleansed tables and views for consumption m
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Bronze conformed date dimension (no CDF required for static calendar)
-CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_date (
+CREATE OR REPLACE TABLE localuc.bronze.raw_dim_date (
     sk_date_id INT COMMENT 'Surrogate key for calendar date',
     full_date DATE COMMENT 'Calendar date',
     day_of_week INT COMMENT 'Day of week (1–7 per source convention)',
@@ -92,7 +92,7 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_date (
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Bronze payer (plan) dimension
-CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_payer (
+CREATE OR REPLACE TABLE localuc.bronze.raw_dim_payer (
     sk_payer_id BIGINT COMMENT 'Surrogate key for payer',
     payer_external_id STRING COMMENT 'External payer or plan identifier',
     payer_name STRING COMMENT 'Payer or plan display name',
@@ -101,7 +101,7 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_payer (
     pcn_number STRING COMMENT 'Processor Control Number (PCN)',
     group_number STRING COMMENT 'Group or plan group number',
     contact_phone STRING COMMENT 'Payer contact phone',
-    specialty_pharmacy_network BOOLEAN COMMENT 'Participates in specialty pharmacy network',
+    specialty_localuc_network BOOLEAN COMMENT 'Participates in specialty localuc network',
     is_active BOOLEAN COMMENT 'Payer record active flag',
     created_date TIMESTAMP COMMENT 'Record creation timestamp in source system',
     updated_date TIMESTAMP COMMENT 'Record last update in source system',
@@ -119,7 +119,7 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_payer (
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Bronze care team member dimension
-CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_care_team_member (
+CREATE OR REPLACE TABLE localuc.bronze.raw_dim_care_team_member (
     sk_care_team_member_id BIGINT COMMENT 'Surrogate key for care team member',
     employee_id STRING COMMENT 'Internal employee identifier',
     first_name STRING COMMENT 'First name',
@@ -145,7 +145,7 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_care_team_member (
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Bronze patient dimension
-CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_patient (
+CREATE OR REPLACE TABLE localuc.bronze.raw_dim_patient (
     sk_patient_id BIGINT COMMENT 'Surrogate key for patient (internal unique identifier)',
     patient_external_id STRING COMMENT 'External patient identifier from source system',
     first_name STRING COMMENT 'Patient first name',
@@ -177,7 +177,7 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_patient (
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Bronze medication dimension
-CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_medication (
+CREATE OR REPLACE TABLE localuc.bronze.raw_dim_medication (
     sk_medication_id BIGINT COMMENT 'Surrogate key for medication (internal unique identifier)',
     ndc_code STRING COMMENT 'National Drug Code identifier from source system',
     medication_name STRING COMMENT 'Branded or trade medication name',
@@ -197,7 +197,7 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_medication (
     _ingest_timestamp TIMESTAMP COMMENT 'Timestamp when record was ingested' DEFAULT current_timestamp(),
     _source_system STRING COMMENT 'Source system name' DEFAULT 'sqlserver',
     _ingest_batch_id STRING COMMENT 'Batch identifier for ingestion'
-) USING DELTA COMMENT 'The table contains medication master and product reference data. It includes identifiers such as surrogate keys and NDC codes, descriptive attributes including medication and generic names, manufacturer, dosage form, strength, and route of administration. Rare disease and orphan drug attributes support specialty pharmacy and program analytics. Pricing and regulatory dates enable formulary, access, and compliance reporting. Audit columns capture ingestion lineage for downstream bronze-to-silver processing.' TBLPROPERTIES (
+) USING DELTA COMMENT 'The table contains medication master and product reference data. It includes identifiers such as surrogate keys and NDC codes, descriptive attributes including medication and generic names, manufacturer, dosage form, strength, and route of administration. Rare disease and orphan drug attributes support specialty localuc and program analytics. Pricing and regulatory dates enable formulary, access, and compliance reporting. Audit columns capture ingestion lineage for downstream bronze-to-silver processing.' TBLPROPERTIES (
     'delta.feature.allowColumnDefaults' = 'supported',
     'delta.enableChangeDataFeed' = 'true'
 );
@@ -208,7 +208,7 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_medication (
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Bronze prescriber dimension
-CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_prescriber (
+CREATE OR REPLACE TABLE localuc.bronze.raw_dim_prescriber (
     sk_prescriber_id BIGINT COMMENT 'Surrogate key for prescriber (internal unique identifier)',
     npi_number STRING COMMENT 'National Provider Identifier (NPI)',
     first_name STRING COMMENT 'Prescriber first name',
@@ -240,7 +240,7 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_prescriber (
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Bronze prescription fact (aligned to dbo.fact_prescription / raw_data CSV)
-CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_prescription (
+CREATE OR REPLACE TABLE localuc.bronze.raw_fact_prescription (
     sk_prescription_id BIGINT COMMENT 'Surrogate key for prescription fact',
     prescription_external_id STRING COMMENT 'Natural or business prescription identifier',
     sk_patient_id BIGINT COMMENT 'FK to raw_dim_patient',
@@ -281,7 +281,7 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_prescription (
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Bronze adherence fact (aligned to dbo.fact_adherence / raw_data CSV)
-CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_adherence (
+CREATE OR REPLACE TABLE localuc.bronze.raw_fact_adherence (
     sk_adherence_id BIGINT COMMENT 'Surrogate key for adherence row',
     sk_patient_id BIGINT COMMENT 'FK to raw_dim_patient',
     sk_prescription_id BIGINT COMMENT 'FK to raw_fact_prescription',
@@ -311,7 +311,7 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_adherence (
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Bronze clinical interaction fact (aligned to dbo.fact_clinical_interaction / raw_data CSV)
-CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_clinical_interaction (
+CREATE OR REPLACE TABLE localuc.bronze.raw_fact_clinical_interaction (
     sk_interaction_id BIGINT COMMENT 'Surrogate key for interaction event',
     sk_patient_id BIGINT COMMENT 'FK to raw_dim_patient',
     sk_prescription_id BIGINT COMMENT 'FK to raw_fact_prescription (nullable in source)',
@@ -341,7 +341,7 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_clinical_interaction (
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Bronze shipment fact (aligned to dbo.fact_shipment / raw_data CSV)
-CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_shipment (
+CREATE OR REPLACE TABLE localuc.bronze.raw_fact_shipment (
     sk_shipment_id BIGINT COMMENT 'Surrogate key for shipment',
     shipment_external_id STRING COMMENT 'Business shipment identifier',
     sk_prescription_id BIGINT COMMENT 'FK to raw_fact_prescription',
@@ -376,7 +376,7 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_shipment (
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Bronze last-event snapshot (aligned to dbo.fact_last_event / raw_data CSV)
-CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_last_event (
+CREATE OR REPLACE TABLE localuc.bronze.raw_fact_last_event (
     sk_event_id BIGINT COMMENT 'Surrogate key for event row',
     sk_prescription_id BIGINT COMMENT 'FK to raw_fact_prescription',
     sk_patient_id BIGINT COMMENT 'FK to raw_dim_patient',
@@ -405,7 +405,7 @@ CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_last_event (
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Silver patient (latest row per patient_external_id)
-CREATE OR REPLACE TABLE pharmacy.silver.dim_patient_cleansed
+CREATE OR REPLACE TABLE localuc.silver.dim_patient_cleansed
 USING DELTA
 TBLPROPERTIES (
     'delta.enableChangeDataFeed' = 'true',
@@ -441,7 +441,7 @@ FROM (
     SELECT
         *,
         ROW_NUMBER() OVER (PARTITION BY patient_external_id ORDER BY updated_date DESC NULLS LAST) AS _row_num
-    FROM pharmacy.bronze.raw_dim_patient
+    FROM localuc.bronze.raw_dim_patient
 ) ranked
 WHERE ranked._row_num = 1;
 
@@ -451,7 +451,7 @@ WHERE ranked._row_num = 1;
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Silver medication (latest row per ndc_code)
-CREATE OR REPLACE TABLE pharmacy.silver.dim_medication_cleansed
+CREATE OR REPLACE TABLE localuc.silver.dim_medication_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -481,7 +481,7 @@ FROM (
     SELECT
         *,
         ROW_NUMBER() OVER (PARTITION BY ndc_code ORDER BY created_date DESC NULLS LAST) AS _row_num
-    FROM pharmacy.bronze.raw_dim_medication
+    FROM localuc.bronze.raw_dim_medication
 ) ranked
 WHERE ranked._row_num = 1;
 
@@ -491,7 +491,7 @@ WHERE ranked._row_num = 1;
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Silver prescriber (current row per npi_number; SCD2 fields reserved for future)
-CREATE OR REPLACE TABLE pharmacy.silver.dim_prescriber_cleansed
+CREATE OR REPLACE TABLE localuc.silver.dim_prescriber_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -521,7 +521,7 @@ FROM (
     SELECT
         *,
         ROW_NUMBER() OVER (PARTITION BY npi_number ORDER BY created_date DESC NULLS LAST) AS _row_num
-    FROM pharmacy.bronze.raw_dim_prescriber
+    FROM localuc.bronze.raw_dim_prescriber
 ) ranked
 WHERE ranked._row_num = 1;
 
@@ -531,7 +531,7 @@ WHERE ranked._row_num = 1;
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Silver payer (latest row per payer_external_id)
-CREATE OR REPLACE TABLE pharmacy.silver.dim_payer_cleansed
+CREATE OR REPLACE TABLE localuc.silver.dim_payer_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -544,7 +544,7 @@ SELECT
     pcn_number,
     group_number,
     contact_phone,
-    specialty_pharmacy_network,
+    specialty_localuc_network,
     COALESCE(is_active, TRUE) AS is_active,
     created_date,
     updated_date,
@@ -554,7 +554,7 @@ FROM (
     SELECT
         *,
         ROW_NUMBER() OVER (PARTITION BY payer_external_id ORDER BY created_date DESC NULLS LAST) AS _row_num
-    FROM pharmacy.bronze.raw_dim_payer
+    FROM localuc.bronze.raw_dim_payer
 ) ranked
 WHERE ranked._row_num = 1;
 
@@ -564,7 +564,7 @@ WHERE ranked._row_num = 1;
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Silver care team member (latest row per employee_id)
-CREATE OR REPLACE TABLE pharmacy.silver.dim_care_team_member_cleansed
+CREATE OR REPLACE TABLE localuc.silver.dim_care_team_member_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -585,7 +585,7 @@ FROM (
     SELECT
         *,
         ROW_NUMBER() OVER (PARTITION BY employee_id ORDER BY created_date DESC NULLS LAST) AS _row_num
-    FROM pharmacy.bronze.raw_dim_care_team_member
+    FROM localuc.bronze.raw_dim_care_team_member
 ) ranked
 WHERE ranked._row_num = 1;
 
@@ -595,7 +595,7 @@ WHERE ranked._row_num = 1;
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Silver date conformed dimension (pass-through from bronze calendar)
-CREATE OR REPLACE TABLE pharmacy.silver.dim_date_cleansed
+CREATE OR REPLACE TABLE localuc.silver.dim_date_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -614,7 +614,7 @@ SELECT
     is_weekend,
     is_holiday,
     current_timestamp() AS _silver_processed_date
-FROM pharmacy.bronze.raw_dim_date;
+FROM localuc.bronze.raw_dim_date;
 
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -622,7 +622,7 @@ FROM pharmacy.bronze.raw_dim_date;
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Silver prescription fact (dedupe by prescription_external_id; analytics columns for gold)
-CREATE OR REPLACE TABLE pharmacy.silver.fact_prescription_cleansed
+CREATE OR REPLACE TABLE localuc.silver.fact_prescription_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -675,7 +675,7 @@ FROM (
     SELECT
         *,
         ROW_NUMBER() OVER (PARTITION BY prescription_external_id ORDER BY updated_date DESC NULLS LAST, created_date DESC NULLS LAST) AS _row_num
-    FROM pharmacy.bronze.raw_fact_prescription
+    FROM localuc.bronze.raw_fact_prescription
 ) ranked
 WHERE ranked._row_num = 1;
 
@@ -685,7 +685,7 @@ WHERE ranked._row_num = 1;
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Silver adherence (join prescription for sk_medication_id; window derived from measurement_period label)
-CREATE OR REPLACE TABLE pharmacy.silver.fact_adherence_cleansed
+CREATE OR REPLACE TABLE localuc.silver.fact_adherence_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -719,8 +719,8 @@ WITH src AS (
             ) AS INT
         ) AS period_days,
         LEAST(GREATEST(COALESCE(a.pdc_proportion_days_covered, 0), 0), 1) AS pdc_clamped
-    FROM pharmacy.bronze.raw_fact_adherence a
-    LEFT JOIN pharmacy.bronze.raw_fact_prescription p
+    FROM localuc.bronze.raw_fact_adherence a
+    LEFT JOIN localuc.bronze.raw_fact_prescription p
         ON p.sk_prescription_id = a.sk_prescription_id
 )
 SELECT
@@ -765,7 +765,7 @@ FROM src;
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Silver clinical interactions (aligned to dbo; gold uses legacy interaction_mode / outcome column names)
-CREATE OR REPLACE TABLE pharmacy.silver.fact_clinical_interaction_cleansed
+CREATE OR REPLACE TABLE localuc.silver.fact_clinical_interaction_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -788,7 +788,7 @@ SELECT
     follow_up_required,
     created_date,
     current_timestamp() AS _silver_processed_date
-FROM pharmacy.bronze.raw_fact_clinical_interaction;
+FROM localuc.bronze.raw_fact_clinical_interaction;
 
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -796,7 +796,7 @@ FROM pharmacy.bronze.raw_fact_clinical_interaction;
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Silver shipments (delivery lag; carrier / exception fields mapped for gold views)
-CREATE OR REPLACE TABLE pharmacy.silver.fact_shipment_cleansed
+CREATE OR REPLACE TABLE localuc.silver.fact_shipment_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -831,7 +831,7 @@ SELECT
     created_date,
     updated_date,
     current_timestamp() AS _silver_processed_date
-FROM pharmacy.bronze.raw_fact_shipment;
+FROM localuc.bronze.raw_fact_shipment;
 
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -839,7 +839,7 @@ FROM pharmacy.bronze.raw_fact_shipment;
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Silver last event (latest row per sk_prescription_id by assigned time)
-CREATE OR REPLACE TABLE pharmacy.silver.fact_last_event_cleansed
+CREATE OR REPLACE TABLE localuc.silver.fact_last_event_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -866,7 +866,7 @@ FROM (
     SELECT
         *,
         ROW_NUMBER() OVER (PARTITION BY sk_prescription_id ORDER BY last_event_assigned_date DESC NULLS LAST) AS _row_num
-    FROM pharmacy.bronze.raw_fact_last_event
+    FROM localuc.bronze.raw_fact_last_event
 ) ranked
 WHERE ranked._row_num = 1;
 
@@ -876,7 +876,7 @@ WHERE ranked._row_num = 1;
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Operational metadata for pipeline runs (optional lineage sidecar)
-CREATE OR REPLACE TABLE pharmacy.silver._metadata_pipeline_runs (
+CREATE OR REPLACE TABLE localuc.silver._metadata_pipeline_runs (
     run_id STRING NOT NULL COMMENT 'Unique run identifier',
     pipeline_name STRING NOT NULL COMMENT 'Pipeline or job name',
     step_name STRING COMMENT 'Step or task name',
@@ -900,7 +900,7 @@ CREATE OR REPLACE TABLE pharmacy.silver._metadata_pipeline_runs (
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Data quality check results
-CREATE OR REPLACE TABLE pharmacy.silver._metadata_quality_checks (
+CREATE OR REPLACE TABLE localuc.silver._metadata_quality_checks (
     table_name STRING NOT NULL COMMENT 'Table or dataset evaluated',
     check_type STRING COMMENT 'Rule or check category',
     check_description STRING COMMENT 'Human-readable description',
@@ -919,7 +919,7 @@ CREATE OR REPLACE TABLE pharmacy.silver._metadata_quality_checks (
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Gold patient dimension (consumption layer)
-CREATE OR REPLACE TABLE pharmacy.gold.dim_patient
+CREATE OR REPLACE TABLE localuc.gold.dim_patient
 USING DELTA
 TBLPROPERTIES (
     'delta.enableChangeDataFeed' = 'true'
@@ -943,7 +943,7 @@ SELECT
     created_date,
     updated_date,
     current_timestamp() AS _gold_created_date
-FROM pharmacy.silver.dim_patient_cleansed;
+FROM localuc.silver.dim_patient_cleansed;
 
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -951,7 +951,7 @@ FROM pharmacy.silver.dim_patient_cleansed;
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Gold medication dimension
-CREATE OR REPLACE TABLE pharmacy.gold.dim_medication
+CREATE OR REPLACE TABLE localuc.gold.dim_medication
 USING DELTA
 TBLPROPERTIES (
     'delta.enableChangeDataFeed' = 'true'
@@ -975,7 +975,7 @@ SELECT
     created_date,
     updated_date,
     current_timestamp() AS _gold_created_date
-FROM pharmacy.silver.dim_medication_cleansed;
+FROM localuc.silver.dim_medication_cleansed;
 
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -983,7 +983,7 @@ FROM pharmacy.silver.dim_medication_cleansed;
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Gold prescriber dimension
-CREATE OR REPLACE TABLE pharmacy.gold.dim_prescriber
+CREATE OR REPLACE TABLE localuc.gold.dim_prescriber
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -1005,7 +1005,7 @@ SELECT
     created_date,
     updated_date,
     current_timestamp() AS _gold_created_date
-FROM pharmacy.silver.dim_prescriber_cleansed;
+FROM localuc.silver.dim_prescriber_cleansed;
 
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1013,7 +1013,7 @@ FROM pharmacy.silver.dim_prescriber_cleansed;
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Gold payer dimension
-CREATE OR REPLACE TABLE pharmacy.gold.dim_payer
+CREATE OR REPLACE TABLE localuc.gold.dim_payer
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -1026,12 +1026,12 @@ SELECT
     pcn_number,
     group_number,
     contact_phone,
-    specialty_pharmacy_network,
+    specialty_localuc_network,
     is_active,
     created_date,
     updated_date,
     current_timestamp() AS _gold_created_date
-FROM pharmacy.silver.dim_payer_cleansed;
+FROM localuc.silver.dim_payer_cleansed;
 
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1039,7 +1039,7 @@ FROM pharmacy.silver.dim_payer_cleansed;
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Gold date dimension
-CREATE OR REPLACE TABLE pharmacy.gold.dim_date
+CREATE OR REPLACE TABLE localuc.gold.dim_date
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -1058,7 +1058,7 @@ SELECT
     is_weekend,
     is_holiday,
     current_timestamp() AS _gold_created_date
-FROM pharmacy.silver.dim_date_cleansed;
+FROM localuc.silver.dim_date_cleansed;
 
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1066,7 +1066,7 @@ FROM pharmacy.silver.dim_date_cleansed;
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Gold care team member dimension
-CREATE OR REPLACE TABLE pharmacy.gold.dim_care_team_member
+CREATE OR REPLACE TABLE localuc.gold.dim_care_team_member
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -1082,7 +1082,7 @@ SELECT
     created_date,
     updated_date,
     current_timestamp() AS _gold_created_date
-FROM pharmacy.silver.dim_care_team_member_cleansed;
+FROM localuc.silver.dim_care_team_member_cleansed;
 
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1090,7 +1090,7 @@ FROM pharmacy.silver.dim_care_team_member_cleansed;
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Gold prescription fact + physical optimization
-CREATE OR REPLACE TABLE pharmacy.gold.fact_prescription
+CREATE OR REPLACE TABLE localuc.gold.fact_prescription
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -1118,9 +1118,9 @@ SELECT
     created_date,
     updated_date,
     current_timestamp() AS _gold_created_date
-FROM pharmacy.silver.fact_prescription_cleansed;
+FROM localuc.silver.fact_prescription_cleansed;
 
-OPTIMIZE pharmacy.gold.fact_prescription ZORDER BY (sk_patient_id, written_date);
+OPTIMIZE localuc.gold.fact_prescription ZORDER BY (sk_patient_id, written_date);
 
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1128,7 +1128,7 @@ OPTIMIZE pharmacy.gold.fact_prescription ZORDER BY (sk_patient_id, written_date)
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Gold adherence fact
-CREATE OR REPLACE TABLE pharmacy.gold.fact_adherence
+CREATE OR REPLACE TABLE localuc.gold.fact_adherence
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -1149,9 +1149,9 @@ SELECT
     adherence_status,
     created_date,
     current_timestamp() AS _gold_created_date
-FROM pharmacy.silver.fact_adherence_cleansed;
+FROM localuc.silver.fact_adherence_cleansed;
 
-OPTIMIZE pharmacy.gold.fact_adherence ZORDER BY (sk_patient_id, measurement_period_start_date);
+OPTIMIZE localuc.gold.fact_adherence ZORDER BY (sk_patient_id, measurement_period_start_date);
 
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1159,7 +1159,7 @@ OPTIMIZE pharmacy.gold.fact_adherence ZORDER BY (sk_patient_id, measurement_peri
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Gold clinical interaction fact
-CREATE OR REPLACE TABLE pharmacy.gold.fact_clinical_interaction
+CREATE OR REPLACE TABLE localuc.gold.fact_clinical_interaction
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -1179,9 +1179,9 @@ SELECT
     follow_up_required,
     created_date,
     current_timestamp() AS _gold_created_date
-FROM pharmacy.silver.fact_clinical_interaction_cleansed;
+FROM localuc.silver.fact_clinical_interaction_cleansed;
 
-OPTIMIZE pharmacy.gold.fact_clinical_interaction ZORDER BY (sk_patient_id, interaction_date);
+OPTIMIZE localuc.gold.fact_clinical_interaction ZORDER BY (sk_patient_id, interaction_date);
 
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1189,7 +1189,7 @@ OPTIMIZE pharmacy.gold.fact_clinical_interaction ZORDER BY (sk_patient_id, inter
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Gold shipment fact
-CREATE OR REPLACE TABLE pharmacy.gold.fact_shipment
+CREATE OR REPLACE TABLE localuc.gold.fact_shipment
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -1211,7 +1211,7 @@ SELECT
     created_date,
     updated_date,
     current_timestamp() AS _gold_created_date
-FROM pharmacy.silver.fact_shipment_cleansed;
+FROM localuc.silver.fact_shipment_cleansed;
 
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1219,7 +1219,7 @@ FROM pharmacy.silver.fact_shipment_cleansed;
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Gold last-event snapshot fact
-CREATE OR REPLACE TABLE pharmacy.gold.fact_last_event
+CREATE OR REPLACE TABLE localuc.gold.fact_last_event
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -1239,7 +1239,7 @@ SELECT
     is_resolved,
     created_date,
     current_timestamp() AS _gold_created_date
-FROM pharmacy.silver.fact_last_event_cleansed;
+FROM localuc.silver.fact_last_event_cleansed;
 
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1247,14 +1247,14 @@ FROM pharmacy.silver.fact_last_event_cleansed;
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Analytic view: patient counts by state (BI)
-CREATE OR REPLACE VIEW pharmacy.gold.v_patients_by_state AS
+CREATE OR REPLACE VIEW localuc.gold.v_patients_by_state AS
 SELECT
     p.state,
     COUNT(DISTINCT p.sk_patient_id) AS total_patients,
     COUNT(DISTINCT CASE WHEN p.is_active THEN p.sk_patient_id END) AS active_patients,
     COUNT(DISTINCT p.primary_rare_disease) AS disease_count,
     ROUND(AVG(p.age), 1) AS avg_age
-FROM pharmacy.gold.dim_patient p
+FROM localuc.gold.dim_patient p
 WHERE p.state IS NOT NULL
 GROUP BY p.state;
 
@@ -1264,7 +1264,7 @@ GROUP BY p.state;
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Analytic view: prescription metrics by medication
-CREATE OR REPLACE VIEW pharmacy.gold.v_prescription_metrics AS
+CREATE OR REPLACE VIEW localuc.gold.v_prescription_metrics AS
 SELECT
     m.ndc_code,
     m.medication_name,
@@ -1278,8 +1278,8 @@ SELECT
     ) AS fill_rate_pct,
     ROUND(SUM(f.total_cost), 2) AS total_revenue,
     ROUND(AVG(f.days_to_fill), 1) AS avg_days_to_fill
-FROM pharmacy.gold.fact_prescription f
-INNER JOIN pharmacy.gold.dim_medication m
+FROM localuc.gold.fact_prescription f
+INNER JOIN localuc.gold.dim_medication m
     ON f.sk_medication_id = m.sk_medication_id
 WHERE f.written_date >= date_sub(current_date(), 365)
 GROUP BY m.ndc_code, m.medication_name, m.manufacturer;
@@ -1290,7 +1290,7 @@ GROUP BY m.ndc_code, m.medication_name, m.manufacturer;
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Analytic view: adherence summary by patient
-CREATE OR REPLACE VIEW pharmacy.gold.v_patient_adherence AS
+CREATE OR REPLACE VIEW localuc.gold.v_patient_adherence AS
 SELECT
     p.sk_patient_id,
     p.patient_external_id,
@@ -1301,8 +1301,8 @@ SELECT
     COUNT(DISTINCT CASE WHEN a.adherence_status = 'Adherent' THEN a.sk_medication_id END) AS adherent_medications,
     COUNT(DISTINCT CASE WHEN a.adherence_status = 'Non-Adherent' THEN a.sk_medication_id END) AS non_adherent_medications,
     ROUND(AVG(a.gaps_count), 1) AS avg_gaps
-FROM pharmacy.gold.fact_adherence a
-INNER JOIN pharmacy.gold.dim_patient p
+FROM localuc.gold.fact_adherence a
+INNER JOIN localuc.gold.dim_patient p
     ON a.sk_patient_id = p.sk_patient_id
 WHERE a.measurement_period_end_date >= date_sub(current_date(), 90)
 GROUP BY p.sk_patient_id, p.patient_external_id, p.first_name, p.last_name;
@@ -1313,7 +1313,7 @@ GROUP BY p.sk_patient_id, p.patient_external_id, p.first_name, p.last_name;
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Analytic view: prescriber performance metrics
-CREATE OR REPLACE VIEW pharmacy.gold.v_prescriber_performance AS
+CREATE OR REPLACE VIEW localuc.gold.v_prescriber_performance AS
 SELECT
     pr.sk_prescriber_id,
     pr.npi_number,
@@ -1328,8 +1328,8 @@ SELECT
     ROUND(AVG(f.days_to_fill), 1) AS avg_days_to_fill,
     ROUND(SUM(f.total_cost), 2) AS total_revenue,
     COUNT(DISTINCT f.sk_patient_id) AS unique_patients
-FROM pharmacy.gold.fact_prescription f
-INNER JOIN pharmacy.gold.dim_prescriber pr
+FROM localuc.gold.fact_prescription f
+INNER JOIN localuc.gold.dim_prescriber pr
     ON f.sk_prescriber_id = pr.sk_prescriber_id
 WHERE f.written_date >= date_sub(current_date(), 365)
 GROUP BY pr.sk_prescriber_id, pr.npi_number, pr.first_name, pr.last_name, pr.specialty;
@@ -1340,7 +1340,7 @@ GROUP BY pr.sk_prescriber_id, pr.npi_number, pr.first_name, pr.last_name, pr.spe
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Analytic view: shipment volume and performance by period
-CREATE OR REPLACE VIEW pharmacy.gold.v_shipment_analysis AS
+CREATE OR REPLACE VIEW localuc.gold.v_shipment_analysis AS
 SELECT
     YEAR(s.ship_date) AS ship_year,
     MONTH(s.ship_date) AS ship_month,
@@ -1349,7 +1349,7 @@ SELECT
     ROUND(AVG(s.delivery_days), 1) AS avg_delivery_days,
     COUNT(DISTINCT CASE WHEN s.exception_flag THEN s.sk_shipment_id END) AS exception_count,
     ROUND(SUM(s.shipping_cost), 2) AS total_shipping_cost
-FROM pharmacy.gold.fact_shipment s
+FROM localuc.gold.fact_shipment s
 WHERE s.ship_date >= date_sub(current_date(), 365)
 GROUP BY YEAR(s.ship_date), MONTH(s.ship_date), s.carrier_name;
 
@@ -1359,39 +1359,39 @@ GROUP BY YEAR(s.ship_date), MONTH(s.ship_date), s.carrier_name;
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: Referential integrity checks (orphan keys in gold fact_prescription)
-CREATE OR REPLACE VIEW pharmacy.gold.v_data_integrity_check AS
+CREATE OR REPLACE VIEW localuc.gold.v_data_integrity_check AS
 SELECT
     'fact_prescription' AS table_name,
     'Missing Patients' AS check_type,
     COUNT(*) AS invalid_records
-FROM pharmacy.gold.fact_prescription f
+FROM localuc.gold.fact_prescription f
 WHERE NOT EXISTS (
-    SELECT 1 FROM pharmacy.gold.dim_patient d WHERE d.sk_patient_id = f.sk_patient_id
+    SELECT 1 FROM localuc.gold.dim_patient d WHERE d.sk_patient_id = f.sk_patient_id
 )
 UNION ALL
 SELECT
     'fact_prescription',
     'Missing Medications',
     COUNT(*)
-FROM pharmacy.gold.fact_prescription f
+FROM localuc.gold.fact_prescription f
 WHERE NOT EXISTS (
-    SELECT 1 FROM pharmacy.gold.dim_medication d WHERE d.sk_medication_id = f.sk_medication_id
+    SELECT 1 FROM localuc.gold.dim_medication d WHERE d.sk_medication_id = f.sk_medication_id
 )
 UNION ALL
 SELECT
     'fact_prescription',
     'Missing Prescribers',
     COUNT(*)
-FROM pharmacy.gold.fact_prescription f
+FROM localuc.gold.fact_prescription f
 WHERE NOT EXISTS (
-    SELECT 1 FROM pharmacy.gold.dim_prescriber d WHERE d.sk_prescriber_id = f.sk_prescriber_id
+    SELECT 1 FROM localuc.gold.dim_prescriber d WHERE d.sk_prescriber_id = f.sk_prescriber_id
 )
 UNION ALL
 SELECT
     'fact_prescription',
     'Invalid Dates',
     COUNT(*)
-FROM pharmacy.gold.fact_prescription f
+FROM localuc.gold.fact_prescription f
 WHERE f.filled_date IS NOT NULL AND f.written_date IS NOT NULL AND f.filled_date < f.written_date;
 
 
@@ -1400,31 +1400,31 @@ WHERE f.filled_date IS NOT NULL AND f.written_date IS NOT NULL AND f.filled_date
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 -- Run order: High-level row counts and freshness by entity
-CREATE OR REPLACE VIEW pharmacy.gold.v_data_statistics AS
+CREATE OR REPLACE VIEW localuc.gold.v_data_statistics AS
 SELECT
     'Patients' AS entity,
     COUNT(*) AS total_records,
     COUNT(DISTINCT DATE(created_date)) AS distinct_creation_dates,
     MAX(created_date) AS last_update
-FROM pharmacy.gold.dim_patient
+FROM localuc.gold.dim_patient
 UNION ALL
 SELECT
     'Medications',
     COUNT(*),
     COUNT(DISTINCT DATE(created_date)),
     MAX(created_date)
-FROM pharmacy.gold.dim_medication
+FROM localuc.gold.dim_medication
 UNION ALL
 SELECT
     'Prescriptions',
     COUNT(*),
     COUNT(DISTINCT DATE(created_date)),
     MAX(created_date)
-FROM pharmacy.gold.fact_prescription
+FROM localuc.gold.fact_prescription
 UNION ALL
 SELECT
     'Shipments',
     COUNT(*),
     COUNT(DISTINCT DATE(created_date)),
     MAX(created_date)
-FROM pharmacy.gold.fact_shipment;
+FROM localuc.gold.fact_shipment;

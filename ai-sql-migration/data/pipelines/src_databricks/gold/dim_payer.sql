@@ -1,5 +1,5 @@
 -- Run order: Gold payer dimension
-CREATE OR REPLACE TABLE pharmacy.gold.dim_payer
+CREATE OR REPLACE TABLE localuc.gold.dim_payer
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -12,9 +12,9 @@ SELECT
     pcn_number,
     group_number,
     contact_phone,
-    specialty_pharmacy_network,
+    specialty_localuc_network,
     is_active,
     created_date,
     updated_date,
     current_timestamp() AS _gold_created_date
-FROM pharmacy.silver.dim_payer_cleansed;
+FROM localuc.silver.dim_payer_cleansed;

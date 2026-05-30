@@ -46,14 +46,14 @@ def _get_connection(
     If parameters are not provided, reads from .env:
     - SQLEDGE_HOST (default: localhost)
     - SQLEDGE_PORT (default: 1433)
-    - SQLEDGE_DATABASE (default: pharmacy_db)
+    - SQLEDGE_DATABASE (default: localuc_db)
     - SQLEDGE_USER
     - SQLEDGE_PASSWORD
     """
     # Read from .env if parameters not provided
     host = host or os.environ.get("SQLEDGE_HOST", "localhost")
     port = port or int(os.environ.get("SQLEDGE_PORT", "1433"))
-    database = database or os.environ.get("SQLEDGE_DATABASE", "pharmacy_db")
+    database = database or os.environ.get("SQLEDGE_DATABASE", "localuc_db")
     user = user or os.environ.get("SQLEDGE_USER", "")
     password = password or os.environ.get("SQLEDGE_PASSWORD", "")
     
@@ -261,7 +261,7 @@ def create_tables(
     if not os.path.exists(full_sql_path):
         raise FileNotFoundError(f"SQL script not found: {full_sql_path}")
 
-    database = database or os.environ.get("SQLEDGE_DATABASE", "pharmacy_db")
+    database = database or os.environ.get("SQLEDGE_DATABASE", "localuc_db")
 
     with open(full_sql_path, "r") as f:
         sql_script = f.read()
@@ -473,7 +473,7 @@ def init(
 
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Initialize pharmacy_db on SQL Server or SQL Edge (schema + CSV load)."
+        description="Initialize localuc_db on SQL Server or SQL Edge (schema + CSV load)."
     )
     parser.add_argument(
         "command",
@@ -515,7 +515,7 @@ def _connection_from_args(args: argparse.Namespace) -> tuple[str, int, str, str,
     database = (
         args.database
         if args.database is not None
-        else os.environ.get("SQLEDGE_DATABASE", "pharmacy_db")
+        else os.environ.get("SQLEDGE_DATABASE", "localuc_db")
     )
     user = args.user if args.user is not None else os.environ.get("SQLEDGE_USER", "")
     password = (

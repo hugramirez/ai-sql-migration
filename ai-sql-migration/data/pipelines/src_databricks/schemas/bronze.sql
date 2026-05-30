@@ -1,4 +1,4 @@
-CREATE SCHEMA IF NOT EXISTS pharmacy.bronze
+CREATE SCHEMA IF NOT EXISTS localuc.bronze
 COMMENT 'BRONZE LAYER - Raw Data Ingestion Zone
 Purpose: Stores unprocessed data extracted directly from source systems (SQL Server, APIs, files)
 Characteristics:
