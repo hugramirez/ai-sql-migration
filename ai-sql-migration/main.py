@@ -82,6 +82,7 @@ def _print_messages(messages: list) -> None:
     migrate_query_lens: list[int] = []
     run_sql_query_lens: list[int] = []
     last_migration_ai: str | None = None
+    last_ai_response: str | None = None
 
     for msg in messages:
         if isinstance(msg, HumanMessage):
@@ -106,9 +107,13 @@ def _print_messages(messages: list) -> None:
                     if isinstance(q, str):
                         run_sql_query_lens.append(len(q))
 
+            # Check for migration summary block first
             block = _ai_migration_summary_block(content)
             if block is not None:
                 last_migration_ai = block
+            # Otherwise, store the last AI response (only if no tool calls)
+            elif not getattr(msg, "tool_calls", None):
+                last_ai_response = content
 
     if human_body is not None:
         console.print(
@@ -153,6 +158,15 @@ def _print_messages(messages: list) -> None:
             Panel(
                 Markdown(last_migration_ai),
                 title="[ai]AI — Migration Summary & Results[/ai]",
+                border_style="green",
+                padding=(0, 1),
+            )
+        )
+    elif last_ai_response is not None:
+        console.print(
+            Panel(
+                Markdown(last_ai_response),
+                title="[ai]AI Response[/ai]",
                 border_style="green",
                 padding=(0, 1),
             )
