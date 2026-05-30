@@ -1,5 +1,3 @@
-## Compufest[1]
-
 # ai-sql-migration
 
 AI-powered SQL migration agent that uses [LangGraph](https://github.com/langchain-ai/langgraph) and [Anthropic Claude](https://www.anthropic.com) to query data from **Azure SQL Edge** (Docker) and **Databricks** using natural language.
