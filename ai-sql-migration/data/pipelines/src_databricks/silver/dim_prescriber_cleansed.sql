@@ -1,5 +1,5 @@
 -- Run order: Silver prescriber (current row per npi_number; SCD2 fields reserved for future)
-CREATE OR REPLACE TABLE pharmacy.silver.dim_prescriber_cleansed
+CREATE OR REPLACE TABLE localuc.silver.dim_prescriber_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -29,6 +29,6 @@ FROM (
     SELECT
         *,
         ROW_NUMBER() OVER (PARTITION BY npi_number ORDER BY created_date DESC NULLS LAST) AS _row_num
-    FROM pharmacy.bronze.raw_dim_prescriber
+    FROM localuc.bronze.raw_dim_prescriber
 ) ranked
 WHERE ranked._row_num = 1;

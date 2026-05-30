@@ -1,5 +1,5 @@
 -- Run order: Gold prescription fact + physical optimization
-CREATE OR REPLACE TABLE pharmacy.gold.fact_prescription
+CREATE OR REPLACE TABLE localuc.gold.fact_prescription
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -27,6 +27,6 @@ SELECT
     created_date,
     updated_date,
     current_timestamp() AS _gold_created_date
-FROM pharmacy.silver.fact_prescription_cleansed;
+FROM localuc.silver.fact_prescription_cleansed;
 
-OPTIMIZE pharmacy.gold.fact_prescription ZORDER BY (sk_patient_id, written_date);
+OPTIMIZE localuc.gold.fact_prescription ZORDER BY (sk_patient_id, written_date);

@@ -2,7 +2,7 @@
 -- Grain: One row per payer/plan
 -- SCD Type: Type 1
 
-USE pharmacy_db;
+USE localdb;
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'dim_payer' AND schema_id = SCHEMA_ID('dbo'))

@@ -30,26 +30,26 @@ def test_getdate_to_current_timestamp():
 
 
 def test_table_remap_dotted():
-    sql, warnings = _rewrite_tsql_to_sparksql("SELECT id FROM pharmacy_db.dbo.dim_patient")
-    assert "pharmacy.gold.dim_patient" in sql
-    assert "pharmacy_db" not in sql
+    sql, warnings = _rewrite_tsql_to_sparksql("SELECT id FROM localdb.dbo.dim_patient")
+    assert "localuc.gold.dim_patient" in sql
+    assert "localdb" not in sql
 
 
 def test_table_remap_bracketed():
-    sql, warnings = _rewrite_tsql_to_sparksql("SELECT id FROM [pharmacy_db].[dbo].[dim_patient]")
-    assert "pharmacy.gold.dim_patient" in sql
-    assert "pharmacy_db" not in sql
+    sql, warnings = _rewrite_tsql_to_sparksql("SELECT id FROM [localdb].[dbo].[dim_patient]")
+    assert "localuc.gold.dim_patient" in sql
+    assert "localdb" not in sql
 
 
 def test_table_remap_dbo_fact():
     sql, warnings = _rewrite_tsql_to_sparksql("SELECT 1 FROM dbo.fact_prescription rx")
-    assert "pharmacy.gold.fact_prescription" in sql
+    assert "localuc.gold.fact_prescription" in sql
     assert "dbo.fact_prescription" not in sql
 
 
 def test_uc_prefix_env_override(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setenv("SQL_MIGRATION_UC_PREFIX", "workspace.default")
-    sql, _ = _rewrite_tsql_to_sparksql("SELECT 1 FROM pharmacy_db.dbo.dim_medication")
+    sql, _ = _rewrite_tsql_to_sparksql("SELECT 1 FROM localdb.dbo.dim_medication")
     assert "workspace.default.dim_medication" in sql
 
 
@@ -85,30 +85,30 @@ def test_full_query_combined():
     query = (
         "SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name, "
         "ISNULL(last_name, 'unknown') AS last_name, "
-        "GETDATE() AS migrated_at FROM pharmacy_db.dbo.dim_patient;"
+        "GETDATE() AS migrated_at FROM localdb.dbo.dim_patient;"
     )
     sql, warnings = _rewrite_tsql_to_sparksql(query)
     assert "LIMIT 5" in sql
     assert "COALESCE(" in sql
     assert "current_timestamp()" in sql
-    assert "pharmacy.gold.dim_patient" in sql
+    assert "localuc.gold.dim_patient" in sql
     assert "TOP" not in sql.upper()
     assert "ISNULL" not in sql.upper()
     assert "GETDATE" not in sql.upper()
 
 
 def test_migrate_sql_query_tool_output_format():
-    query = "SELECT TOP 3 ISNULL(name, 'x') AS name FROM pharmacy_db.dbo.dim_patient;"
+    query = "SELECT TOP 3 ISNULL(name, 'x') AS name FROM localdb.dbo.dim_patient;"
     result = migrate_sql_query.invoke({"query": query})
     assert result.startswith("MIGRATED_SQL:")
     assert "REWRITES:" in result
 
 
 def test_migrate_sql_query_tool_migrated_sql_line():
-    query = "SELECT TOP 3 GETDATE() AS ts FROM pharmacy_db.dbo.dim_patient;"
+    query = "SELECT TOP 3 GETDATE() AS ts FROM localdb.dbo.dim_patient;"
     result = migrate_sql_query.invoke({"query": query})
     migrated_line = next(l for l in result.splitlines() if l.startswith("MIGRATED_SQL:"))
     extracted = migrated_line[len("MIGRATED_SQL:"):].strip()
     assert "current_timestamp()" in extracted
     assert "LIMIT 3" in extracted
-    assert "pharmacy.gold.dim_patient" in extracted
+    assert "localuc.gold.dim_patient" in extracted

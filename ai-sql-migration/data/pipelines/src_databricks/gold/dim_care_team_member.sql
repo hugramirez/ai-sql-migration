@@ -1,5 +1,5 @@
 -- Run order: Gold care team member dimension
-CREATE OR REPLACE TABLE pharmacy.gold.dim_care_team_member
+CREATE OR REPLACE TABLE localuc.gold.dim_care_team_member
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -15,4 +15,4 @@ SELECT
     created_date,
     updated_date,
     current_timestamp() AS _gold_created_date
-FROM pharmacy.silver.dim_care_team_member_cleansed;
+FROM localuc.silver.dim_care_team_member_cleansed;

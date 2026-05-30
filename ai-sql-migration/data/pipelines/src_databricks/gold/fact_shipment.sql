@@ -1,5 +1,5 @@
 -- Run order: Gold shipment fact
-CREATE OR REPLACE TABLE pharmacy.gold.fact_shipment
+CREATE OR REPLACE TABLE localuc.gold.fact_shipment
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -21,4 +21,4 @@ SELECT
     created_date,
     updated_date,
     current_timestamp() AS _gold_created_date
-FROM pharmacy.silver.fact_shipment_cleansed;
+FROM localuc.silver.fact_shipment_cleansed;

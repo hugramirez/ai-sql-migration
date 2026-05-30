@@ -1,5 +1,5 @@
 -- Run order: Bronze medication dimension
-CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_medication (
+CREATE OR REPLACE TABLE localuc.bronze.raw_dim_medication (
     sk_medication_id BIGINT COMMENT 'Surrogate key for medication (internal unique identifier)',
     ndc_code STRING COMMENT 'National Drug Code identifier from source system',
     medication_name STRING COMMENT 'Branded or trade medication name',

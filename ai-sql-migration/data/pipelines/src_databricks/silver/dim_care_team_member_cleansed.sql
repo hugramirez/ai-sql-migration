@@ -1,5 +1,5 @@
 -- Run order: Silver care team member (latest row per employee_id)
-CREATE OR REPLACE TABLE pharmacy.silver.dim_care_team_member_cleansed
+CREATE OR REPLACE TABLE localuc.silver.dim_care_team_member_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -20,6 +20,6 @@ FROM (
     SELECT
         *,
         ROW_NUMBER() OVER (PARTITION BY employee_id ORDER BY created_date DESC NULLS LAST) AS _row_num
-    FROM pharmacy.bronze.raw_dim_care_team_member
+    FROM localuc.bronze.raw_dim_care_team_member
 ) ranked
 WHERE ranked._row_num = 1;

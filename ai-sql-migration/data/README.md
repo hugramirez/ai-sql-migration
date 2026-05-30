@@ -4,11 +4,11 @@ Database initialization (`init_db.py`) and SQL pipelines under `pipelines/`.
 
 ## Databricks (Unity Catalog)
 
-From **`ai-sql-migration`**, set `DATABRICKS_HOST`, `DATABRICKS_TOKEN`, and `DATABRICKS_WAREHOUSE_ID` in `.env`. The catalog **`pharmacy`** must exist (or be creatable by your user). `DATABRICKS_WAREHOUSE_ID` must be the **full** SQL warehouse UUID (32 hex characters, with or without hyphens); a truncated ID usually yields HTTP 400 on connect.
+From **`ai-sql-migration`**, set `DATABRICKS_HOST`, `DATABRICKS_TOKEN`, and `DATABRICKS_WAREHOUSE_ID` in `.env`. The catalog **`localuc`** must exist (or be creatable by your user). `DATABRICKS_WAREHOUSE_ID` must be the **full** SQL warehouse UUID (32 hex characters, with or without hyphens); a truncated ID usually yields HTTP 400 on connect.
 
 Optional: `DATABRICKS_MAX_ROWS_PER_TABLE=100` limits bronze **dimension** CSV loads to the first *N* rows per table (smoke tests). Omit for a full load. CLI: `uv run python data/init_db_databricks.py init --max-rows 100` (use `--max-rows 0` to ignore the env cap for that run).
 
-- **Python CLI**: `uv run python data/init_db_databricks.py --help` — `init` runs bronze DDL, loads dimension CSVs into `pharmacy.bronze.raw_dim_*`, then silver / gold / views. SQL files that append `OPTIMIZE` after a `CREATE TABLE … AS SELECT` are split into separate warehouse statements automatically. Facts in bronze are not loaded from `raw_data` (schema differs from SQL Server exports); extend with your own ingest.
+- **Python CLI**: `uv run python data/init_db_databricks.py --help` — `init` runs bronze DDL, loads dimension CSVs into `localuc.bronze.raw_dim_*`, then silver / gold / views. SQL files that append `OPTIMIZE` after a `CREATE TABLE … AS SELECT` are split into separate warehouse statements automatically. Facts in bronze are not loaded from `raw_data` (schema differs from SQL Server exports); extend with your own ingest.
 - **Smoke test (SQL warehouse only)**: `uv run python scripts/test_databricks_sql_connection.py` — runs `SELECT 1` with the same `databricks.sql.connect` parameters as the pipeline (reads `.env`).
 - **Notebook**: open `data/init_db_databricks.ipynb` (includes a minimal connection cell after `load_dotenv`; same flow as CLI for the full pipeline).
 
@@ -29,7 +29,7 @@ Create or edit `ai-sql-migration/.env`. `data/init_db.py` and `data/init_db_data
 ```env
 SQLEDGE_HOST=localhost
 SQLEDGE_PORT=1433
-SQLEDGE_DATABASE=pharmacy_db
+SQLEDGE_DATABASE=localuc_db
 SQLEDGE_USER=sa
 SQLEDGE_PASSWORD=<your_password>
 ```
@@ -55,7 +55,7 @@ uv run python data/init_db.py
 
 This runs `init()`, which:
 
-1. **Drops `pharmacy_db` if it already exists** (best-effort), recreates it, then runs `pipelines/src_sql_server/run.sql` to create tables and indexes.
+1. **Drops `localuc_db` if it already exists** (best-effort), recreates it, then runs `pipelines/src_sql_server/run.sql` to create tables and indexes.
 2. Loads CSVs from `data/raw_data/` into `dbo.*` tables (see load order in `init_db.py`).
 3. Writes logs under `ai-sql-migration/logs/` as `data_load_YYYYMMDD_HHMMSS.log` (a new log file is created when the CSV load phase starts).
 

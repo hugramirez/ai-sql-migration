@@ -1,5 +1,5 @@
 -- Run order: Bronze prescriber dimension
-CREATE OR REPLACE TABLE pharmacy.bronze.raw_dim_prescriber (
+CREATE OR REPLACE TABLE localuc.bronze.raw_dim_prescriber (
     sk_prescriber_id BIGINT COMMENT 'Surrogate key for prescriber (internal unique identifier)',
     npi_number STRING COMMENT 'National Provider Identifier (NPI)',
     first_name STRING COMMENT 'Prescriber first name',

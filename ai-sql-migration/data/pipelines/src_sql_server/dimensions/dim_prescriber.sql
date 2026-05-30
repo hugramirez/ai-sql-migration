@@ -2,7 +2,7 @@
 -- Grain: One row per unique NPI
 -- SCD Type: Type 2
 
-USE pharmacy_db;
+USE localdb;
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'dim_prescriber' AND schema_id = SCHEMA_ID('dbo'))

@@ -1,5 +1,5 @@
 -- Run order: Silver clinical interactions (aligned to dbo; gold uses legacy interaction_mode / outcome column names)
-CREATE OR REPLACE TABLE pharmacy.silver.fact_clinical_interaction_cleansed
+CREATE OR REPLACE TABLE localuc.silver.fact_clinical_interaction_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -22,4 +22,4 @@ SELECT
     follow_up_required,
     created_date,
     current_timestamp() AS _silver_processed_date
-FROM pharmacy.bronze.raw_fact_clinical_interaction;
+FROM localuc.bronze.raw_fact_clinical_interaction;

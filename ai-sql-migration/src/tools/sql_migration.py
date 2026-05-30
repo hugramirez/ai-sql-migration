@@ -17,13 +17,13 @@ def _to_bool(value: str, default: bool = True) -> bool:
 
 
 def _migration_uc_prefix() -> str:
-    """Unity Catalog prefix for pharmacy warehouse objects (no trailing dot)."""
-    raw = os.environ.get("SQL_MIGRATION_UC_PREFIX", "pharmacy.gold").strip()
-    return raw.rstrip(".").strip() or "pharmacy.gold"
+    """Unity Catalog prefix for localuc warehouse objects (no trailing dot)."""
+    raw = os.environ.get("SQL_MIGRATION_UC_PREFIX", "localuc.gold").strip()
+    return raw.rstrip(".").strip() or "localuc.gold"
 
 
 # Tables aligned with data/pipelines (SQL Server dbo.* → same logical name under UC prefix)
-_PHARMACY_DBO_TABLES: tuple[str, ...] = (
+_LOCALDB_DBO_TABLES: tuple[str, ...] = (
     "dim_patient",
     "dim_medication",
     "dim_prescriber",
@@ -39,13 +39,13 @@ _PHARMACY_DBO_TABLES: tuple[str, ...] = (
 
 
 def _table_rewrite_pairs() -> list[tuple[str, str]]:
-    """Longest-match-friendly (pharmacy_db.dbo.* before bare dbo.*)."""
+    """Longest-match-friendly (localdb.dbo.* before bare dbo.*)."""
     prefix = _migration_uc_prefix()
     pairs: list[tuple[str, str]] = []
-    for t in _PHARMACY_DBO_TABLES:
+    for t in _LOCALDB_DBO_TABLES:
         target = f"{prefix}.{t}"
-        pairs.append((rf"\[pharmacy_db\]\.\[dbo\]\.\[{t}\]", target))
-        pairs.append((rf"pharmacy_db\.dbo\.{t}\b", target))
+        pairs.append((rf"\[localdb\]\.\[dbo\]\.\[{t}\]", target))
+        pairs.append((rf"localdb\.dbo\.{t}\b", target))
         pairs.append((rf"(?<![\w])dbo\.{t}\b", target))
     pairs.sort(key=lambda x: len(x[0]), reverse=True)
     return pairs
@@ -86,7 +86,7 @@ def _rewrite_tsql_to_sparksql(query: str) -> tuple[str, list[str]]:
         rewritten = off_fetch.sub(r"LIMIT \1", rewritten).strip()
         warnings.append("Applied OFFSET/FETCH -> LIMIT rewrite.")
 
-    # Remap pharmacy dbo.* → Unity Catalog gold (or SQL_MIGRATION_UC_PREFIX)
+    # Remap localdb dbo.* → Unity Catalog gold (or SQL_MIGRATION_UC_PREFIX)
     for pattern, replacement in _table_rewrite_pairs():
         new_sql = re.sub(pattern, replacement, rewritten, flags=re.IGNORECASE)
         if new_sql != rewritten:

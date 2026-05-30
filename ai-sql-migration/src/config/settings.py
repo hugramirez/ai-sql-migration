@@ -18,19 +18,19 @@ DEFAULT_SYSTEM_PROMPT = """You are an expert data analyst agent with access to t
 - `describe_sqledge_table(table_name)` — return column names, types, and nullability for a table.
 
 
-**Databricks** (Unity Catalog, pharmacy semantic model: catalog `pharmacy`, schemas `bronze` / `silver` / `gold`)
+**Databricks** (Unity Catalog, localuc semantic model: catalog `localuc`, schemas `bronze` / `silver` / `gold`)
 - `run_sql_query(query, limit)` — run a read-only SELECT/SHOW/DESCRIBE query. LIMIT N is appended automatically.
 - `describe_table(table_name)` — describe a Unity Catalog table schema.
 - `migrate_sql_query(query)` — migrate SQL Edge/T-SQL to Databricks-compatible Spark SQL. Returns the migrated SQL ready to run.
-- Analytic facts/dimensions for reports: `pharmacy.gold.fact_*`, `pharmacy.gold.dim_*` (set env `SQL_MIGRATION_UC_PREFIX` to override the rewrite target, e.g. `workspace.default`).
+- Analytic facts/dimensions for reports: `localuc.gold.fact_*`, `localuc.gold.dim_*` (set env `SQL_MIGRATION_UC_PREFIX` to override the rewrite target, e.g. `workspace.default`).
 
 ## Table mapping (SQL Edge -> Databricks)
 
-When migrating, `migrate_sql_query` remaps `pharmacy_db.dbo.*` and `dbo.*` to `pharmacy.gold.*` by default (see `SQL_MIGRATION_UC_PREFIX`). Example:
+When migrating, `migrate_sql_query` remaps `localdb.dbo.*` and `dbo.*` to `localuc.gold.*` by default (see `SQL_MIGRATION_UC_PREFIX`). Example:
 | SQL Edge (T-SQL) | Databricks (Spark SQL) |
 |---|---|
-| `[pharmacy_db].[dbo].[dim_patient]` | `pharmacy.gold.dim_patient` |
-| `dbo.fact_prescription` | `pharmacy.gold.fact_prescription` |
+| `[localdb].[dbo].[dim_patient]` | `localuc.gold.dim_patient` |
+| `dbo.fact_prescription` | `localuc.gold.fact_prescription` |
 
 After migration, always strip any remaining T-SQL bracket notation (`[column]` -> `column`) before executing with `run_sql_query`.
 
@@ -132,12 +132,12 @@ class Settings:
             uc_schema=os.environ.get("UC_SCHEMA", "").strip(),
             sqledge_host=os.environ.get("SQLEDGE_HOST", "localhost").strip(),
             sqledge_port=int(os.environ.get("SQLEDGE_PORT", "1433")),
-            sqledge_database=os.environ.get("SQLEDGE_DATABASE", "pharmacy_db").strip(),
+            sqledge_database=os.environ.get("SQLEDGE_DATABASE", "localdb").strip(),
             sqledge_user=os.environ.get("SQLEDGE_USER", "").strip(),
             sqledge_password=os.environ.get("SQLEDGE_PASSWORD", "").strip(),
             sqlserver_host=os.environ.get("SQLSERVER_HOST", "localhost").strip(),
             sqlserver_port=int(os.environ.get("SQLSERVER_PORT", "1433")),
-            sqlserver_database=os.environ.get("SQLSERVER_DATABASE", "pharmacy_db").strip(),
+            sqlserver_database=os.environ.get("SQLSERVER_DATABASE", "localdb").strip(),
             sqlserver_user=os.environ.get("SQLSERVER_USER", "").strip(),
             sqlserver_password=os.environ.get("SQLSERVER_PASSWORD", "").strip(),
             sqlfluff_enabled=os.environ.get("SQLFLUFF_ENABLED", "true").strip().lower() in {"1", "true", "yes", "on"},

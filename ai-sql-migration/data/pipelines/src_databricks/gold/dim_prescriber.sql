@@ -1,5 +1,5 @@
 -- Run order: Gold prescriber dimension
-CREATE OR REPLACE TABLE pharmacy.gold.dim_prescriber
+CREATE OR REPLACE TABLE localuc.gold.dim_prescriber
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -21,4 +21,4 @@ SELECT
     created_date,
     updated_date,
     current_timestamp() AS _gold_created_date
-FROM pharmacy.silver.dim_prescriber_cleansed;
+FROM localuc.silver.dim_prescriber_cleansed;
