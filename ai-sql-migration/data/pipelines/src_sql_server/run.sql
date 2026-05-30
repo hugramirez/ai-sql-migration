@@ -8,7 +8,7 @@
 -- those scripts in dependency order (same order as listed in SOURCE SECTION
 -- markers below).
 --
--- Database: pharmacy_db
+-- Database: localdb
 -- Schema: dbo
 -- ============================================================================
 
@@ -20,14 +20,14 @@
 USE master;
 GO
 
-IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'pharmacy_db')
+IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'localdb')
 BEGIN
-    CREATE DATABASE pharmacy_db
+    CREATE DATABASE localdb
         COLLATE SQL_Latin1_General_CP1_CI_AS;
 END
 GO
 
-USE pharmacy_db;
+USE localdb;
 GO
 
 IF EXISTS (
@@ -62,7 +62,7 @@ GO
 
 -- Run order: dim_patient (one row per patient; SCD Type 1 - current state only)
 
-USE pharmacy_db;
+USE localdb;
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'dim_patient' AND schema_id = SCHEMA_ID('dbo'))
@@ -99,7 +99,7 @@ GO
 
 -- Run order: dim_medication (one row per NDC code; SCD Type 1 - prices update in place)
 
-USE pharmacy_db;
+USE localdb;
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'dim_medication' AND schema_id = SCHEMA_ID('dbo'))
@@ -136,7 +136,7 @@ GO
 
 -- Run order: dim_prescriber (one row per NPI; SCD Type 2 - track specialty/location changes)
 
-USE pharmacy_db;
+USE localdb;
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'dim_prescriber' AND schema_id = SCHEMA_ID('dbo'))
@@ -173,7 +173,7 @@ GO
 
 -- Run order: dim_payer (one row per payer/plan; SCD Type 1 - attributes update in place)
 
-USE pharmacy_db;
+USE localdb;
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'dim_payer' AND schema_id = SCHEMA_ID('dbo'))
@@ -206,7 +206,7 @@ GO
 
 -- Run order: dim_date (conformed date dimension; one row per calendar date)
 
-USE pharmacy_db;
+USE localdb;
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'dim_date' AND schema_id = SCHEMA_ID('dbo'))
@@ -239,7 +239,7 @@ GO
 
 -- Run order: dim_care_team_member (one row per employee; SCD Type 1 - attributes update in place)
 
-USE pharmacy_db;
+USE localdb;
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'dim_care_team_member' AND schema_id = SCHEMA_ID('dbo'))
@@ -270,7 +270,7 @@ GO
 
 -- Run order: fact_prescription (primary hub; one row per prescription; Fact Type: Additive)
 
-USE pharmacy_db;
+USE localdb;
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'fact_prescription' AND schema_id = SCHEMA_ID('dbo'))
@@ -325,7 +325,7 @@ GO
 
 -- Run order: fact_adherence (one row per patient-prescription-measurement period; Fact Type: Semi-additive)
 
-USE pharmacy_db;
+USE localdb;
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'fact_adherence' AND schema_id = SCHEMA_ID('dbo'))
@@ -364,7 +364,7 @@ GO
 
 -- Run order: fact_clinical_interaction (one row per interaction event; Fact Type: Additive)
 
-USE pharmacy_db;
+USE localdb;
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'fact_clinical_interaction' AND schema_id = SCHEMA_ID('dbo'))
@@ -404,7 +404,7 @@ GO
 
 -- Run order: fact_shipment (one row per shipment; Fact Type: Additive)
 
-USE pharmacy_db;
+USE localdb;
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'fact_shipment' AND schema_id = SCHEMA_ID('dbo'))
@@ -449,7 +449,7 @@ GO
 
 -- Run order: fact_last_event (one row per prescription; Fact Type: Snapshot - current state only)
 
-USE pharmacy_db;
+USE localdb;
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'fact_last_event' AND schema_id = SCHEMA_ID('dbo'))
