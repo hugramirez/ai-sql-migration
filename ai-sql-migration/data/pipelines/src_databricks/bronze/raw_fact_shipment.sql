@@ -1,5 +1,5 @@
 -- Run order: Bronze shipment fact (aligned to dbo.fact_shipment / raw_data CSV)
-CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_shipment (
+CREATE OR REPLACE TABLE localuc.bronze.raw_fact_shipment (
     sk_shipment_id BIGINT COMMENT 'Surrogate key for shipment',
     shipment_external_id STRING COMMENT 'Business shipment identifier',
     sk_prescription_id BIGINT COMMENT 'FK to raw_fact_prescription',

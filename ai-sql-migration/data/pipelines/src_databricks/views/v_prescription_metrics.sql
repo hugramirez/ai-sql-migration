@@ -1,5 +1,5 @@
 -- Run order: Analytic view: prescription metrics by medication
-CREATE OR REPLACE VIEW pharmacy.gold.v_prescription_metrics AS
+CREATE OR REPLACE VIEW localuc.gold.v_prescription_metrics AS
 SELECT
     m.ndc_code,
     m.medication_name,
@@ -13,8 +13,8 @@ SELECT
     ) AS fill_rate_pct,
     ROUND(SUM(f.total_cost), 2) AS total_revenue,
     ROUND(AVG(f.days_to_fill), 1) AS avg_days_to_fill
-FROM pharmacy.gold.fact_prescription f
-INNER JOIN pharmacy.gold.dim_medication m
+FROM localuc.gold.fact_prescription f
+INNER JOIN localuc.gold.dim_medication m
     ON f.sk_medication_id = m.sk_medication_id
 WHERE f.written_date >= date_sub(current_date(), 365)
 GROUP BY m.ndc_code, m.medication_name, m.manufacturer;

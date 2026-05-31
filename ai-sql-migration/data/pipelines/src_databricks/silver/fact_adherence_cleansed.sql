@@ -1,5 +1,5 @@
 -- Run order: Silver adherence (join prescription for sk_medication_id; window derived from measurement_period label)
-CREATE OR REPLACE TABLE pharmacy.silver.fact_adherence_cleansed
+CREATE OR REPLACE TABLE localuc.silver.fact_adherence_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -33,8 +33,8 @@ WITH src AS (
             ) AS INT
         ) AS period_days,
         LEAST(GREATEST(COALESCE(a.pdc_proportion_days_covered, 0), 0), 1) AS pdc_clamped
-    FROM pharmacy.bronze.raw_fact_adherence a
-    LEFT JOIN pharmacy.bronze.raw_fact_prescription p
+    FROM localuc.bronze.raw_fact_adherence a
+    LEFT JOIN localuc.bronze.raw_fact_prescription p
         ON p.sk_prescription_id = a.sk_prescription_id
 )
 SELECT

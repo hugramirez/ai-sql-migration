@@ -1,5 +1,5 @@
 -- Run order: Silver date conformed dimension (pass-through from bronze calendar)
-CREATE OR REPLACE TABLE pharmacy.silver.dim_date_cleansed
+CREATE OR REPLACE TABLE localuc.silver.dim_date_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -18,4 +18,4 @@ SELECT
     is_weekend,
     is_holiday,
     current_timestamp() AS _silver_processed_date
-FROM pharmacy.bronze.raw_dim_date;
+FROM localuc.bronze.raw_dim_date;

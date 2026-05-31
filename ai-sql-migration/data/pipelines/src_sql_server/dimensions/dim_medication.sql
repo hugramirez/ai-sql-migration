@@ -2,7 +2,7 @@
 -- Grain: One row per unique NDC code
 -- SCD Type: Type 1
 
-USE pharmacy_db;
+USE localdb;
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'dim_medication' AND schema_id = SCHEMA_ID('dbo'))

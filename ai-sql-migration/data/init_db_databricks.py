@@ -1,5 +1,11 @@
 """Databricks Unity Catalog pipeline: DDL from modular SQL + bronze dimension loads.
 
+REQUIRED: The Unity Catalog ``localuc`` must exist before running this script. Create it with:
+  CREATE CATALOG IF NOT EXISTS localuc;
+  GRANT USE CATALOG ON CATALOG localuc TO `user@enterprise.com`;
+
+Run these SQL commands in your Databricks workspace SQL editor first.
+
 Uses ``databricks-sql-connector`` (SQL warehouse). Environment (from ``ai-sql-migration/.env``):
 
 - ``DATABRICKS_HOST`` — workspace URL, e.g. ``https://adb-....azuredatabricks.net``
@@ -7,7 +13,7 @@ Uses ``databricks-sql-connector`` (SQL warehouse). Environment (from ``ai-sql-mi
 - ``DATABRICKS_WAREHOUSE_ID`` — SQL warehouse ID (UUID)
 - ``DATABRICKS_MAX_ROWS_PER_TABLE`` (optional) — positive integer caps CSV rows loaded **per bronze dimension and fact table** (dev/smoke tests). Omit or empty = load all rows.
 
-The Unity Catalog ``pharmacy`` must exist (and your principal needs ``USE CATALOG`` + DDL on it).
+The Unity Catalog ``localuc`` must exist (and your principal needs ``USE CATALOG`` + DDL on it).
 Bronze fact DDL matches ``dbo.fact_*`` / ``raw_data/fact_*.csv``; this loader truncates and inserts
 those CSVs after dimensions (same optional row cap per table).
 
@@ -79,7 +85,7 @@ FACT_LOAD_ORDER = [
 ]
 
 CSV_TO_BRONZE = {
-    name: f"pharmacy.bronze.raw_{name}" for name in (*DIM_LOAD_ORDER, *FACT_LOAD_ORDER)
+    name: f"localuc.bronze.raw_{name}" for name in (*DIM_LOAD_ORDER, *FACT_LOAD_ORDER)
 }
 
 # Schemas + bronze DDL only (run before loading CSVs into bronze).
@@ -244,15 +250,15 @@ def execute_sql_file(conn, relative_to_data: str) -> None:
             cur.execute(stmt)
 
 
-def ensure_pharmacy_catalog(conn) -> None:
-    """Create catalog ``pharmacy`` if missing (may require admin / managed location in your workspace)."""
-    logging.info("Ensuring catalog pharmacy exists")
+def ensure_localuc_catalog(conn) -> None:
+    """Create catalog ``localuc`` if missing (may require admin / managed location in your workspace)."""
+    logging.info("Ensuring catalog localuc exists")
     try:
         with conn.cursor() as cur:
-            cur.execute("CREATE CATALOG IF NOT EXISTS pharmacy")
+            cur.execute("CREATE CATALOG IF NOT EXISTS localuc")
     except Exception as e:
         logging.warning(
-            "Could not auto-create catalog pharmacy (create it in UC UI if needed): %s",
+            "Could not auto-create catalog localuc (create it in UC UI if needed): %s",
             e,
         )
 
@@ -351,7 +357,7 @@ def load_bronze_csv_tables(
     batch_size: int = 80,
     max_rows_per_table: int | None = None,
 ) -> dict[str, int]:
-    """Truncate and load CSVs into ``pharmacy.bronze.raw_*`` (ingest columns use defaults).
+    """Truncate and load CSVs into ``localuc.bronze.raw_*`` (ingest columns use defaults).
 
     Args:
         table_names: Logical table names matching ``raw_data/{name}.csv`` and ``raw_{name}`` Delta tables.
@@ -481,7 +487,7 @@ def init(
 
     with get_connection() as conn:
         if not skip_ensure_catalog:
-            ensure_pharmacy_catalog(conn)
+            ensure_localuc_catalog(conn)
         run_ddl_pipeline(conn, PIPELINE_BRONZE_PHASE)
         logging.info("Loading bronze dimensions from %s", data_path)
         load_bronze_dimensions(conn, data_path=data_path, max_rows_per_table=row_cap)
@@ -497,7 +503,7 @@ def init(
 
 def _parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(
-        description="Databricks UC pharmacy pipeline (DDL + bronze dimensions and facts)."
+        description="Databricks UC localuc pipeline (DDL + bronze dimensions and facts)."
     )
     p.add_argument(
         "command",
@@ -514,7 +520,7 @@ def _parse_args() -> argparse.Namespace:
     p.add_argument(
         "--skip-ensure-catalog",
         action="store_true",
-        help="Do not run CREATE CATALOG IF NOT EXISTS pharmacy",
+        help="Do not run CREATE CATALOG IF NOT EXISTS localuc",
     )
     p.add_argument(
         "--max-rows",
@@ -544,7 +550,7 @@ if __name__ == "__main__":
             _setup_logging()
             with get_connection() as conn:
                 if not args.skip_ensure_catalog:
-                    ensure_pharmacy_catalog(conn)
+                    ensure_localuc_catalog(conn)
                 run_ddl_pipeline(conn)
             print("\nDDL completed.")
         elif args.command == "load-dims":

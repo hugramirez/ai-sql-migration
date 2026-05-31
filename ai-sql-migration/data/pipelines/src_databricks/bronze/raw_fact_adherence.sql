@@ -1,5 +1,5 @@
 -- Run order: Bronze adherence fact (aligned to dbo.fact_adherence / raw_data CSV)
-CREATE OR REPLACE TABLE pharmacy.bronze.raw_fact_adherence (
+CREATE OR REPLACE TABLE localuc.bronze.raw_fact_adherence (
     sk_adherence_id BIGINT COMMENT 'Surrogate key for adherence row',
     sk_patient_id BIGINT COMMENT 'FK to raw_dim_patient',
     sk_prescription_id BIGINT COMMENT 'FK to raw_fact_prescription',

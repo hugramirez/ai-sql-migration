@@ -1,5 +1,5 @@
 -- Run order: Silver payer (latest row per payer_external_id)
-CREATE OR REPLACE TABLE pharmacy.silver.dim_payer_cleansed
+CREATE OR REPLACE TABLE localuc.silver.dim_payer_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -22,6 +22,6 @@ FROM (
     SELECT
         *,
         ROW_NUMBER() OVER (PARTITION BY payer_external_id ORDER BY created_date DESC NULLS LAST) AS _row_num
-    FROM pharmacy.bronze.raw_dim_payer
+    FROM localuc.bronze.raw_dim_payer
 ) ranked
 WHERE ranked._row_num = 1;

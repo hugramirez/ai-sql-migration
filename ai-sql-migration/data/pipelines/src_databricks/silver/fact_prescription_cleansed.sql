@@ -1,5 +1,5 @@
 -- Run order: Silver prescription fact (dedupe by prescription_external_id; analytics columns for gold)
-CREATE OR REPLACE TABLE pharmacy.silver.fact_prescription_cleansed
+CREATE OR REPLACE TABLE localuc.silver.fact_prescription_cleansed
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -52,6 +52,6 @@ FROM (
     SELECT
         *,
         ROW_NUMBER() OVER (PARTITION BY prescription_external_id ORDER BY updated_date DESC NULLS LAST, created_date DESC NULLS LAST) AS _row_num
-    FROM pharmacy.bronze.raw_fact_prescription
+    FROM localuc.bronze.raw_fact_prescription
 ) ranked
 WHERE ranked._row_num = 1;

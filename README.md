@@ -1,17 +1,18 @@
-## Compufest[1]
-
 # ai-sql-migration
 
-AI-powered SQL migration agent that uses [LangGraph](https://github.com/langchain-ai/langgraph) and [Anthropic Claude](https://www.anthropic.com) to query data from **Azure SQL Edge** (Docker) and **Databricks** using natural language.
+AI-powered SQL migration agent that uses [LangGraph](https://github.com/langchain-ai/langgraph) and an LLM (Anthropic Claude or [OpenRouter](https://openrouter.ai)) to query data from **Azure SQL Edge** (Docker) and **Databricks** using natural language.
+
+When OpenRouter is configured, a lightweight classifier model automatically routes each query to the right-sized model based on complexity (simple / medium / complex), optimizing cost without sacrificing quality on hard tasks.
 
 ## Requirements
 
 - Python 3.13+
 - [uv](https://docs.astral.sh/uv/getting-started/installation/)
 - [ODBC Driver 18 for SQL Server](https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server)
-- An Anthropic API key
+- An **Anthropic API key** (`ANTHROPIC_API_KEY`) **or** an **OpenRouter API key** (`OPENROUTER_API_KEY`) — at least one is required
 - Docker running `azure-sql-edge` (for SQL Edge tools)
 - A Databricks workspace with a SQL warehouse (for Databricks tools)
+  - **Required**: A Unity Catalog (`localuc` by default) must exist before using Databricks features
 
 ## Setup
 
@@ -33,22 +34,69 @@ uv sync
 cp .env.example .env
 ```
 
+### LLM Provider (at least one required)
+
 | Variable | Description |
 |---|---|
-| `ANTHROPIC_API_KEY` | Your Anthropic API key (`sk-ant-...`) |
+| `ANTHROPIC_API_KEY` | Anthropic API key (`sk-ant-...`). Enables the LLM classifier and tiered routing with Claude models. |
+| `OPENROUTER_API_KEY` | OpenRouter API key (`sk-or-...`). Enables classifier + tiered routing via OpenRouter. Takes precedence over Anthropic when both are set. |
+
+### Anthropic model tiers (optional — only used when `ANTHROPIC_API_KEY` is set)
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `ANTHROPIC_MODEL_CLASSIFIER` | `claude-haiku-4-5-20251001` | Model used to classify query complexity |
+| `ANTHROPIC_MODEL_SIMPLE` | `claude-haiku-4-5-20251001` | Model for simple queries (basic SELECTs, schema lookups) |
+| `ANTHROPIC_MODEL_MEDIUM` | `claude-sonnet-4-5` | Model for medium queries (JOINs, aggregations) |
+| `ANTHROPIC_MODEL_COMPLEX` | `claude-sonnet-4-5` | Model for complex queries (full T-SQL→Spark migrations, subqueries) |
+
+### OpenRouter model tiers (optional — only used when `OPENROUTER_API_KEY` is set)
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `OPENROUTER_MODEL_CLASSIFIER` | `meta-llama/llama-3.1-8b-instruct:free` | Model used to classify query complexity |
+| `OPENROUTER_MODEL_SIMPLE` | `meta-llama/llama-3.1-8b-instruct:free` | Model for simple queries (basic SELECTs, schema lookups) |
+| `OPENROUTER_MODEL_MEDIUM` | `mistralai/mixtral-8x7b-instruct` | Model for medium queries (JOINs, aggregations) |
+| `OPENROUTER_MODEL_COMPLEX` | `anthropic/claude-sonnet-4-5` | Model for complex queries (full T-SQL→Spark migrations, subqueries) |
+
+### SQL Edge connection
+
+| Variable | Description |
+|---|---|
 | `SQLEDGE_HOST` | SQL Edge host (default: `localhost`) |
 | `SQLEDGE_PORT` | SQL Edge port (default: `1433`) |
 | `SQLEDGE_DATABASE` | Database name (e.g. `ecobicis`) |
 | `SQLEDGE_USER` | SQL Edge login (e.g. `sa`) |
 | `SQLEDGE_PASSWORD` | SQL Edge password |
+
+### Databricks connection
+
+| Variable | Description |
+|---|---|
 | `DATABRICKS_HOST` | Databricks workspace URL |
 | `DATABRICKS_TOKEN` | Databricks personal access token |
 | `DATABRICKS_WAREHOUSE_ID` | SQL warehouse ID |
 | `UC_CATALOG` | Unity Catalog name |
 | `UC_SCHEMA` | Schema name within the catalog |
+
+### SQLFluff migration
+
+| Variable | Description |
+|---|---|
 | `SQLFLUFF_ENABLED` | Enable SQL migration lint/fix flow (`true`/`false`) |
 | `SQLFLUFF_SOURCE_DIALECT` | Source SQL dialect for migration (default: `tsql`) |
 | `SQLFLUFF_TARGET_DIALECT` | Target SQL dialect for migration (default: `sparksql`) |
+
+### Databricks Unity Catalog Setup (Required)
+
+Before using Databricks features, ensure the Unity Catalog exists and you have access:
+
+```sql
+CREATE CATALOG IF NOT EXISTS localuc;
+GRANT USE CATALOG ON CATALOG localuc TO `user@enterprise.com`;
+```
+
+Run these commands in your **Databricks workspace SQL editor** before initializing the database pipeline or querying Databricks with the agent. Replace `user@enterprise.com` with your actual Databricks principal (user email or service principal name).
 
 ## Running
 
@@ -71,8 +119,8 @@ ai-sql-migration/
 ├── .env.example                 # Environment variables template
 └── src/
     ├── config/
-    │   ├── settings.py          # Settings dataclass loaded from env
-    │   └── llm_config.py        # ChatAnthropic model factory
+    │   ├── settings.py          # Settings dataclass loaded from env (Anthropic + OpenRouter fields)
+    │   └── llm_config.py        # Model factory: Anthropic direct or OpenRouter tiered + query classifier
     ├── graph/
     │   ├── builder.py           # LangGraph agent compilation
     │   ├── nodes.py             # LLM call, tool, and routing nodes
@@ -103,55 +151,120 @@ ai-sql-migration/
 
 ## Usage Examples
 
-Use explicit queries so the agent chooses the correct tool and data source.
+The agent automatically classifies each query into a tier (`simple` / `medium` / `complex`) and routes it to the appropriate model. Use explicit queries so the agent also chooses the correct tool and data source.
 
-**Databricks (`run_sql_query`)**
-```bash
-USER_QUERY="Use run_sql_query to list 5 rows from workspace.default.dim_patient." uv run python main.py
-```
+### Tier: simple
 
-**Databricks schema (`describe_table`)**
-```bash
-USER_QUERY="Use describe_table for workspace.default.dim_patient and show me the columns." uv run python main.py
-```
+Queries clasificadas como `simple` usan el modelo más ligero (e.g. `claude-haiku` o `llama-3.1-8b:free`). Ideales para lookups de schema o SELECTs básicos de una sola tabla.
 
-**SQL Edge (`run_sqledge_query`)**
-```bash
-USER_QUERY="Use run_sqledge_query to execute: SELECT TOP (5) [sk_patient_id], [patient_external_id], [first_name], [last_name], [date_of_birth], [age], [gender], [ethnicity], [state], [zip_code], [enrollment_date], [primary_rare_disease], [secondary_conditions], [is_active], [created_date], [updated_date] FROM [pharmacy_db].[dbo].[dim_patient]" uv run python main.py
-```
+#### Describir schema de una tabla (SQL Edge)
 
-**SQL Edge schema (`describe_sqledge_table`)**
 ```bash
 USER_QUERY="Use describe_sqledge_table for dim_patient and list all columns." uv run python main.py
 ```
 
-**SQL Edge active patients (`run_sqledge_query`)**
+#### Describir schema de una tabla (Databricks)
+
 ```bash
-USER_QUERY="Use run_sqledge_query to execute: SELECT TOP (5) [sk_patient_id], [first_name], [last_name], [is_active], [updated_date] FROM [pharmacy_db].[dbo].[dim_patient] WHERE [is_active] = 1" uv run python main.py
+USER_QUERY="Use describe_table for localuc.gold.dim_patient and show me the columns." uv run python main.py
 ```
 
-**Migrate SQL Edge -> Databricks (`migrate_sql_query` + `run_sql_query`)**
+#### SELECT básico (SQL Edge)
+
 ```bash
-export USER_QUERY="Use migrate_sql_query for: SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name, ISNULL(last_name, 'unknown') AS last_name, GETDATE() AS migrated_at FROM pharmacy_db.dbo.dim_patient; then run_sql_query on the migrated SQL in Databricks."
+USER_QUERY="Use run_sqledge_query to execute: SELECT TOP (5) [sk_patient_id], [first_name], [last_name], [is_active] FROM [localdb].[dbo].[dim_patient] WHERE [is_active] = 1" uv run python main.py
+```
+
+#### SELECT básico (Databricks)
+
+```bash
+USER_QUERY="Use run_sql_query to list 5 rows from localuc.gold.dim_patient." uv run python main.py
+```
+
+---
+
+### Tier: medium
+
+Queries clasificadas como `medium` usan un modelo intermedio (e.g. `claude-sonnet` o `mixtral-8x7b`). Ideales para agregaciones, JOINs simples y filtros compuestos.
+
+#### Agregación con GROUP BY (SQL Edge)
+
+```bash
+USER_QUERY="Use run_sqledge_query to count patients grouped by primary_rare_disease, order by count descending, top 10." uv run python main.py
+```
+
+#### JOIN entre dos tablas (SQL Edge)
+
+```bash
+USER_QUERY="Use run_sqledge_query to join dim_patient with fact_prescription on sk_patient_id, show first_name, last_name and count of prescriptions per patient, top 5." uv run python main.py
+```
+
+#### Agregación en Databricks
+
+```bash
+USER_QUERY="Use run_sql_query on localuc.gold.fact_prescription to show total prescriptions per medication, grouped by medication name, top 10 ordered by total descending." uv run python main.py
+```
+
+---
+
+### Tier: complex
+
+Queries clasificadas como `complex` usan el modelo más capaz (e.g. `claude-sonnet-4-5` o `claude-opus`). Ideales para migraciones T-SQL → Spark SQL completas y analytics multi-tabla.
+
+#### Migrar y ejecutar query simple
+
+```bash
+USER_QUERY="Use migrate_sql_query for: SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name, ISNULL(last_name, 'unknown') AS last_name, GETDATE() AS migrated_at FROM localdb.dbo.dim_patient; then run_sql_query on the migrated SQL in Databricks."
 uv run python main.py
 ```
 
-**Programmatic usage:**
+#### Migrar query con JOIN y agregación
+
+```bash
+export USER_QUERY="Migrate this T-SQL to Databricks using migrate_sql_query, then run it with run_sql_query:
+SELECT TOP 10
+    p.first_name,
+    p.last_name,
+    COUNT(rx.sk_prescription_id) AS total_prescriptions,
+    ISNULL(p.primary_rare_disease, 'Unknown') AS disease
+FROM localdb.dbo.dim_patient p
+JOIN localdb.dbo.fact_prescription rx ON p.sk_patient_id = rx.sk_patient_id
+GROUP BY p.first_name, p.last_name, p.primary_rare_disease
+ORDER BY total_prescriptions DESC"
+uv run python main.py
+```
+
+#### Migrar desde archivo .sql
+
+```bash
+uv run python main.py --sql-file reports/patient_spending.sql
+```
+
+#### Guardar el SQL migrado a un archivo
+
+```bash
+uv run python main.py -q "SELECT TOP 5 GETDATE() AS ts, ISNULL(first_name,'?') AS name FROM localdb.dbo.dim_patient" --write-migrated output/migrated.sql
+```
+
+#### Uso programático
 
 ```python
 from dotenv import load_dotenv
 load_dotenv()
 
-from src.config import Settings
+from src.config import Settings, classify_query
 from src.graph.builder import build_agent
 from langchain_core.messages import HumanMessage
 
 settings = Settings.from_env()
-agent = build_agent(settings)
 
-result = agent.invoke({
-    "messages": [HumanMessage(content="Migrate this SQL Edge query to Databricks and run it: SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name FROM pharmacy_db.dbo.dim_patient;")]
-})
+query = "Migrate this SQL Edge query to Databricks and run it: SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name FROM pharmacy_db.dbo.dim_patient;"
+
+# Classify query complexity and route to the right model (no-op if only ANTHROPIC_API_KEY is set)
+tier = classify_query(settings, query)
+agent = build_agent(settings, tier=tier)
+
+result = agent.invoke({"messages": [HumanMessage(content=query)]})
 print(result["messages"][-1].content)
 ```
 
@@ -160,7 +273,8 @@ print(result["messages"][-1].content)
 | Package | Purpose |
 |---|---|
 | `anthropic` | Claude API client |
-| `langchain-anthropic` | LangChain-compatible Claude chat model |
+| `langchain-anthropic` | LangChain-compatible Claude chat model (used when `ANTHROPIC_API_KEY` is set) |
+| `langchain-openai` | LangChain-compatible OpenAI-format chat model (used for OpenRouter) |
 | `langchain-core` | Base abstractions for tools and messages |
 | `langgraph` | Agent graph orchestration |
 | `pyodbc` | ODBC connector for Azure SQL Edge |

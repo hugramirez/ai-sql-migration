@@ -2,21 +2,21 @@
 -- SQL Server Schema Definition
 -- ============================================================================
 -- Purpose: Create database and schema for pharmacy platform
--- Database: pharmacy_db
+-- Database: localdb
 -- Schema: dbo
 -- ============================================================================
 
 USE master;
 GO
 
-IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'pharmacy_db')
+IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'localdb')
 BEGIN
-    CREATE DATABASE pharmacy_db
+    CREATE DATABASE localdb
         COLLATE SQL_Latin1_General_CP1_CI_AS;
 END
 GO
 
-USE pharmacy_db;
+USE localdb;
 GO
 
 EXEC sp_addextendedproperty

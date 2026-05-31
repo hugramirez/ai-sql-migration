@@ -1,5 +1,5 @@
 -- Run order: Gold last-event snapshot fact
-CREATE OR REPLACE TABLE pharmacy.gold.fact_last_event
+CREATE OR REPLACE TABLE localuc.gold.fact_last_event
 USING DELTA
 TBLPROPERTIES ('delta.enableChangeDataFeed' = 'true')
 AS
@@ -19,4 +19,4 @@ SELECT
     is_resolved,
     created_date,
     current_timestamp() AS _gold_created_date
-FROM pharmacy.silver.fact_last_event_cleansed;
+FROM localuc.silver.fact_last_event_cleansed;

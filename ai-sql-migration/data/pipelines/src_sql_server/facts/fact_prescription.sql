@@ -2,7 +2,7 @@
 -- Grain: One row per prescription filled
 -- Fact Type: Additive
 
-USE pharmacy_db;
+USE localdb;
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'fact_prescription' AND schema_id = SCHEMA_ID('dbo'))
