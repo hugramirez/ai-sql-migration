@@ -90,7 +90,7 @@ DATABRICKS_HOST=https://adb-XXXXXXXX.XX.databricks.com
 DATABRICKS_TOKEN=dapi...
 DATABRICKS_WAREHOUSE_ID=...
 UC_CATALOG=localuc
-UC_SCHEMA=default
+UC_SCHEMA=bronze
 ```
 
 Consulta el [README → Setup](README.md#setup) para obtener los valores de cada variable.
@@ -179,7 +179,7 @@ DATABRICKS_HOST=https://adb-XXXXXXXX.XX.databricks.com
 DATABRICKS_TOKEN=dapi1234567890abcdef1234567890abcd
 DATABRICKS_WAREHOUSE_ID=warehouse-id-full-uuid
 UC_CATALOG=localuc
-UC_SCHEMA=default
+UC_SCHEMA=bronze
 ```
 
 Consulta el [README → Setup](README.md#setup) para obtener los valores exactos de cada variable.
@@ -196,6 +196,83 @@ uv run python scripts/test_databricks_sql_connection.py
 ```
 
 Si muestra `Connection OK.`, la conexión es exitosa.
+
+---
+
+## 7. Sincronizar Dependencias
+
+Desde el directorio `ai-sql-migration`:
+
+```bash
+uv sync
+```
+
+---
+
+# Crear Esquemas y Poblar Bases de Datos
+
+Una vez completada la instalación básica, crea los esquemas (estructura de tablas) y puebla las bases de datos.
+
+## SQL Server / Azure SQL Edge
+
+### Prerrequisitos
+
+- Docker container `azure-sql-edge-dev` ejecutándose (paso 5 del setup anterior)
+- Archivo `.env` con `SQLEDGE_HOST`, `SQLEDGE_PORT`, `SQLEDGE_USER`, `SQLEDGE_PASSWORD`, `SQLEDGE_DATABASE`
+
+### Ejecución
+
+Desde el directorio `ai-sql-migration`:
+
+```bash
+uv run python data/init_db.py
+```
+
+Esto:
+1. Elimina y recrea la base de datos especificada en `SQLEDGE_DATABASE` (por defecto: `localuc_db`)
+2. Ejecuta el DDL desde `data/pipelines/src_sql_server/run.sql` para crear tablas e índices
+3. Carga los datos de `data/raw_data/` en las tablas correspondientes
+4. Registra el proceso en `logs/data_load_YYYYMMDD_HHMMSS.log`
+
+Para más opciones, consulta [data/README.md](ai-sql-migration/data/README.md).
+
+---
+
+## Databricks (Unity Catalog)
+
+### Prerrequisitos
+
+- Databricks workspace con SQL warehouse activo (`RUNNING`)
+- **Unity Catalog `localuc` previamente creado** en Databricks
+- Tokens PAT (`DATABRICKS_TOKEN`) generado (paso 1 del setup de Databricks)
+- Variables de entorno en `.env`: `DATABRICKS_HOST`, `DATABRICKS_TOKEN`, `DATABRICKS_WAREHOUSE_ID`, `UC_CATALOG`, `UC_SCHEMA`
+
+### Crear el Catálogo (si no existe)
+
+Si aún no has creado `localuc`, ejecuta estos comandos en el editor SQL de tu workspace de Databricks:
+
+```sql
+CREATE CATALOG IF NOT EXISTS localuc;
+GRANT USE CATALOG ON CATALOG localuc TO `tu_email@dominio.com`;
+```
+
+Reemplaza `tu_email@dominio.com` con tu principal de Databricks.
+
+### Ejecución
+
+Desde el directorio `ai-sql-migration`:
+
+```bash
+uv run python data/init_db_databricks.py init
+```
+
+Esto:
+1. Crea el esquema `bronze` en el catálogo `localuc` (DDL desde `data/pipelines/src_databricks/run.sql`)
+2. Carga las tablas de dimensión desde CSVs en `data/raw_data/dim_*.csv`
+3. Crea esquemas `silver` y `gold`
+4. Registra el progreso en la consola
+
+Para más opciones, consulta [data/README.md](ai-sql-migration/data/README.md).
 
 ---
 
