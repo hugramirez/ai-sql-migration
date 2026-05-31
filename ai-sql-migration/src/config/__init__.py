@@ -1,4 +1,5 @@
 from src.config.llm_config import (
+    ClassifierResult,
     classify_query,
     create_anthropic_model,
     create_chat_model,
@@ -9,6 +10,7 @@ from src.config.settings import Settings
 
 __all__ = [
     "Settings",
+    "ClassifierResult",
     "classify_query",
     "create_anthropic_model",
     "create_chat_model",

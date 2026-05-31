@@ -69,12 +69,27 @@ def create_openrouter_model(settings: Settings, tier: str = "complex"):
     )
 
 
-def classify_query(settings: Settings, query: str) -> str:
+class ClassifierResult:
+    """Tier decision plus token usage from the classifier call."""
+    __slots__ = ("tier", "input_tokens", "output_tokens")
+
+    def __init__(self, tier: str, input_tokens: int = 0, output_tokens: int = 0):
+        self.tier = tier
+        self.input_tokens = input_tokens
+        self.output_tokens = output_tokens
+
+    def __str__(self) -> str:
+        return self.tier
+
+
+def classify_query(settings: Settings, query: str) -> ClassifierResult:
     """Classify query complexity using a cheap model from the configured provider.
 
-    Returns 'simple', 'medium', or 'complex'.
-    Falls back to 'complex' on any error or unexpected output.
+    Returns a ClassifierResult with tier ('simple'/'medium'/'complex') and token usage.
+    Falls back to tier='complex' with zero tokens on any error.
     """
+    _fallback = ClassifierResult("complex")
+
     if settings.openrouter_api_key:
         classifier_model = ChatOpenAI(
             api_key=settings.openrouter_api_key,
@@ -91,15 +106,21 @@ def classify_query(settings: Settings, query: str) -> str:
             temperature=0.0,
         )
     else:
-        return "complex"
+        return _fallback
 
     try:
         prompt = _CLASSIFIER_PROMPT.format(query=query)
         response = classifier_model.invoke([HumanMessage(content=prompt)])
         raw = str(response.content).strip().lower().split()[0]
-        return raw if raw in _VALID_TIERS else "complex"
+        tier = raw if raw in _VALID_TIERS else "complex"
+        meta = getattr(response, "usage_metadata", None) or {}
+        return ClassifierResult(
+            tier=tier,
+            input_tokens=meta.get("input_tokens", 0),
+            output_tokens=meta.get("output_tokens", 0),
+        )
     except Exception:
-        return "complex"
+        return _fallback
 
 
 _JUDGE_PROMPT = """\

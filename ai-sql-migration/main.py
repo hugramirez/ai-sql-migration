@@ -259,7 +259,8 @@ def main() -> None:
         user_query = os.environ.get("USER_QUERY", _default_demo_query()).strip()
 
     console.print("[meta]Classifying query…[/meta]")
-    tier = classify_query(settings, user_query)
+    classifier_result = classify_query(settings, user_query)
+    tier = classifier_result.tier
 
     if settings.openrouter_api_key:
         _tier_model_map = {
@@ -268,6 +269,7 @@ def main() -> None:
             "complex": settings.openrouter_model_complex,
         }
         selected_model = _tier_model_map.get(tier, settings.openrouter_model_complex)
+        classifier_model_name = settings.openrouter_model_classifier
         console.print(
             f"[meta]Tier:[/meta] [bold]{tier}[/bold]  "
             f"[meta]Model:[/meta] [bold]{selected_model}[/bold]"
@@ -279,6 +281,7 @@ def main() -> None:
             "complex": settings.anthropic_model_complex,
         }
         selected_model = _anthropic_tier_map.get(tier, settings.anthropic_model_complex)
+        classifier_model_name = settings.anthropic_model_classifier
         console.print(
             f"[meta]Tier:[/meta] [bold]{tier}[/bold]  "
             f"[meta]Model:[/meta] [bold]{selected_model}[/bold] [meta](Anthropic)[/meta]"
@@ -297,8 +300,17 @@ def main() -> None:
 
     _print_messages(result["messages"])
 
-    # Collect and display run metrics
-    metrics = collect_run_metrics(result, tier, selected_model, provider, latency_ms)
+    # Collect and display run metrics (include classifier tokens so totals match LangSmith)
+    metrics = collect_run_metrics(
+        result,
+        tier,
+        selected_model,
+        provider,
+        latency_ms,
+        classifier_input_tokens=classifier_result.input_tokens,
+        classifier_output_tokens=classifier_result.output_tokens,
+        classifier_model=classifier_model_name,
+    )
 
     if settings.quality_judge_enabled:
         last_ai = next(

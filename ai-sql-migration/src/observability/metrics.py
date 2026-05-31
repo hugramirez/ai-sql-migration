@@ -86,21 +86,35 @@ def collect_run_metrics(
     model: str,
     provider: str,
     latency_ms: int,
+    classifier_input_tokens: int = 0,
+    classifier_output_tokens: int = 0,
+    classifier_model: str = "",
 ) -> RunMetrics:
-    """Build a RunMetrics from a completed agent.invoke() result."""
+    """Build a RunMetrics from a completed agent.invoke() result.
+
+    classifier_* args add the classifier call's token usage so totals match LangSmith.
+    """
     messages = result.get("messages", [])
     llm_calls = result.get("llm_calls", 0)
-    input_tokens, output_tokens = _extract_token_counts(messages)
+    agent_in, agent_out = _extract_token_counts(messages)
     tools_called = _extract_tools_called(messages)
+
+    total_in = agent_in + classifier_input_tokens
+    total_out = agent_out + classifier_output_tokens
+
+    # Cost = agent model cost + classifier model cost (may differ)
+    agent_cost = estimate_cost(model, agent_in, agent_out) or 0.0
+    clf_cost = estimate_cost(classifier_model, classifier_input_tokens, classifier_output_tokens) or 0.0
+    total_cost: float | None = round(agent_cost + clf_cost, 6) if (agent_cost or clf_cost) else None
 
     return RunMetrics(
         tier=tier,
         model=model,
         provider=provider,
         latency_ms=latency_ms,
-        llm_calls=llm_calls,
+        llm_calls=llm_calls + (1 if classifier_input_tokens else 0),
         tools_called=tools_called,
-        input_tokens=input_tokens,
-        output_tokens=output_tokens,
-        estimated_cost_usd=estimate_cost(model, input_tokens, output_tokens),
+        input_tokens=total_in,
+        output_tokens=total_out,
+        estimated_cost_usd=total_cost,
     )
