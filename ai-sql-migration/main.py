@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import time
 from pathlib import Path
 
 from langchain_core.messages import AIMessage, HumanMessage, ToolMessage
@@ -11,10 +12,12 @@ from rich.console import Console
 from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.rule import Rule
+from rich.table import Table
 from rich.theme import Theme
 
-from src.config import Settings, classify_query
+from src.config import Settings, classify_query, judge_response
 from src.graph.builder import build_agent
+from src.observability import RunMetrics, collect_run_metrics
 from src.tools.sql_migration import parse_migrated_sql_line
 
 _MIGRATION_TOOL_NAMES = frozenset({"migrate_sql_query", "run_sql_query"})
@@ -175,6 +178,33 @@ def _print_messages(messages: list) -> None:
     console.print(Rule(style="bright_black"))
 
 
+def _print_metrics_panel(metrics: RunMetrics) -> None:
+    table = Table.grid(padding=(0, 2))
+    table.add_column(style="meta")
+    table.add_column(style="bold")
+
+    table.add_row("Tier", metrics.tier)
+    table.add_row("Model", f"{metrics.model} ({metrics.provider})")
+    table.add_row("Latency", f"{metrics.latency_ms:,} ms")
+    table.add_row("LLM calls", str(metrics.llm_calls))
+    if metrics.tools_called:
+        table.add_row("Tools used", ", ".join(metrics.tools_called))
+    if metrics.input_tokens or metrics.output_tokens:
+        table.add_row(
+            "Tokens",
+            f"{metrics.input_tokens:,} in / {metrics.output_tokens:,} out",
+        )
+    if metrics.estimated_cost_usd is not None:
+        table.add_row("Est. cost", f"~${metrics.estimated_cost_usd:.6f} USD")
+    if metrics.quality_score is not None:
+        score_bar = "★" * metrics.quality_score + "☆" * (5 - metrics.quality_score)
+        table.add_row("Quality", f"{score_bar}  {metrics.quality_score}/5  {metrics.quality_notes}")
+
+    console.print(
+        Panel(table, title="[meta]Run Metrics[/meta]", border_style="bright_black", padding=(0, 1))
+    )
+
+
 def _default_demo_query() -> str:
     return (
         "Migrate this SQL Edge query to Databricks using migrate_sql_query, then execute it with run_sql_query: "
@@ -254,12 +284,38 @@ def main() -> None:
             f"[meta]Model:[/meta] [bold]{selected_model}[/bold] [meta](Anthropic)[/meta]"
         )
 
+    # Enable LangSmith tracing if configured
+    if settings.langchain_tracing and settings.langsmith_api_key:
+        os.environ["LANGCHAIN_TRACING_V2"] = "true"
+        os.environ["LANGCHAIN_API_KEY"] = settings.langsmith_api_key
+        os.environ["LANGCHAIN_PROJECT"] = settings.langsmith_project
+
+    provider = "openrouter" if settings.openrouter_api_key else "anthropic"
+    invoke_config = {"metadata": {"tier": tier, "model": selected_model, "provider": provider}}
+
     console.print("[meta]Starting agent…[/meta]")
     agent = build_agent(settings, tier=tier)
 
     messages = [HumanMessage(content=user_query)]
-    result = agent.invoke({"messages": messages})
+    _t0 = time.monotonic()
+    result = agent.invoke({"messages": messages}, config=invoke_config)
+    latency_ms = int((time.monotonic() - _t0) * 1000)
+
     _print_messages(result["messages"])
+
+    # Collect and display run metrics
+    metrics = collect_run_metrics(result, tier, selected_model, provider, latency_ms)
+
+    if settings.quality_judge_enabled:
+        last_ai = next(
+            (str(m.content) for m in reversed(result["messages"]) if isinstance(m, AIMessage)),
+            "",
+        )
+        judgment = judge_response(settings, user_query, last_ai)
+        metrics.quality_score = judgment.get("score")
+        metrics.quality_notes = judgment.get("notes", "")
+
+    _print_metrics_panel(metrics)
 
     if args.write_migrated is not None:
         migrated = _last_migrated_spark_sql(result["messages"])
