@@ -193,6 +193,13 @@ USER_QUERY="Use run_sqledge_query to execute: SELECT TOP (5) [sk_patient_id], [f
 USER_QUERY="Use run_sql_query to list 5 rows from localuc.gold.dim_patient." uv run python main.py
 ```
 
+#### Migrar y ejecutar query básica (SQL Edge → Databricks)
+
+```bash
+USER_QUERY="Use migrate_sql_query for: SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name, ISNULL(last_name, 'unknown') AS last_name, GETDATE() AS migrated_at FROM localdb.dbo.dim_patient; then run_sql_query on the migrated SQL in Databricks."
+uv run python main.py
+```
+
 ---
 
 ### Tier: medium
@@ -223,10 +230,27 @@ USER_QUERY="Use run_sql_query on localuc.gold.fact_prescription to show total pr
 
 Queries clasificadas como `complex` usan el modelo más capaz (e.g. `claude-sonnet-4-5` o `claude-opus`). Ideales para migraciones T-SQL → Spark SQL completas y analytics multi-tabla.
 
-#### Migrar y ejecutar query simple
+#### Migrar query con window functions y CTE
 
 ```bash
-USER_QUERY="Use migrate_sql_query for: SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name, ISNULL(last_name, 'unknown') AS last_name, GETDATE() AS migrated_at FROM localdb.dbo.dim_patient; then run_sql_query on the migrated SQL in Databricks."
+export USER_QUERY="Use migrate_sql_query for this T-SQL, then run it with run_sql_query:
+WITH ranked_patients AS (
+    SELECT
+        p.sk_patient_id,
+        p.first_name,
+        p.last_name,
+        ISNULL(p.primary_rare_disease, 'Unknown') AS disease,
+        COUNT(rx.sk_prescription_id) AS total_prescriptions,
+        ROW_NUMBER() OVER (PARTITION BY p.primary_rare_disease ORDER BY COUNT(rx.sk_prescription_id) DESC) AS rn
+    FROM localdb.dbo.dim_patient p
+    LEFT JOIN localdb.dbo.fact_prescription rx ON p.sk_patient_id = rx.sk_patient_id
+    WHERE p.is_active = 1
+    GROUP BY p.sk_patient_id, p.first_name, p.last_name, p.primary_rare_disease
+)
+SELECT TOP 10 first_name, last_name, disease, total_prescriptions, rn
+FROM ranked_patients
+WHERE rn = 1
+ORDER BY total_prescriptions DESC;"
 uv run python main.py
 ```
 
