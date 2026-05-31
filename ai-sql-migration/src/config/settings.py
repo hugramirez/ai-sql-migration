@@ -92,6 +92,15 @@ class Settings:
     temperature: float = 0.0
     system_prompt: str = DEFAULT_SYSTEM_PROMPT
     anthropic_api_key: str = ""
+    openrouter_api_key: str = ""
+    openrouter_model_simple: str = "meta-llama/llama-3.1-8b-instruct:free"
+    openrouter_model_medium: str = "mistralai/mixtral-8x7b-instruct"
+    openrouter_model_complex: str = "anthropic/claude-sonnet-4-5"
+    openrouter_model_classifier: str = "meta-llama/llama-3.1-8b-instruct:free"
+    anthropic_model_simple: str = "claude-haiku-4-5-20251001"
+    anthropic_model_medium: str = "claude-sonnet-4-5"
+    anthropic_model_complex: str = "claude-sonnet-4-5"
+    anthropic_model_classifier: str = "claude-haiku-4-5-20251001"
     databricks_host: str = ""
     databricks_token: str = ""
     databricks_warehouse_id: str = ""
@@ -114,17 +123,44 @@ class Settings:
 
     @classmethod
     def from_env(cls) -> Settings:
-        key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
-        if not key:
+        anthropic_key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+        openrouter_key = os.environ.get("OPENROUTER_API_KEY", "").strip()
+        if not anthropic_key and not openrouter_key:
             raise SystemExit(
-                "ANTHROPIC_API_KEY is not set. Claude requires an Anthropic API key.\n\n"
-                "Example:\n"
+                "Neither ANTHROPIC_API_KEY nor OPENROUTER_API_KEY is set.\n"
+                "Set at least one to run the agent.\n\n"
+                "Examples:\n"
                 "  export ANTHROPIC_API_KEY='sk-ant-api03-...'\n"
-                "  uv run python main.py\n"
+                "  export OPENROUTER_API_KEY='sk-or-...'\n"
             )
 
         return cls(
-            anthropic_api_key=key,
+            anthropic_api_key=anthropic_key,
+            openrouter_api_key=openrouter_key,
+            openrouter_model_simple=os.environ.get(
+                "OPENROUTER_MODEL_SIMPLE", "meta-llama/llama-3.1-8b-instruct:free"
+            ).strip(),
+            openrouter_model_medium=os.environ.get(
+                "OPENROUTER_MODEL_MEDIUM", "mistralai/mixtral-8x7b-instruct"
+            ).strip(),
+            openrouter_model_complex=os.environ.get(
+                "OPENROUTER_MODEL_COMPLEX", "anthropic/claude-sonnet-4-5"
+            ).strip(),
+            openrouter_model_classifier=os.environ.get(
+                "OPENROUTER_MODEL_CLASSIFIER", "meta-llama/llama-3.1-8b-instruct:free"
+            ).strip(),
+            anthropic_model_simple=os.environ.get(
+                "ANTHROPIC_MODEL_SIMPLE", "claude-haiku-4-5-20251001"
+            ).strip(),
+            anthropic_model_medium=os.environ.get(
+                "ANTHROPIC_MODEL_MEDIUM", "claude-sonnet-4-5"
+            ).strip(),
+            anthropic_model_complex=os.environ.get(
+                "ANTHROPIC_MODEL_COMPLEX", "claude-sonnet-4-5"
+            ).strip(),
+            anthropic_model_classifier=os.environ.get(
+                "ANTHROPIC_MODEL_CLASSIFIER", "claude-haiku-4-5-20251001"
+            ).strip(),
             databricks_host=os.environ.get("DATABRICKS_HOST", "").strip(),
             databricks_token=os.environ.get("DATABRICKS_TOKEN", "").strip(),
             databricks_warehouse_id=os.environ.get("DATABRICKS_WAREHOUSE_ID", "").strip(),

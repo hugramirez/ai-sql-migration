@@ -4,16 +4,19 @@ from __future__ import annotations
 
 from langgraph.graph import END, START, StateGraph
 
-from src.config.llm_config import create_chat_model
+from src.config.llm_config import create_anthropic_model, create_chat_model, create_openrouter_model
 from src.config.settings import Settings
 from src.graph.nodes import make_llm_call_node, make_tool_node, should_continue
 from src.graph.state import MessagesState
 from src.tools import get_agent_tools
 
 
-def build_agent(settings: Settings):
+def build_agent(settings: Settings, tier: str = "complex"):
     """Build and compile the Databricks tool-calling agent."""
-    model = create_chat_model(settings)
+    if settings.openrouter_api_key:
+        model = create_openrouter_model(settings, tier)
+    else:
+        model = create_anthropic_model(settings, tier)
     tools = get_agent_tools()
     tools_by_name = {t.name: t for t in tools}
     model_with_tools = model.bind_tools(tools)

@@ -1,13 +1,15 @@
 # ai-sql-migration
 
-AI-powered SQL migration agent that uses [LangGraph](https://github.com/langchain-ai/langgraph) and [Anthropic Claude](https://www.anthropic.com) to query data from **Azure SQL Edge** (Docker) and **Databricks** using natural language.
+AI-powered SQL migration agent that uses [LangGraph](https://github.com/langchain-ai/langgraph) and an LLM (Anthropic Claude or [OpenRouter](https://openrouter.ai)) to query data from **Azure SQL Edge** (Docker) and **Databricks** using natural language.
+
+When OpenRouter is configured, a lightweight classifier model automatically routes each query to the right-sized model based on complexity (simple / medium / complex), optimizing cost without sacrificing quality on hard tasks.
 
 ## Requirements
 
 - Python 3.13+
 - [uv](https://docs.astral.sh/uv/getting-started/installation/)
 - [ODBC Driver 18 for SQL Server](https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server)
-- An Anthropic API key
+- An **Anthropic API key** (`ANTHROPIC_API_KEY`) **or** an **OpenRouter API key** (`OPENROUTER_API_KEY`) — at least one is required
 - Docker running `azure-sql-edge` (for SQL Edge tools)
 - A Databricks workspace with a SQL warehouse (for Databricks tools)
   - **Required**: A Unity Catalog (`localuc` by default) must exist before using Databricks features
@@ -32,19 +34,55 @@ uv sync
 cp .env.example .env
 ```
 
+### LLM Provider (at least one required)
+
 | Variable | Description |
 |---|---|
-| `ANTHROPIC_API_KEY` | Your Anthropic API key (`sk-ant-...`) |
+| `ANTHROPIC_API_KEY` | Anthropic API key (`sk-ant-...`). Enables the LLM classifier and tiered routing with Claude models. |
+| `OPENROUTER_API_KEY` | OpenRouter API key (`sk-or-...`). Enables classifier + tiered routing via OpenRouter. Takes precedence over Anthropic when both are set. |
+
+### Anthropic model tiers (optional — only used when `ANTHROPIC_API_KEY` is set)
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `ANTHROPIC_MODEL_CLASSIFIER` | `claude-haiku-4-5-20251001` | Model used to classify query complexity |
+| `ANTHROPIC_MODEL_SIMPLE` | `claude-haiku-4-5-20251001` | Model for simple queries (basic SELECTs, schema lookups) |
+| `ANTHROPIC_MODEL_MEDIUM` | `claude-sonnet-4-5` | Model for medium queries (JOINs, aggregations) |
+| `ANTHROPIC_MODEL_COMPLEX` | `claude-sonnet-4-5` | Model for complex queries (full T-SQL→Spark migrations, subqueries) |
+
+### OpenRouter model tiers (optional — only used when `OPENROUTER_API_KEY` is set)
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `OPENROUTER_MODEL_CLASSIFIER` | `meta-llama/llama-3.1-8b-instruct:free` | Model used to classify query complexity |
+| `OPENROUTER_MODEL_SIMPLE` | `meta-llama/llama-3.1-8b-instruct:free` | Model for simple queries (basic SELECTs, schema lookups) |
+| `OPENROUTER_MODEL_MEDIUM` | `mistralai/mixtral-8x7b-instruct` | Model for medium queries (JOINs, aggregations) |
+| `OPENROUTER_MODEL_COMPLEX` | `anthropic/claude-sonnet-4-5` | Model for complex queries (full T-SQL→Spark migrations, subqueries) |
+
+### SQL Edge connection
+
+| Variable | Description |
+|---|---|
 | `SQLEDGE_HOST` | SQL Edge host (default: `localhost`) |
 | `SQLEDGE_PORT` | SQL Edge port (default: `1433`) |
 | `SQLEDGE_DATABASE` | Database name (e.g. `ecobicis`) |
 | `SQLEDGE_USER` | SQL Edge login (e.g. `sa`) |
 | `SQLEDGE_PASSWORD` | SQL Edge password |
+
+### Databricks connection
+
+| Variable | Description |
+|---|---|
 | `DATABRICKS_HOST` | Databricks workspace URL |
 | `DATABRICKS_TOKEN` | Databricks personal access token |
 | `DATABRICKS_WAREHOUSE_ID` | SQL warehouse ID |
 | `UC_CATALOG` | Unity Catalog name |
 | `UC_SCHEMA` | Schema name within the catalog |
+
+### SQLFluff migration
+
+| Variable | Description |
+|---|---|
 | `SQLFLUFF_ENABLED` | Enable SQL migration lint/fix flow (`true`/`false`) |
 | `SQLFLUFF_SOURCE_DIALECT` | Source SQL dialect for migration (default: `tsql`) |
 | `SQLFLUFF_TARGET_DIALECT` | Target SQL dialect for migration (default: `sparksql`) |
@@ -81,8 +119,8 @@ ai-sql-migration/
 ├── .env.example                 # Environment variables template
 └── src/
     ├── config/
-    │   ├── settings.py          # Settings dataclass loaded from env
-    │   └── llm_config.py        # ChatAnthropic model factory
+    │   ├── settings.py          # Settings dataclass loaded from env (Anthropic + OpenRouter fields)
+    │   └── llm_config.py        # Model factory: Anthropic direct or OpenRouter tiered + query classifier
     ├── graph/
     │   ├── builder.py           # LangGraph agent compilation
     │   ├── nodes.py             # LLM call, tool, and routing nodes
@@ -152,16 +190,19 @@ uv run python main.py
 from dotenv import load_dotenv
 load_dotenv()
 
-from src.config import Settings
+from src.config import Settings, classify_query
 from src.graph.builder import build_agent
 from langchain_core.messages import HumanMessage
 
 settings = Settings.from_env()
-agent = build_agent(settings)
 
-result = agent.invoke({
-    "messages": [HumanMessage(content="Migrate this SQL Edge query to Databricks and run it: SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name FROM pharmacy_db.dbo.dim_patient;")]
-})
+query = "Migrate this SQL Edge query to Databricks and run it: SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name FROM pharmacy_db.dbo.dim_patient;"
+
+# Classify query complexity and route to the right model (no-op if only ANTHROPIC_API_KEY is set)
+tier = classify_query(settings, query)
+agent = build_agent(settings, tier=tier)
+
+result = agent.invoke({"messages": [HumanMessage(content=query)]})
 print(result["messages"][-1].content)
 ```
 
@@ -170,7 +211,8 @@ print(result["messages"][-1].content)
 | Package | Purpose |
 |---|---|
 | `anthropic` | Claude API client |
-| `langchain-anthropic` | LangChain-compatible Claude chat model |
+| `langchain-anthropic` | LangChain-compatible Claude chat model (used when `ANTHROPIC_API_KEY` is set) |
+| `langchain-openai` | LangChain-compatible OpenAI-format chat model (used for OpenRouter) |
 | `langchain-core` | Base abstractions for tools and messages |
 | `langgraph` | Agent graph orchestration |
 | `pyodbc` | ODBC connector for Azure SQL Edge |

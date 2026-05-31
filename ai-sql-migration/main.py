@@ -13,7 +13,7 @@ from rich.panel import Panel
 from rich.rule import Rule
 from rich.theme import Theme
 
-from src.config import Settings
+from src.config import Settings, classify_query
 from src.graph.builder import build_agent
 from src.tools.sql_migration import parse_migrated_sql_line
 
@@ -218,9 +218,6 @@ def main() -> None:
 
     settings = Settings.from_env()
 
-    console.print("[meta]Starting agent…[/meta]")
-    agent = build_agent(settings)
-
     if args.sql_file is not None:
         path = args.sql_file.expanduser()
         if not path.is_file():
@@ -230,6 +227,35 @@ def main() -> None:
         user_query = _migration_task_prompt(args.query)
     else:
         user_query = os.environ.get("USER_QUERY", _default_demo_query()).strip()
+
+    console.print("[meta]Classifying query…[/meta]")
+    tier = classify_query(settings, user_query)
+
+    if settings.openrouter_api_key:
+        _tier_model_map = {
+            "simple": settings.openrouter_model_simple,
+            "medium": settings.openrouter_model_medium,
+            "complex": settings.openrouter_model_complex,
+        }
+        selected_model = _tier_model_map.get(tier, settings.openrouter_model_complex)
+        console.print(
+            f"[meta]Tier:[/meta] [bold]{tier}[/bold]  "
+            f"[meta]Model:[/meta] [bold]{selected_model}[/bold]"
+        )
+    else:
+        _anthropic_tier_map = {
+            "simple": settings.anthropic_model_simple,
+            "medium": settings.anthropic_model_medium,
+            "complex": settings.anthropic_model_complex,
+        }
+        selected_model = _anthropic_tier_map.get(tier, settings.anthropic_model_complex)
+        console.print(
+            f"[meta]Tier:[/meta] [bold]{tier}[/bold]  "
+            f"[meta]Model:[/meta] [bold]{selected_model}[/bold] [meta](Anthropic)[/meta]"
+        )
+
+    console.print("[meta]Starting agent…[/meta]")
+    agent = build_agent(settings, tier=tier)
 
     messages = [HumanMessage(content=user_query)]
     result = agent.invoke({"messages": messages})
