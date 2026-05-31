@@ -21,8 +21,9 @@ Single-package Python project under `ai-sql-migration/`.
 
 - **`main.py`** — Entry point; runs LangGraph agent and formats output with rich console panels.
 - **`pyproject.toml`** — Dependencies, Python 3.13+, uv as package manager.
-- **`src/config/`** — Settings from `.env` (uses `python-dotenv`); system prompt; LLM client factory.
+- **`src/config/`** — Settings from `.env` (uses `python-dotenv`); system prompt; LLM client factory; `classify_query()` returns `ClassifierResult` (tier + token usage); `judge_response()` for quality scoring.
 - **`src/graph/`** — LangGraph agent: `builder.py` compiles the graph, `nodes.py` has LLM call / tool node / routing, `state.py` defines MessagesState.
+- **`src/observability/`** — `metrics.py`: `RunMetrics` dataclass, `collect_run_metrics()`, cost estimation table per model. Printed as a panel after every run.
 - **`src/tools/`** — Five tools: `migrate_sql_query` (SQLFluff T-SQL→Spark SQL), `run_sqledge_query`, `describe_sqledge_table`, `run_sql_query`, `describe_table`.
 - **`tests/`** — Two test files; use pytest. `test_sql_migration.py` tests SQLFluff rewrites (TOP→LIMIT, ISNULL→COALESCE, etc.).
 - **`data/`** — DB initialization scripts (`init_db.py` for SQL Edge, `init_db_databricks.py` for Databricks) and raw CSV fixtures.
@@ -35,8 +36,11 @@ The `.env` file **must** be present (`.env.example` is the template). `python-do
 Critical for agent operation:
 
 - `ANTHROPIC_API_KEY` — Required **unless** `OPENROUTER_API_KEY` is set. At least one must be present.
-- `OPENROUTER_API_KEY` — Optional. When set, enables the LLM query classifier and tiered model routing. Takes precedence over Anthropic.
-- `OPENROUTER_MODEL_CLASSIFIER` / `OPENROUTER_MODEL_SIMPLE` / `OPENROUTER_MODEL_MEDIUM` / `OPENROUTER_MODEL_COMPLEX` — Model names per tier (all have defaults; only active when `OPENROUTER_API_KEY` is set).
+- `ANTHROPIC_MODEL_CLASSIFIER` / `ANTHROPIC_MODEL_SIMPLE` / `ANTHROPIC_MODEL_MEDIUM` / `ANTHROPIC_MODEL_COMPLEX` — Claude models per tier (defaults: haiku / haiku / sonnet / sonnet).
+- `OPENROUTER_API_KEY` — Optional. When set, takes precedence over Anthropic.
+- `OPENROUTER_MODEL_CLASSIFIER` / `OPENROUTER_MODEL_SIMPLE` / `OPENROUTER_MODEL_MEDIUM` / `OPENROUTER_MODEL_COMPLEX` — OpenRouter models per tier (defaults: llama-3.1-8b:free / llama-3.1-8b:free / mixtral-8x7b / claude-sonnet-4-5).
+- `LANGSMITH_TRACING` / `LANGSMITH_API_KEY` / `LANGSMITH_PROJECT` — LangSmith tracing. **Must be in `.env`** — setting these at runtime is too late (LangChain reads them at import time).
+- `QUALITY_JUDGE_ENABLED` — Set `true` to score each response 1–5 with a cheap classifier model.
 - `SQLEDGE_*` — SQL Edge connection (Docker running `azure-sql-edge`).
 - `DATABRICKS_*` — Databricks SQL Warehouse.
 - `UC_*` — Unity Catalog (tables remapped via `SQL_MIGRATION_UC_PREFIX` env var, default: `pharmacy.gold.*`).
@@ -79,8 +83,10 @@ Defined in `settings.py`. Key rules agent sees:
 ## LLM & Tooling
 
 - **Provider selection**: If `OPENROUTER_API_KEY` is set → `ChatOpenAI` via `langchain-openai` pointed at `https://openrouter.ai/api/v1`. Otherwise → `ChatAnthropic` via `langchain-anthropic`.
-- **Query classifier**: `classify_query()` en `llm_config.py` corre en **ambos** proveedores. Con OpenRouter usa `OPENROUTER_MODEL_CLASSIFIER` (default: `meta-llama/llama-3.1-8b-instruct:free`); con Anthropic usa `ANTHROPIC_MODEL_CLASSIFIER` (default: `claude-haiku-4-5-20251001`). Retorna `simple`, `medium`, o `complex`; cae a `complex` en cualquier error.
+- **Query classifier**: `classify_query()` en `llm_config.py` corre en **ambos** proveedores. Retorna un `ClassifierResult` con `.tier` (`simple`/`medium`/`complex`) y `.input_tokens`/`.output_tokens` para incluir en métricas. Cae a `tier="complex"` con tokens=0 en cualquier error.
 - **Model tiers**: `build_agent(settings, tier)` selecciona el modelo del tier correspondiente (`settings.openrouter_model_{tier}` o `settings.anthropic_model_{tier}`). Default tier: `complex`.
+- **Observability**: después de cada `agent.invoke()`, `collect_run_metrics()` agrega tokens del agente + tokens del clasificador para coincidir con LangSmith. Se imprime un panel `Run Metrics` en consola con latencia, LLM calls, tools usados, tokens, costo estimado, y quality score (si `QUALITY_JUDGE_ENABLED=true`).
+- **Databricks async**: `run_sql_query` usa polling (`_poll_statement()`) cuando Databricks devuelve estado `PENDING`/`RUNNING`. Máximo 300s de espera con backoff de 1s→5s.
 - **Tools**: Five tools bound to model; LangGraph router decides tool-call vs. END.
 - **Graph**: START → llm_call → [tool_node or END] → llm_call (loop until no more tool calls).
 
@@ -105,3 +111,5 @@ Run these commands in your Databricks workspace SQL editor **before** running `d
 6. **Stale env overrides** — If testing with `SQL_MIGRATION_UC_PREFIX`, remember it affects all migrations in that session.
 7. **Missing Databricks catalog** — `localuc` must exist before running `init_db_databricks.py`; create it with the SQL commands above.
 8. **OpenRouter model without tool-calling support** — The free-tier classifier model (`llama-3.1-8b-instruct:free`) only emits a one-word response and does not use tools. The agent models (`SIMPLE`/`MEDIUM`/`COMPLEX`) must support function calling; the defaults (`llama-3.1-8b`, `mixtral-8x7b`, `claude-sonnet-4-5`) all do.
+9. **LangSmith vars set at runtime** — `LANGSMITH_TRACING`, `LANGSMITH_API_KEY`, and `LANGSMITH_PROJECT` must be present in `.env` before the process starts. Setting them via `os.environ` inside `main()` is too late — LangChain reads tracing config at import time.
+10. **Databricks query PENDING** — `run_sql_query` now polls automatically when Databricks returns `PENDING` or `RUNNING`. If you still see retry behavior in LangSmith, check `DATABRICKS_WAREHOUSE_ID` is correct and the warehouse is running.

@@ -2,7 +2,7 @@
 
 AI-powered SQL migration agent that uses [LangGraph](https://github.com/langchain-ai/langgraph) and an LLM (Anthropic Claude or [OpenRouter](https://openrouter.ai)) to query data from **Azure SQL Edge** (Docker) and **Databricks** using natural language.
 
-When OpenRouter is configured, a lightweight classifier model automatically routes each query to the right-sized model based on complexity (simple / medium / complex), optimizing cost without sacrificing quality on hard tasks.
+A lightweight LLM classifier automatically routes each query to the right-sized model based on complexity (simple / medium / complex), optimizing cost without sacrificing quality on hard tasks. The classifier works with both Anthropic and OpenRouter.
 
 ## Requirements
 
@@ -87,6 +87,16 @@ cp .env.example .env
 | `SQLFLUFF_SOURCE_DIALECT` | Source SQL dialect for migration (default: `tsql`) |
 | `SQLFLUFF_TARGET_DIALECT` | Target SQL dialect for migration (default: `sparksql`) |
 
+### Observability (optional)
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `LANGSMITH_TRACING` | `false` | Enable LangSmith tracing. Must be set in `.env` — cannot be set at runtime. |
+| `LANGSMITH_API_KEY` | — | LangSmith API key (`ls__...`). Required when tracing is enabled. |
+| `LANGSMITH_PROJECT` | `ai-sql-migration` | Project name in LangSmith. |
+| `LANGSMITH_ENDPOINT` | `https://api.smith.langchain.com` | LangSmith API endpoint. |
+| `QUALITY_JUDGE_ENABLED` | `false` | Run a cheap LLM judge after each response to score quality (1–5). Adds ~1 extra LLM call per run. |
+
 ### Databricks Unity Catalog Setup (Required)
 
 Before using Databricks features, ensure the Unity Catalog exists and you have access:
@@ -120,16 +130,18 @@ ai-sql-migration/
 └── src/
     ├── config/
     │   ├── settings.py          # Settings dataclass loaded from env (Anthropic + OpenRouter fields)
-    │   └── llm_config.py        # Model factory: Anthropic direct or OpenRouter tiered + query classifier
+    │   └── llm_config.py        # Model factory, query classifier (ClassifierResult), quality judge
     ├── graph/
     │   ├── builder.py           # LangGraph agent compilation
     │   ├── nodes.py             # LLM call, tool, and routing nodes
     │   └── state.py             # Agent state definition
     ├── models/                  # Data models
+    ├── observability/
+    │   └── metrics.py           # RunMetrics: latency, tokens, cost estimation, quality score
     └── tools/
         ├── sql_migration.py     # SQL Edge -> Databricks migration tool (SQLFluff)
         ├── sqledge_sql.py       # Azure SQL Edge tools
-        └── databricks_sql.py    # Databricks SQL tools
+        └── databricks_sql.py    # Databricks SQL tools (with async polling)
 ```
 
 ## Agent Tools
@@ -181,6 +193,13 @@ USER_QUERY="Use run_sqledge_query to execute: SELECT TOP (5) [sk_patient_id], [f
 USER_QUERY="Use run_sql_query to list 5 rows from localuc.gold.dim_patient." uv run python main.py
 ```
 
+#### Migrar y ejecutar query básica (SQL Edge → Databricks)
+
+```bash
+USER_QUERY="Use migrate_sql_query for: SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name, ISNULL(last_name, 'unknown') AS last_name, GETDATE() AS migrated_at FROM localdb.dbo.dim_patient; then run_sql_query on the migrated SQL in Databricks."
+uv run python main.py
+```
+
 ---
 
 ### Tier: medium
@@ -211,10 +230,27 @@ USER_QUERY="Use run_sql_query on localuc.gold.fact_prescription to show total pr
 
 Queries clasificadas como `complex` usan el modelo más capaz (e.g. `claude-sonnet-4-5` o `claude-opus`). Ideales para migraciones T-SQL → Spark SQL completas y analytics multi-tabla.
 
-#### Migrar y ejecutar query simple
+#### Migrar query con window functions y CTE
 
 ```bash
-USER_QUERY="Use migrate_sql_query for: SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name, ISNULL(last_name, 'unknown') AS last_name, GETDATE() AS migrated_at FROM localdb.dbo.dim_patient; then run_sql_query on the migrated SQL in Databricks."
+export USER_QUERY="Use migrate_sql_query for this T-SQL, then run it with run_sql_query:
+WITH ranked_patients AS (
+    SELECT
+        p.sk_patient_id,
+        p.first_name,
+        p.last_name,
+        ISNULL(p.primary_rare_disease, 'Unknown') AS disease,
+        COUNT(rx.sk_prescription_id) AS total_prescriptions,
+        ROW_NUMBER() OVER (PARTITION BY p.primary_rare_disease ORDER BY COUNT(rx.sk_prescription_id) DESC) AS rn
+    FROM localdb.dbo.dim_patient p
+    LEFT JOIN localdb.dbo.fact_prescription rx ON p.sk_patient_id = rx.sk_patient_id
+    WHERE p.is_active = 1
+    GROUP BY p.sk_patient_id, p.first_name, p.last_name, p.primary_rare_disease
+)
+SELECT TOP 10 first_name, last_name, disease, total_prescriptions, rn
+FROM ranked_patients
+WHERE rn = 1
+ORDER BY total_prescriptions DESC;"
 uv run python main.py
 ```
 
@@ -260,9 +296,9 @@ settings = Settings.from_env()
 
 query = "Migrate this SQL Edge query to Databricks and run it: SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name FROM pharmacy_db.dbo.dim_patient;"
 
-# Classify query complexity and route to the right model (no-op if only ANTHROPIC_API_KEY is set)
-tier = classify_query(settings, query)
-agent = build_agent(settings, tier=tier)
+# classify_query returns a ClassifierResult with .tier and token usage
+classifier_result = classify_query(settings, query)
+agent = build_agent(settings, tier=classifier_result.tier)
 
 result = agent.invoke({"messages": [HumanMessage(content=query)]})
 print(result["messages"][-1].content)
