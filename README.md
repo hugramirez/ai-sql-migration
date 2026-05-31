@@ -151,40 +151,102 @@ ai-sql-migration/
 
 ## Usage Examples
 
-Use explicit queries so the agent chooses the correct tool and data source.
+The agent automatically classifies each query into a tier (`simple` / `medium` / `complex`) and routes it to the appropriate model. Use explicit queries so the agent also chooses the correct tool and data source.
 
-**Databricks (`run_sql_query`)**
-```bash
-USER_QUERY="Use run_sql_query to list 5 rows from workspace.default.dim_patient." uv run python main.py
-```
+### Tier: simple
 
-**Databricks schema (`describe_table`)**
-```bash
-USER_QUERY="Use describe_table for workspace.default.dim_patient and show me the columns." uv run python main.py
-```
+Queries clasificadas como `simple` usan el modelo más ligero (e.g. `claude-haiku` o `llama-3.1-8b:free`). Ideales para lookups de schema o SELECTs básicos de una sola tabla.
 
-**SQL Edge (`run_sqledge_query`)**
-```bash
-USER_QUERY="Use run_sqledge_query to execute: SELECT TOP (5) [sk_patient_id], [patient_external_id], [first_name], [last_name], [date_of_birth], [age], [gender], [ethnicity], [state], [zip_code], [enrollment_date], [primary_rare_disease], [secondary_conditions], [is_active], [created_date], [updated_date] FROM [pharmacy_db].[dbo].[dim_patient]" uv run python main.py
-```
+#### Describir schema de una tabla (SQL Edge)
 
-**SQL Edge schema (`describe_sqledge_table`)**
 ```bash
 USER_QUERY="Use describe_sqledge_table for dim_patient and list all columns." uv run python main.py
 ```
 
-**SQL Edge active patients (`run_sqledge_query`)**
+#### Describir schema de una tabla (Databricks)
+
 ```bash
-USER_QUERY="Use run_sqledge_query to execute: SELECT TOP (5) [sk_patient_id], [first_name], [last_name], [is_active], [updated_date] FROM [pharmacy_db].[dbo].[dim_patient] WHERE [is_active] = 1" uv run python main.py
+USER_QUERY="Use describe_table for localuc.gold.dim_patient and show me the columns." uv run python main.py
 ```
 
-**Migrate SQL Edge -> Databricks (`migrate_sql_query` + `run_sql_query`)**
+#### SELECT básico (SQL Edge)
+
 ```bash
-export USER_QUERY="Use migrate_sql_query for: SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name, ISNULL(last_name, 'unknown') AS last_name, GETDATE() AS migrated_at FROM pharmacy_db.dbo.dim_patient; then run_sql_query on the migrated SQL in Databricks."
+USER_QUERY="Use run_sqledge_query to execute: SELECT TOP (5) [sk_patient_id], [first_name], [last_name], [is_active] FROM [localdb].[dbo].[dim_patient] WHERE [is_active] = 1" uv run python main.py
+```
+
+#### SELECT básico (Databricks)
+
+```bash
+USER_QUERY="Use run_sql_query to list 5 rows from localuc.gold.dim_patient." uv run python main.py
+```
+
+---
+
+### Tier: medium
+
+Queries clasificadas como `medium` usan un modelo intermedio (e.g. `claude-sonnet` o `mixtral-8x7b`). Ideales para agregaciones, JOINs simples y filtros compuestos.
+
+#### Agregación con GROUP BY (SQL Edge)
+
+```bash
+USER_QUERY="Use run_sqledge_query to count patients grouped by primary_rare_disease, order by count descending, top 10." uv run python main.py
+```
+
+#### JOIN entre dos tablas (SQL Edge)
+
+```bash
+USER_QUERY="Use run_sqledge_query to join dim_patient with fact_prescription on sk_patient_id, show first_name, last_name and count of prescriptions per patient, top 5." uv run python main.py
+```
+
+#### Agregación en Databricks
+
+```bash
+USER_QUERY="Use run_sql_query on localuc.gold.fact_prescription to show total prescriptions per medication, grouped by medication name, top 10 ordered by total descending." uv run python main.py
+```
+
+---
+
+### Tier: complex
+
+Queries clasificadas como `complex` usan el modelo más capaz (e.g. `claude-sonnet-4-5` o `claude-opus`). Ideales para migraciones T-SQL → Spark SQL completas y analytics multi-tabla.
+
+#### Migrar y ejecutar query simple
+
+```bash
+USER_QUERY="Use migrate_sql_query for: SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name, ISNULL(last_name, 'unknown') AS last_name, GETDATE() AS migrated_at FROM localdb.dbo.dim_patient; then run_sql_query on the migrated SQL in Databricks."
 uv run python main.py
 ```
 
-**Programmatic usage:**
+#### Migrar query con JOIN y agregación
+
+```bash
+export USER_QUERY="Migrate this T-SQL to Databricks using migrate_sql_query, then run it with run_sql_query:
+SELECT TOP 10
+    p.first_name,
+    p.last_name,
+    COUNT(rx.sk_prescription_id) AS total_prescriptions,
+    ISNULL(p.primary_rare_disease, 'Unknown') AS disease
+FROM localdb.dbo.dim_patient p
+JOIN localdb.dbo.fact_prescription rx ON p.sk_patient_id = rx.sk_patient_id
+GROUP BY p.first_name, p.last_name, p.primary_rare_disease
+ORDER BY total_prescriptions DESC"
+uv run python main.py
+```
+
+#### Migrar desde archivo .sql
+
+```bash
+uv run python main.py --sql-file reports/patient_spending.sql
+```
+
+#### Guardar el SQL migrado a un archivo
+
+```bash
+uv run python main.py -q "SELECT TOP 5 GETDATE() AS ts, ISNULL(first_name,'?') AS name FROM localdb.dbo.dim_patient" --write-migrated output/migrated.sql
+```
+
+#### Uso programático
 
 ```python
 from dotenv import load_dotenv
