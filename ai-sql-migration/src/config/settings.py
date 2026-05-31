@@ -119,6 +119,10 @@ class Settings:
     sqlfluff_enabled: bool = True
     sqlfluff_source_dialect: str = "tsql"
     sqlfluff_target_dialect: str = "sparksql"
+    langsmith_api_key: str = ""
+    langsmith_project: str = "ai-sql-migration"
+    langchain_tracing: bool = False
+    quality_judge_enabled: bool = False
 
 
     @classmethod
@@ -179,6 +183,13 @@ class Settings:
             sqlfluff_enabled=os.environ.get("SQLFLUFF_ENABLED", "true").strip().lower() in {"1", "true", "yes", "on"},
             sqlfluff_source_dialect=os.environ.get("SQLFLUFF_SOURCE_DIALECT", "tsql").strip(),
             sqlfluff_target_dialect=os.environ.get("SQLFLUFF_TARGET_DIALECT", "sparksql").strip(),
+            langsmith_api_key=os.environ.get("LANGSMITH_API_KEY", "").strip(),
+            langsmith_project=os.environ.get("LANGSMITH_PROJECT", "ai-sql-migration").strip(),
+            langchain_tracing=(
+                os.environ.get("LANGSMITH_TRACING", "").strip().lower() in {"1", "true", "yes", "on"}
+                or os.environ.get("LANGCHAIN_TRACING_V2", "").strip().lower() in {"1", "true", "yes", "on"}
+            ),
+            quality_judge_enabled=os.environ.get("QUALITY_JUDGE_ENABLED", "false").strip().lower() in {"1", "true", "yes", "on"},
         )
 
 

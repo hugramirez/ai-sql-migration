@@ -3,6 +3,7 @@ from src.config.llm_config import (
     create_anthropic_model,
     create_chat_model,
     create_openrouter_model,
+    judge_response,
 )
 from src.config.settings import Settings
 
@@ -12,4 +13,5 @@ __all__ = [
     "create_anthropic_model",
     "create_chat_model",
     "create_openrouter_model",
+    "judge_response",
 ]

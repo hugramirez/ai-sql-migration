@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import json
+
 from langchain_anthropic import ChatAnthropic  # type: ignore
 from langchain_openai import ChatOpenAI  # type: ignore
 from langchain_core.messages import HumanMessage
@@ -98,6 +100,72 @@ def classify_query(settings: Settings, query: str) -> str:
         return raw if raw in _VALID_TIERS else "complex"
     except Exception:
         return "complex"
+
+
+_JUDGE_PROMPT = """\
+You are a QA evaluator for a SQL data agent. Evaluate the agent's response quality.
+
+User query: {query}
+
+Agent response:
+{response}
+
+Rate the response from 1 to 5:
+5 = Excellent: complete, well-formatted, all requirements met
+4 = Good: complete with minor issues or omissions
+3 = Adequate: answers the question but missing relevant detail
+2 = Below average: partial answer or significant formatting issues
+1 = Poor: wrong answer, missing key information, or errors
+
+Reply with ONLY valid JSON (no markdown, no extra text):
+{{"score": <1-5>, "notes": "<one sentence explanation>"}}"""
+
+
+def judge_response(settings: Settings, user_query: str, agent_response: str) -> dict:
+    """Evaluate agent response quality using a cheap model.
+
+    Returns {"score": int (1-5), "notes": str}.
+    Falls back to {"score": None, "notes": "judge unavailable"} on any error.
+    """
+    _fallback = {"score": None, "notes": "judge unavailable"}
+    if not agent_response.strip():
+        return _fallback
+
+    if settings.openrouter_api_key:
+        judge_model = ChatOpenAI(
+            api_key=settings.openrouter_api_key,
+            base_url=_OPENROUTER_BASE_URL,
+            model=settings.openrouter_model_classifier,
+            max_tokens=128,
+            temperature=0.0,
+        )
+    elif settings.anthropic_api_key:
+        judge_model = ChatAnthropic(
+            anthropic_api_key=settings.anthropic_api_key,
+            model=settings.anthropic_model_classifier,
+            max_tokens=128,
+            temperature=0.0,
+        )
+    else:
+        return _fallback
+
+    try:
+        prompt = _JUDGE_PROMPT.format(
+            query=user_query[:1000],
+            response=agent_response[:3000],
+        )
+        response = judge_model.invoke([HumanMessage(content=prompt)])
+        raw = str(response.content).strip()
+        # strip possible markdown code fences
+        if raw.startswith("```"):
+            raw = raw.split("```")[1].lstrip("json").strip()
+        data = json.loads(raw)
+        score = int(data.get("score", 0))
+        if score not in range(1, 6):
+            return _fallback
+        return {"score": score, "notes": str(data.get("notes", ""))}
+    except Exception:
+        return _fallback
 
 
 if __name__ == "__main__":
