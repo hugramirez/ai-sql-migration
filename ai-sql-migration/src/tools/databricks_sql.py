@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import re
+import time
 
 import requests
 from dotenv import load_dotenv
@@ -35,6 +36,34 @@ def _guard_select_only(query: str) -> str:
     return q
 
 
+_TERMINAL_STATES = frozenset({"SUCCEEDED", "FAILED", "CANCELLED", "CLOSED"})
+_MAX_POLL_SECONDS = 300
+_POLL_INTERVAL_START = 1.0
+_POLL_INTERVAL_MAX = 5.0
+
+
+def _poll_statement(host: str, token: str, statement_id: str) -> dict:
+    """Poll GET /api/2.0/sql/statements/{id} until the query reaches a terminal state."""
+    elapsed = 0.0
+    interval = _POLL_INTERVAL_START
+    while elapsed < _MAX_POLL_SECONDS:
+        time.sleep(interval)
+        elapsed += interval
+        resp = requests.get(
+            f"{host}/api/2.0/sql/statements/{statement_id}",
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=30,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        if data.get("status", {}).get("state") in _TERMINAL_STATES:
+            return data
+        interval = min(interval * 1.5, _POLL_INTERVAL_MAX)
+    raise RuntimeError(
+        f"Databricks query timed out after {_MAX_POLL_SECONDS}s (statement_id={statement_id})"
+    )
+
+
 def _execute(query: str, limit: int) -> str:
     host, token, warehouse_id = _require_env()
 
@@ -63,9 +92,16 @@ def _execute(query: str, limit: int) -> str:
     data = resp.json()
 
     state = data.get("status", {}).get("state")
+
+    # If Databricks returned before the query finished, poll until terminal state
+    if state not in _TERMINAL_STATES:
+        statement_id = data.get("statement_id")
+        data = _poll_statement(host, token, statement_id)
+        state = data.get("status", {}).get("state")
+
     if state != "SUCCEEDED":
         error = data.get("status", {}).get("error", {})
-        raise RuntimeError(f"Query {state}: {error.get('message', data)}")
+        raise RuntimeError(f"Query {state}: {error.get('message', str(data.get('status', {})))}")
 
     columns = [c["name"] for c in data.get("manifest", {}).get("schema", {}).get("columns", [])]
     rows = data.get("result", {}).get("data_array", [])
