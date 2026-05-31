@@ -185,7 +185,10 @@ class Settings:
             sqlfluff_target_dialect=os.environ.get("SQLFLUFF_TARGET_DIALECT", "sparksql").strip(),
             langsmith_api_key=os.environ.get("LANGSMITH_API_KEY", "").strip(),
             langsmith_project=os.environ.get("LANGSMITH_PROJECT", "ai-sql-migration").strip(),
-            langchain_tracing=os.environ.get("LANGCHAIN_TRACING_V2", "false").strip().lower() in {"1", "true", "yes", "on"},
+            langchain_tracing=(
+                os.environ.get("LANGSMITH_TRACING", "").strip().lower() in {"1", "true", "yes", "on"}
+                or os.environ.get("LANGCHAIN_TRACING_V2", "").strip().lower() in {"1", "true", "yes", "on"}
+            ),
             quality_judge_enabled=os.environ.get("QUALITY_JUDGE_ENABLED", "false").strip().lower() in {"1", "true", "yes", "on"},
         )
 

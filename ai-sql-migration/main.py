@@ -284,12 +284,6 @@ def main() -> None:
             f"[meta]Model:[/meta] [bold]{selected_model}[/bold] [meta](Anthropic)[/meta]"
         )
 
-    # Enable LangSmith tracing if configured
-    if settings.langchain_tracing and settings.langsmith_api_key:
-        os.environ["LANGCHAIN_TRACING_V2"] = "true"
-        os.environ["LANGCHAIN_API_KEY"] = settings.langsmith_api_key
-        os.environ["LANGCHAIN_PROJECT"] = settings.langsmith_project
-
     provider = "openrouter" if settings.openrouter_api_key else "anthropic"
     invoke_config = {"metadata": {"tier": tier, "model": selected_model, "provider": provider}}
 
