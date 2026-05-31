@@ -14,7 +14,7 @@ A lightweight LLM classifier automatically routes each query to the right-sized 
 - A Databricks workspace with a SQL warehouse (for Databricks tools)
   - **Required**: A Unity Catalog (`localuc` by default) must exist before using Databricks features
 
-**For step-by-step setup instructions, see [runbook.md](runbook.md)** ← Start here if this is your first time setting up the project.
+**For step-by-step setup instructions, see [runbook.md](ai-sql-migration/runbook.md)** ← Start here if this is your first time setting up the project.
 
 ## Setup
 
