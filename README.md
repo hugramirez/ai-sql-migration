@@ -2,7 +2,7 @@
 
 AI-powered SQL migration agent that uses [LangGraph](https://github.com/langchain-ai/langgraph) and an LLM (Anthropic Claude or [OpenRouter](https://openrouter.ai)) to query data from **Azure SQL Edge** (Docker) and **Databricks** using natural language.
 
-When OpenRouter is configured, a lightweight classifier model automatically routes each query to the right-sized model based on complexity (simple / medium / complex), optimizing cost without sacrificing quality on hard tasks.
+A lightweight LLM classifier automatically routes each query to the right-sized model based on complexity (simple / medium / complex), optimizing cost without sacrificing quality on hard tasks. The classifier works with both Anthropic and OpenRouter.
 
 ## Requirements
 
@@ -87,6 +87,16 @@ cp .env.example .env
 | `SQLFLUFF_SOURCE_DIALECT` | Source SQL dialect for migration (default: `tsql`) |
 | `SQLFLUFF_TARGET_DIALECT` | Target SQL dialect for migration (default: `sparksql`) |
 
+### Observability (optional)
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `LANGSMITH_TRACING` | `false` | Enable LangSmith tracing. Must be set in `.env` — cannot be set at runtime. |
+| `LANGSMITH_API_KEY` | — | LangSmith API key (`ls__...`). Required when tracing is enabled. |
+| `LANGSMITH_PROJECT` | `ai-sql-migration` | Project name in LangSmith. |
+| `LANGSMITH_ENDPOINT` | `https://api.smith.langchain.com` | LangSmith API endpoint. |
+| `QUALITY_JUDGE_ENABLED` | `false` | Run a cheap LLM judge after each response to score quality (1–5). Adds ~1 extra LLM call per run. |
+
 ### Databricks Unity Catalog Setup (Required)
 
 Before using Databricks features, ensure the Unity Catalog exists and you have access:
@@ -120,16 +130,18 @@ ai-sql-migration/
 └── src/
     ├── config/
     │   ├── settings.py          # Settings dataclass loaded from env (Anthropic + OpenRouter fields)
-    │   └── llm_config.py        # Model factory: Anthropic direct or OpenRouter tiered + query classifier
+    │   └── llm_config.py        # Model factory, query classifier (ClassifierResult), quality judge
     ├── graph/
     │   ├── builder.py           # LangGraph agent compilation
     │   ├── nodes.py             # LLM call, tool, and routing nodes
     │   └── state.py             # Agent state definition
     ├── models/                  # Data models
+    ├── observability/
+    │   └── metrics.py           # RunMetrics: latency, tokens, cost estimation, quality score
     └── tools/
         ├── sql_migration.py     # SQL Edge -> Databricks migration tool (SQLFluff)
         ├── sqledge_sql.py       # Azure SQL Edge tools
-        └── databricks_sql.py    # Databricks SQL tools
+        └── databricks_sql.py    # Databricks SQL tools (with async polling)
 ```
 
 ## Agent Tools
@@ -260,9 +272,9 @@ settings = Settings.from_env()
 
 query = "Migrate this SQL Edge query to Databricks and run it: SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name FROM pharmacy_db.dbo.dim_patient;"
 
-# Classify query complexity and route to the right model (no-op if only ANTHROPIC_API_KEY is set)
-tier = classify_query(settings, query)
-agent = build_agent(settings, tier=tier)
+# classify_query returns a ClassifierResult with .tier and token usage
+classifier_result = classify_query(settings, query)
+agent = build_agent(settings, tier=classifier_result.tier)
 
 result = agent.invoke({"messages": [HumanMessage(content=query)]})
 print(result["messages"][-1].content)
