@@ -1,0 +1,468 @@
+---
+# specs/ai_sql_migration.spec.yaml
+project: "ai-sql-migration"
+version: "1.0.0"
+created_date: "2026-05-31"
+last_updated: "2026-05-31"
+owner: "Hugo Alejandro Ramirez Moreno"
+
+adr_references:
+  - adr: "ADR-001"
+    reason: "Tiered LLM routing via lightweight classifier — drives SPEC-001 and SPEC-003"
+  - adr: "ADR-002"
+    reason: "T-SQL → Spark SQL migration via SQLFluff + custom rewrites — drives SPEC-002"
+
+# ==============================================================================
+# SPEC-001: Query Complexity Classifier
+# ==============================================================================
+specifications:
+
+  - spec_id: "SPEC-001"
+    name: "Query Complexity Classifier"
+    description: "classify_query() must return a valid tier within time and cost budgets, with a safe fallback on any error."
+    priority: "critical"
+
+    requirements:
+      - req_id: "REQ-001"
+        description: "Classifier must respond within latency budget"
+        type: "performance"
+        metric_name: "classifier_latency_ms"
+        metric_type: "latency"
+        threshold: 2000
+        operator: "<"
+        unit: "milliseconds"
+        adr_source: "ADR-001"
+        validation_method: "automated"
+        acceptance_criteria: "100% of calls complete under 2000ms in test environment"
+
+      - req_id: "REQ-002"
+        description: "Classifier accuracy on labeled test set"
+        type: "functional"
+        metric_name: "classifier_accuracy"
+        metric_type: "classification_accuracy"
+        threshold: 0.85
+        operator: ">="
+        unit: "ratio"
+        adr_source: "ADR-001"
+        validation_method: "automated"
+        dataset_ref: "tests/fixtures/classifier_test_set.json"
+
+      - req_id: "REQ-003"
+        description: "Any exception in the classifier must return tier='complex', never raise"
+        type: "functional"
+        metric_name: "classifier_fallback_correctness"
+        metric_type: "error_handling"
+        threshold: 1.0
+        operator: "=="
+        unit: "boolean"
+        adr_source: "ADR-001"
+        validation_method: "automated"
+        acceptance_criteria: "ClassifierResult(tier='complex') returned on LLM exception"
+
+    test_cases:
+      - tc_id: "TC-001"
+        description: "Simple query classified as 'simple'"
+        category: "functional"
+        priority: "critical"
+        preconditions:
+          - "ANTHROPIC_API_KEY or OPENROUTER_API_KEY is set"
+          - "Classifier model is available"
+        inputs:
+          query: "SELECT TOP 5 first_name FROM localdb.dbo.dim_patient"
+          expected_tier: "simple"
+        expected_outputs:
+          tier: "simple"
+          input_tokens_gt: 0
+        assertions:
+          - name: "Tier is 'simple'"
+            condition: "result.tier == 'simple'"
+            required: true
+          - name: "Token count captured"
+            condition: "result.input_tokens > 0"
+            required: false
+        adr_validation: "REQ-002"
+        implementation_ref: "tests/test_sql_migration.py::test_classifier_simple_query"
+
+      - tc_id: "TC-002"
+        description: "Complex migration query classified as 'complex'"
+        category: "functional"
+        priority: "critical"
+        preconditions:
+          - "Classifier model is available"
+        inputs:
+          query: "Migrate this T-SQL to Databricks: SELECT TOP 5 ISNULL(first_name,'?') AS fn, GETDATE() AS ts FROM localdb.dbo.dim_patient JOIN localdb.dbo.fact_prescription ON dim_patient.patient_id = fact_prescription.patient_id"
+          expected_tier: "complex"
+        expected_outputs:
+          tier: "complex"
+        assertions:
+          - name: "Tier is 'complex'"
+            condition: "result.tier == 'complex'"
+            required: true
+        adr_validation: "REQ-002"
+        implementation_ref: "tests/test_sql_migration.py::test_classifier_complex_query"
+
+      - tc_id: "TC-003"
+        description: "Classifier falls back to 'complex' when LLM raises exception"
+        category: "error_handling"
+        priority: "critical"
+        preconditions:
+          - "LLM client is mocked to raise an Exception"
+        inputs:
+          mock_exception: "Exception('network error')"
+        expected_outputs:
+          tier: "complex"
+          input_tokens: 0
+          output_tokens: 0
+        assertions:
+          - name: "Fallback tier is 'complex'"
+            condition: "result.tier == 'complex'"
+            required: true
+          - name: "No exception raised to caller"
+            condition: "no exception propagated"
+            required: true
+        adr_validation: "REQ-003"
+        implementation_ref: "tests/test_sql_migration.py::test_classifier_fallback_on_error"
+
+    acceptance_criteria:
+      - criteria_id: "AC-001"
+        description: "All TC-001, TC-002, TC-003 pass"
+        condition: "TC-001 PASS AND TC-002 PASS AND TC-003 PASS"
+        required: true
+      - criteria_id: "AC-002"
+        description: "Accuracy ≥ 85% on full labeled test set"
+        condition: "accuracy >= 0.85"
+        required: true
+
+    validation_strategy:
+      automated: true
+      frequency: "on_every_commit"
+      tools:
+        - "pytest"
+      owner: "Hugo Alejandro Ramirez Moreno"
+      escalation: "Tech Lead"
+
+    success_metrics:
+      - metric_id: "SM-001"
+        name: "Classifier accuracy"
+        target: ">= 85%"
+        baseline: null
+        tracking_frequency: "per_deployment"
+      - metric_id: "SM-002"
+        name: "Fallback rate"
+        target: "< 5% of production calls"
+        baseline: null
+        tracking_frequency: "daily"
+
+# ==============================================================================
+# SPEC-002: T-SQL → Spark SQL Migration Pipeline
+# ==============================================================================
+
+  - spec_id: "SPEC-002"
+    name: "T-SQL to Spark SQL Migration (SQLFluff + Custom Rewrites)"
+    description: "migrate_sql_query() must correctly rewrite T-SQL syntax to valid Spark SQL and return output in the MIGRATED_SQL: format."
+    priority: "critical"
+
+    requirements:
+      - req_id: "REQ-004"
+        description: "TOP N → LIMIT N rewrite applied"
+        type: "functional"
+        metric_name: "top_to_limit_rewrite"
+        metric_type: "syntax_rewrite"
+        threshold: 1.0
+        operator: "=="
+        unit: "boolean"
+        adr_source: "ADR-002"
+        validation_method: "automated"
+
+      - req_id: "REQ-005"
+        description: "ISNULL(a,b) → COALESCE(a,b) rewrite applied"
+        type: "functional"
+        metric_name: "isnull_to_coalesce_rewrite"
+        metric_type: "syntax_rewrite"
+        threshold: 1.0
+        operator: "=="
+        unit: "boolean"
+        adr_source: "ADR-002"
+        validation_method: "automated"
+
+      - req_id: "REQ-006"
+        description: "GETDATE() → current_timestamp() rewrite applied"
+        type: "functional"
+        metric_name: "getdate_rewrite"
+        metric_type: "syntax_rewrite"
+        threshold: 1.0
+        operator: "=="
+        unit: "boolean"
+        adr_source: "ADR-002"
+        validation_method: "automated"
+
+      - req_id: "REQ-007"
+        description: "Table references remapped from localdb.dbo.* to localuc.gold.*"
+        type: "functional"
+        metric_name: "table_remap"
+        metric_type: "identifier_rewrite"
+        threshold: 1.0
+        operator: "=="
+        unit: "boolean"
+        adr_source: "ADR-002"
+        validation_method: "automated"
+
+      - req_id: "REQ-008"
+        description: "T-SQL bracket notation ([column]) stripped from output"
+        type: "functional"
+        metric_name: "bracket_strip"
+        metric_type: "syntax_rewrite"
+        threshold: 1.0
+        operator: "=="
+        unit: "boolean"
+        adr_source: "ADR-002"
+        validation_method: "automated"
+
+      - req_id: "REQ-009"
+        description: "Output always contains MIGRATED_SQL: prefix line"
+        type: "functional"
+        metric_name: "output_format_compliance"
+        metric_type: "format"
+        threshold: 1.0
+        operator: "=="
+        unit: "boolean"
+        adr_source: "ADR-002"
+        validation_method: "automated"
+        acceptance_criteria: "parse_migrated_sql_line() returns non-None for any valid input"
+
+    test_cases:
+      - tc_id: "TC-004"
+        description: "Full T-SQL query with TOP, ISNULL, GETDATE, and table reference migrated correctly"
+        category: "functional"
+        priority: "critical"
+        preconditions:
+          - "SQLFLUFF_ENABLED=true (default)"
+          - "SQL_MIGRATION_UC_PREFIX=localuc.gold (default)"
+        inputs:
+          query: "SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name, ISNULL(last_name, 'unknown') AS last_name, GETDATE() AS migrated_at FROM localdb.dbo.dim_patient"
+        expected_outputs:
+          contains_limit: true
+          limit_value: "5"
+          contains_coalesce: true
+          contains_current_timestamp: true
+          table_ref: "localuc.gold.dim_patient"
+          no_brackets: true
+        assertions:
+          - name: "LIMIT 5 present"
+            condition: "'LIMIT 5' in migrated_sql.upper()"
+            required: true
+          - name: "COALESCE present (ISNULL removed)"
+            condition: "'COALESCE' in migrated_sql.upper() and 'ISNULL' not in migrated_sql.upper()"
+            required: true
+          - name: "current_timestamp present (GETDATE removed)"
+            condition: "'current_timestamp' in migrated_sql.lower() and 'GETDATE' not in migrated_sql.upper()"
+            required: true
+          - name: "Table remapped to Unity Catalog"
+            condition: "'localuc.gold.dim_patient' in migrated_sql"
+            required: true
+          - name: "No T-SQL bracket notation"
+            condition: "'[' not in migrated_sql and ']' not in migrated_sql"
+            required: true
+        adr_validation: "REQ-004, REQ-005, REQ-006, REQ-007, REQ-008"
+        implementation_ref: "tests/test_sql_migration.py::test_migrate_full_tsql_query"
+
+      - tc_id: "TC-005"
+        description: "OFFSET/FETCH NEXT rewritten to LIMIT"
+        category: "functional"
+        priority: "high"
+        preconditions:
+          - "SQLFLUFF_ENABLED=true"
+        inputs:
+          query: "SELECT first_name FROM dbo.dim_patient ORDER BY patient_id OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY"
+        expected_outputs:
+          contains_limit: true
+          limit_value: "10"
+          no_offset_fetch: true
+        assertions:
+          - name: "LIMIT 10 present"
+            condition: "'LIMIT 10' in migrated_sql.upper()"
+            required: true
+          - name: "OFFSET/FETCH removed"
+            condition: "'OFFSET' not in migrated_sql.upper() and 'FETCH' not in migrated_sql.upper()"
+            required: true
+        adr_validation: "REQ-004"
+        implementation_ref: "tests/test_sql_migration.py::test_migrate_offset_fetch"
+
+      - tc_id: "TC-006"
+        description: "Output format always contains MIGRATED_SQL: line parseable by parse_migrated_sql_line()"
+        category: "functional"
+        priority: "critical"
+        preconditions:
+          - "Any valid T-SQL input"
+        inputs:
+          query: "SELECT patient_id FROM dbo.dim_patient"
+        expected_outputs:
+          migrated_sql_not_none: true
+        assertions:
+          - name: "parse_migrated_sql_line returns non-None"
+            condition: "parse_migrated_sql_line(tool_output) is not None"
+            required: true
+        adr_validation: "REQ-009"
+        implementation_ref: "tests/test_sql_migration.py::test_migrate_output_format"
+
+      - tc_id: "TC-007"
+        description: "Empty query raises ValueError, not silently returns empty string"
+        category: "error_handling"
+        priority: "high"
+        preconditions: []
+        inputs:
+          query: ""
+        expected_outputs:
+          raises: "ValueError"
+        assertions:
+          - name: "ValueError raised on empty input"
+            condition: "raises ValueError"
+            required: true
+        adr_validation: "REQ-009"
+        implementation_ref: "tests/test_sql_migration.py::test_migrate_empty_query_raises"
+
+    acceptance_criteria:
+      - criteria_id: "AC-003"
+        description: "TC-004 to TC-007 all pass"
+        condition: "TC-004 PASS AND TC-005 PASS AND TC-006 PASS AND TC-007 PASS"
+        required: true
+
+    validation_strategy:
+      automated: true
+      frequency: "on_every_commit"
+      tools:
+        - "pytest"
+      owner: "Hugo Alejandro Ramirez Moreno"
+      escalation: "Tech Lead"
+
+    success_metrics:
+      - metric_id: "SM-003"
+        name: "Rewrite correctness rate"
+        target: "100% on known patterns"
+        baseline: null
+        tracking_frequency: "per_deployment"
+
+# ==============================================================================
+# SPEC-003: Cost Observability & Run Metrics
+# ==============================================================================
+
+  - spec_id: "SPEC-003"
+    name: "Cost Observability and Run Metrics"
+    description: "collect_run_metrics() must accurately capture latency, token usage, and estimated cost for every agent invocation."
+    priority: "high"
+
+    requirements:
+      - req_id: "REQ-010"
+        description: "estimate_cost() returns None for unknown models, not raises"
+        type: "functional"
+        metric_name: "cost_estimation_safety"
+        metric_type: "error_handling"
+        threshold: 1.0
+        operator: "=="
+        unit: "boolean"
+        adr_source: "ADR-001"
+        validation_method: "automated"
+
+      - req_id: "REQ-011"
+        description: "Classifier token counts included in total RunMetrics"
+        type: "functional"
+        metric_name: "classifier_tokens_included"
+        metric_type: "accounting"
+        threshold: 1.0
+        operator: "=="
+        unit: "boolean"
+        adr_source: "ADR-001"
+        validation_method: "automated"
+
+      - req_id: "REQ-012"
+        description: "Total end-to-end latency (P95) under 30 seconds"
+        type: "performance"
+        metric_name: "e2e_latency_ms"
+        metric_type: "latency"
+        threshold: 30000
+        operator: "<"
+        unit: "milliseconds"
+        adr_source: "ADR-001"
+        validation_method: "hybrid"
+        acceptance_criteria: "Measured in production via LangSmith traces"
+
+    test_cases:
+      - tc_id: "TC-008"
+        description: "estimate_cost returns correct value for claude-haiku-4-5-20251001"
+        category: "functional"
+        priority: "high"
+        preconditions: []
+        inputs:
+          model: "claude-haiku-4-5-20251001"
+          input_tokens: 1000000
+          output_tokens: 1000000
+        expected_outputs:
+          cost_usd: 4.80
+        assertions:
+          - name: "Cost equals ($0.80 in + $4.00 out) per 1M tokens"
+            condition: "abs(cost - 4.80) < 0.001"
+            required: true
+        adr_validation: "REQ-010"
+        implementation_ref: "tests/test_sql_migration.py::test_estimate_cost_haiku"
+
+      - tc_id: "TC-009"
+        description: "estimate_cost returns None for unknown model, does not raise"
+        category: "error_handling"
+        priority: "high"
+        preconditions: []
+        inputs:
+          model: "unknown/model-xyz"
+          input_tokens: 100
+          output_tokens: 50
+        expected_outputs:
+          cost_usd: null
+        assertions:
+          - name: "Returns None"
+            condition: "estimate_cost(...) is None"
+            required: true
+        adr_validation: "REQ-010"
+        implementation_ref: "tests/test_sql_migration.py::test_estimate_cost_unknown_model"
+
+    acceptance_criteria:
+      - criteria_id: "AC-004"
+        description: "TC-008 and TC-009 pass"
+        condition: "TC-008 PASS AND TC-009 PASS"
+        required: true
+
+    validation_strategy:
+      automated: true
+      frequency: "on_every_commit"
+      tools:
+        - "pytest"
+      owner: "Hugo Alejandro Ramirez Moreno"
+      escalation: "Tech Lead"
+
+    success_metrics:
+      - metric_id: "SM-004"
+        name: "Cost estimation coverage"
+        target: "All models in production price table"
+        baseline: null
+        tracking_frequency: "per_deployment"
+
+# ==============================================================================
+# Global config
+# ==============================================================================
+config:
+  environment: "test"
+
+  thresholds:
+    classifier_latency_ms: 2000
+    e2e_latency_ms: 30000
+    classifier_accuracy_min: 0.85
+    classifier_fallback_rate_max: 0.05
+    cost_simple_usd: 0.0005
+    cost_complex_usd: 0.020
+
+  test_data_paths:
+    classifier_test_set: "tests/fixtures/classifier_test_set.json"
+
+  monitoring:
+    enabled: true
+    alerting: true
+    dashboard_url: "https://smith.langchain.com"
+    project: "ai-sql-migration"
