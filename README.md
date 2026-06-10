@@ -1,183 +1,183 @@
 # ai-sql-migration
 
-AI-powered SQL migration agent that uses [LangGraph](https://github.com/langchain-ai/langgraph) and an LLM (Anthropic Claude or [OpenRouter](https://openrouter.ai)) to query data from **Azure SQL Edge** (Docker) and **Databricks** using natural language.
+Agente de migración SQL impulsado por IA que utiliza [LangGraph](https://github.com/langchain-ai/langgraph) y un LLM (Anthropic Claude o [OpenRouter](https://openrouter.ai)) para consultar datos desde **Azure SQL Edge** (Docker) y **Databricks** usando lenguaje natural.
 
-A lightweight LLM classifier automatically routes each query to the right-sized model based on complexity (simple / medium / complex), optimizing cost without sacrificing quality on hard tasks. The classifier works with both Anthropic and OpenRouter.
+Un clasificador LLM ligero enruta automáticamente cada consulta al modelo de tamaño adecuado según su complejidad (simple / medium / complex), optimizando el costo sin sacrificar calidad en tareas difíciles. El clasificador funciona tanto con Anthropic como con OpenRouter.
 
-## Requirements
+## Requisitos
 
 - Python 3.13+
 - [uv](https://docs.astral.sh/uv/getting-started/installation/)
 - [ODBC Driver 18 for SQL Server](https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server)
-- An **Anthropic API key** (`ANTHROPIC_API_KEY`) **or** an **OpenRouter API key** (`OPENROUTER_API_KEY`) — at least one is required
-- Docker running `azure-sql-edge` (for SQL Edge tools)
-- A Databricks workspace with a SQL warehouse (for Databricks tools)
-  - **Required**: A Unity Catalog (`localuc` by default) must exist before using Databricks features
+- Una **clave de API de Anthropic** (`ANTHROPIC_API_KEY`) **o** una **clave de API de OpenRouter** (`OPENROUTER_API_KEY`) — al menos una es requerida
+- Docker ejecutando `azure-sql-edge` (para herramientas de SQL Edge)
+- Un workspace de Databricks con un SQL warehouse (para herramientas de Databricks) — [regístrate en la edición gratuita](https://www.databricks.com/signup/free-edition?provider=DB_FREE_TIER&dbx_source=www&itm_data=dbx-web&l=en-EN&itm_source=www&itm_category=learn&itm_page=free-edition&itm_location=body&itm_component=hero&itm_offer=free-edition) si aún no tienes una cuenta
+  - **Requerido**: Debe existir un Unity Catalog (`localuc` por defecto) antes de usar funcionalidades de Databricks
 
-**For step-by-step setup instructions, see [runbook.md](ai-sql-migration/runbook.md)** ← Start here if this is your first time setting up the project.
+**Para instrucciones de configuración paso a paso, consulta [runbook.md](runbook.md)** ← Empieza aquí si es tu primera vez configurando el proyecto.
 
-## Setup
+## Configuración
 
-1. Clone the repo and enter the project directory:
+1. Clona el repositorio y entra al directorio del proyecto:
 
 ```bash
 cd ai-sql-migration
 ```
 
-2. Install dependencies:
+2. Instala las dependencias:
 
 ```bash
 uv sync
 ```
 
-3. Copy the environment variables template and fill in your credentials:
+3. Copia la plantilla de variables de entorno y completa tus credenciales:
 
 ```bash
 cp .env.example .env
 ```
 
-### LLM Provider (at least one required)
+### Proveedor LLM (al menos uno requerido)
 
-| Variable | Description |
+| Variable | Descripción |
 |---|---|
-| `ANTHROPIC_API_KEY` | Anthropic API key (`sk-ant-...`). Enables the LLM classifier and tiered routing with Claude models. |
-| `OPENROUTER_API_KEY` | OpenRouter API key (`sk-or-...`). Enables classifier + tiered routing via OpenRouter. Takes precedence over Anthropic when both are set. |
+| `ANTHROPIC_API_KEY` | Clave de API de Anthropic (`sk-ant-...`). Habilita el clasificador LLM y enrutamiento por niveles con modelos Claude. |
+| `OPENROUTER_API_KEY` | Clave de API de OpenRouter (`sk-or-...`). Habilita clasificador + enrutamiento por niveles vía OpenRouter. Tiene prioridad sobre Anthropic cuando ambas están configuradas. |
 
-### Anthropic model tiers (optional — only used when `ANTHROPIC_API_KEY` is set)
+### Niveles de modelo Anthropic (opcional — solo se usa cuando `ANTHROPIC_API_KEY` está configurada)
 
-| Variable | Default | Description |
-| --- | --- | --- |
-| `ANTHROPIC_MODEL_CLASSIFIER` | `claude-haiku-4-5-20251001` | Model used to classify query complexity |
-| `ANTHROPIC_MODEL_SIMPLE` | `claude-haiku-4-5-20251001` | Model for simple queries (basic SELECTs, schema lookups) |
-| `ANTHROPIC_MODEL_MEDIUM` | `claude-sonnet-4-5` | Model for medium queries (JOINs, aggregations) |
-| `ANTHROPIC_MODEL_COMPLEX` | `claude-sonnet-4-5` | Model for complex queries (full T-SQL→Spark migrations, subqueries) |
+| Variable | Por defecto | Descripción |
+|---|---|---|
+| `ANTHROPIC_MODEL_CLASSIFIER` | `claude-haiku-4-5-20251001` | Modelo usado para clasificar la complejidad de la consulta |
+| `ANTHROPIC_MODEL_SIMPLE` | `claude-haiku-4-5-20251001` | Modelo para consultas simples (SELECTs básicos, consultas de esquema) |
+| `ANTHROPIC_MODEL_MEDIUM` | `claude-sonnet-4-5` | Modelo para consultas medianas (JOINs, agregaciones) |
+| `ANTHROPIC_MODEL_COMPLEX` | `claude-sonnet-4-5` | Modelo para consultas complejas (migraciones completas T-SQL→Spark, subconsultas) |
 
-### OpenRouter model tiers (optional — only used when `OPENROUTER_API_KEY` is set)
+### Niveles de modelo OpenRouter (opcional — solo se usa cuando `OPENROUTER_API_KEY` está configurada)
 
-| Variable | Default | Description |
-| --- | --- | --- |
-| `OPENROUTER_MODEL_CLASSIFIER` | `meta-llama/llama-3.1-8b-instruct:free` | Model used to classify query complexity |
-| `OPENROUTER_MODEL_SIMPLE` | `meta-llama/llama-3.1-8b-instruct:free` | Model for simple queries (basic SELECTs, schema lookups) |
-| `OPENROUTER_MODEL_MEDIUM` | `mistralai/mixtral-8x7b-instruct` | Model for medium queries (JOINs, aggregations) |
-| `OPENROUTER_MODEL_COMPLEX` | `anthropic/claude-sonnet-4-5` | Model for complex queries (full T-SQL→Spark migrations, subqueries) |
+| Variable | Por defecto | Descripción |
+|---|---|---|
+| `OPENROUTER_MODEL_CLASSIFIER` | `meta-llama/llama-3.1-8b-instruct:free` | Modelo usado para clasificar la complejidad de la consulta |
+| `OPENROUTER_MODEL_SIMPLE` | `meta-llama/llama-3.1-8b-instruct:free` | Modelo para consultas simples (SELECTs básicos, consultas de esquema) |
+| `OPENROUTER_MODEL_MEDIUM` | `mistralai/mixtral-8x7b-instruct` | Modelo para consultas medianas (JOINs, agregaciones) |
+| `OPENROUTER_MODEL_COMPLEX` | `anthropic/claude-sonnet-4-5` | Modelo para consultas complejas (migraciones completas T-SQL→Spark, subconsultas) |
 
-### SQL Edge connection
+### Conexión a SQL Edge
 
-| Variable | Description |
+| Variable | Descripción |
 |---|---|
-| `SQLEDGE_HOST` | SQL Edge host (default: `localhost`) |
-| `SQLEDGE_PORT` | SQL Edge port (default: `1433`) |
-| `SQLEDGE_DATABASE` | Database name (e.g. `ecobicis`) |
-| `SQLEDGE_USER` | SQL Edge login (e.g. `sa`) |
-| `SQLEDGE_PASSWORD` | SQL Edge password |
+| `SQLEDGE_HOST` | Host de SQL Edge (por defecto: `localhost`) |
+| `SQLEDGE_PORT` | Puerto de SQL Edge (por defecto: `1433`) |
+| `SQLEDGE_DATABASE` | Nombre de la base de datos (ej. `ecobicis`) |
+| `SQLEDGE_USER` | Usuario de SQL Edge (ej. `sa`) |
+| `SQLEDGE_PASSWORD` | Contraseña de SQL Edge |
 
-### Databricks connection
+### Conexión a Databricks
 
-| Variable | Description |
+| Variable | Descripción |
 |---|---|
-| `DATABRICKS_HOST` | Databricks workspace URL |
-| `DATABRICKS_TOKEN` | Databricks personal access token |
-| `DATABRICKS_WAREHOUSE_ID` | SQL warehouse ID |
-| `UC_CATALOG` | Unity Catalog name |
-| `UC_SCHEMA` | Schema name within the catalog |
+| `DATABRICKS_HOST` | URL del workspace de Databricks |
+| `DATABRICKS_TOKEN` | Token de acceso personal de Databricks |
+| `DATABRICKS_WAREHOUSE_ID` | ID del SQL warehouse |
+| `UC_CATALOG` | Nombre del Unity Catalog |
+| `UC_SCHEMA` | Nombre del esquema dentro del catálogo |
 
-### SQLFluff migration
+### Migración SQLFluff
 
-| Variable | Description |
+| Variable | Descripción |
 |---|---|
-| `SQLFLUFF_ENABLED` | Enable SQL migration lint/fix flow (`true`/`false`) |
-| `SQLFLUFF_SOURCE_DIALECT` | Source SQL dialect for migration (default: `tsql`) |
-| `SQLFLUFF_TARGET_DIALECT` | Target SQL dialect for migration (default: `sparksql`) |
+| `SQLFLUFF_ENABLED` | Habilitar flujo de lint/corrección de migración SQL (`true`/`false`) |
+| `SQLFLUFF_SOURCE_DIALECT` | Dialecto SQL de origen para migración (por defecto: `tsql`) |
+| `SQLFLUFF_TARGET_DIALECT` | Dialecto SQL de destino para migración (por defecto: `sparksql`) |
 
-### Observability (optional)
+### Observabilidad (opcional)
 
-| Variable | Default | Description |
-| --- | --- | --- |
-| `LANGSMITH_TRACING` | `false` | Enable LangSmith tracing. Must be set in `.env` — cannot be set at runtime. |
-| `LANGSMITH_API_KEY` | — | LangSmith API key (`ls__...`). Required when tracing is enabled. |
-| `LANGSMITH_PROJECT` | `ai-sql-migration` | Project name in LangSmith. |
-| `LANGSMITH_ENDPOINT` | `https://api.smith.langchain.com` | LangSmith API endpoint. |
-| `QUALITY_JUDGE_ENABLED` | `false` | Run a cheap LLM judge after each response to score quality (1–5). Adds ~1 extra LLM call per run. |
+| Variable | Por defecto | Descripción |
+|---|---|---|
+| `LANGSMITH_TRACING` | `false` | Habilitar trazado LangSmith. Debe configurarse en `.env` — no se puede configurar en tiempo de ejecución. |
+| `LANGSMITH_API_KEY` | — | Clave de API de LangSmith (`ls__...`). Requerida cuando el trazado está habilitado. |
+| `LANGSMITH_PROJECT` | `ai-sql-migration` | Nombre del proyecto en LangSmith. |
+| `LANGSMITH_ENDPOINT` | `https://api.smith.langchain.com` | Endpoint de API de LangSmith. |
+| `QUALITY_JUDGE_ENABLED` | `false` | Ejecutar un juez LLM económico después de cada respuesta para calificar calidad (1–5). Agrega ~1 llamada LLM adicional por ejecución. |
 
-### Databricks Unity Catalog Setup (Required)
+### Configuración del Unity Catalog de Databricks (Requerido)
 
-Before using Databricks features, ensure the Unity Catalog exists and you have access:
+Antes de usar funcionalidades de Databricks, asegúrate de que el Unity Catalog exista y tengas acceso:
 
 ```sql
 CREATE CATALOG IF NOT EXISTS localuc;
 GRANT USE CATALOG ON CATALOG localuc TO `user@enterprise.com`;
 ```
 
-Run these commands in your **Databricks workspace SQL editor** before initializing the database pipeline or querying Databricks with the agent. Replace `user@enterprise.com` with your actual Databricks principal (user email or service principal name).
+Ejecuta estos comandos en el **editor SQL de tu workspace de Databricks** antes de inicializar el pipeline de base de datos o consultar Databricks con el agente. Reemplaza `user@enterprise.com` con tu principal de Databricks real (correo de usuario o nombre de service principal).
 
-## Running
+## Ejecución
 
 ```bash
 uv run python main.py
 ```
 
-Override the default query with the `USER_QUERY` environment variable:
+Sobrescribe la consulta por defecto con la variable de entorno `USER_QUERY`:
 
 ```bash
 USER_QUERY="Use migrate_sql_query for: SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name FROM pharmacy_db.dbo.dim_patient; then run_sql_query on the migrated SQL in Databricks." uv run python main.py
 ```
 
-## Project Structure
+## Estructura del Proyecto
 
 ```
 ai-sql-migration/
-├── main.py                      # Entry point and rich console UI
-├── pyproject.toml               # Project metadata and dependencies
-├── .env.example                 # Environment variables template
+├── main.py                      # Punto de entrada e interfaz de consola rich
+├── pyproject.toml               # Metadatos del proyecto y dependencias
+├── .env.example                 # Plantilla de variables de entorno
 └── src/
     ├── config/
-    │   ├── settings.py          # Settings dataclass loaded from env (Anthropic + OpenRouter fields)
-    │   └── llm_config.py        # Model factory, query classifier (ClassifierResult), quality judge
+    │   ├── settings.py          # Dataclass Settings cargada desde env (campos Anthropic + OpenRouter)
+    │   └── llm_config.py        # Fábrica de modelos, clasificador de consultas (ClassifierResult), juez de calidad
     ├── graph/
-    │   ├── builder.py           # LangGraph agent compilation
-    │   ├── nodes.py             # LLM call, tool, and routing nodes
-    │   └── state.py             # Agent state definition
-    ├── models/                  # Data models
+    │   ├── builder.py           # Compilación del agente LangGraph
+    │   ├── nodes.py             # Nodos de llamada LLM, herramientas y enrutamiento
+    │   └── state.py             # Definición del estado del agente
+    ├── models/                  # Modelos de datos
     ├── observability/
-    │   └── metrics.py           # RunMetrics: latency, tokens, cost estimation, quality score
+    │   └── metrics.py           # RunMetrics: latencia, tokens, estimación de costos, puntuación de calidad
     └── tools/
-        ├── sql_migration.py     # SQL Edge -> Databricks migration tool (SQLFluff)
-        ├── sqledge_sql.py       # Azure SQL Edge tools
-        └── databricks_sql.py    # Databricks SQL tools (with async polling)
+        ├── sql_migration.py     # Herramienta de migración SQL Edge -> Databricks (SQLFluff)
+        ├── sqledge_sql.py       # Herramientas de Azure SQL Edge
+        └── databricks_sql.py    # Herramientas de Databricks SQL (con polling asíncrono)
 ```
 
-## Agent Tools
+## Herramientas del Agente
 
 ### Azure SQL Edge
 
-| Tool | Description |
+| Herramienta | Descripción |
 |---|---|
-| `run_sqledge_query` | Runs a read-only `SELECT` query against the SQL Edge instance. Automatically injects `TOP N` to cap results. |
-| `describe_sqledge_table` | Returns column names, data types, and nullability for a given table via `INFORMATION_SCHEMA.COLUMNS`. |
+| `run_sqledge_query` | Ejecuta una consulta `SELECT` de solo lectura contra la instancia de SQL Edge. Inyecta automáticamente `TOP N` para limitar resultados. |
+| `describe_sqledge_table` | Devuelve nombres de columnas, tipos de datos y nulabilidad para una tabla dada mediante `INFORMATION_SCHEMA.COLUMNS`. |
 
 ### Databricks
 
-| Tool | Description |
+| Herramienta | Descripción |
 |---|---|
-| `run_sql_query` | Runs a read-only `SELECT`, `SHOW`, or `DESCRIBE` query against Databricks SQL Warehouse. Automatically appends `LIMIT N`. |
-| `describe_table` | Describes a Unity Catalog table schema using `DESCRIBE TABLE`. |
-| `migrate_sql_query` | Migrates SQL Edge/T-SQL flavored SQL to Spark SQL using SQLFluff lint + rewrite rules. |
+| `run_sql_query` | Ejecuta una consulta `SELECT`, `SHOW` o `DESCRIBE` de solo lectura contra Databricks SQL Warehouse. Agrega automáticamente `LIMIT N`. |
+| `describe_table` | Describe el esquema de una tabla del Unity Catalog usando `DESCRIBE TABLE`. |
+| `migrate_sql_query` | Migra SQL con sintaxis SQL Edge/T-SQL a Spark SQL usando reglas de lint + reescritura de SQLFluff. |
 
-## Usage Examples
+## Ejemplos de Uso
 
-The agent automatically classifies each query into a tier (`simple` / `medium` / `complex`) and routes it to the appropriate model. Use explicit queries so the agent also chooses the correct tool and data source.
+El agente clasifica automáticamente cada consulta en un nivel (`simple` / `medium` / `complex`) y la enruta al modelo apropiado. Usa consultas explícitas para que el agente también elija la herramienta y fuente de datos correcta.
 
-### Tier: simple
+### Nivel: simple
 
-Queries clasificadas como `simple` usan el modelo más ligero (e.g. `claude-haiku` o `llama-3.1-8b:free`). Ideales para lookups de schema o SELECTs básicos de una sola tabla.
+Consultas clasificadas como `simple` usan el modelo más ligero (ej. `claude-haiku` o `llama-3.1-8b:free`). Ideales para consultas de esquema o SELECTs básicos de una sola tabla.
 
-#### Describir schema de una tabla (SQL Edge)
+#### Describir esquema de una tabla (SQL Edge)
 
 ```bash
 USER_QUERY="Use describe_sqledge_table for dim_patient and list all columns." uv run python main.py
 ```
 
-#### Describir schema de una tabla (Databricks)
+#### Describir esquema de una tabla (Databricks)
 
 ```bash
 USER_QUERY="Use describe_table for localuc.gold.dim_patient and show me the columns." uv run python main.py
@@ -195,7 +195,7 @@ USER_QUERY="Use run_sqledge_query to execute: SELECT TOP (5) [sk_patient_id], [f
 USER_QUERY="Use run_sql_query to list 5 rows from localuc.gold.dim_patient." uv run python main.py
 ```
 
-#### Migrar y ejecutar query básica (SQL Edge → Databricks)
+#### Migrar y ejecutar consulta básica (SQL Edge → Databricks)
 
 ```bash
 USER_QUERY="Use migrate_sql_query for: SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name, ISNULL(last_name, 'unknown') AS last_name, GETDATE() AS migrated_at FROM localdb.dbo.dim_patient; then run_sql_query on the migrated SQL in Databricks."
@@ -204,9 +204,9 @@ uv run python main.py
 
 ---
 
-### Tier: medium
+### Nivel: medium
 
-Queries clasificadas como `medium` usan un modelo intermedio (e.g. `claude-sonnet` o `mixtral-8x7b`). Ideales para agregaciones, JOINs simples y filtros compuestos.
+Consultas clasificadas como `medium` usan un modelo intermedio (ej. `claude-sonnet` o `mixtral-8x7b`). Ideales para agregaciones, JOINs simples y filtros compuestos.
 
 #### Agregación con GROUP BY (SQL Edge)
 
@@ -228,11 +228,11 @@ USER_QUERY="Use run_sql_query on localuc.gold.fact_prescription to show total pr
 
 ---
 
-### Tier: complex
+### Nivel: complex
 
-Queries clasificadas como `complex` usan el modelo más capaz (e.g. `claude-sonnet-4-5` o `claude-opus`). Ideales para migraciones T-SQL → Spark SQL completas y analytics multi-tabla.
+Consultas clasificadas como `complex` usan el modelo más capaz (ej. `claude-sonnet-4-5` o `claude-opus`). Ideales para migraciones completas T-SQL → Spark SQL y analytics multi-tabla.
 
-#### Migrar query con window functions y CTE
+#### Migrar consulta con window functions y CTE
 
 ```bash
 export USER_QUERY="Use migrate_sql_query for this T-SQL, then run it with run_sql_query:
@@ -256,7 +256,7 @@ ORDER BY total_prescriptions DESC;"
 uv run python main.py
 ```
 
-#### Migrar query con JOIN y agregación
+#### Migrar consulta con JOIN y agregación
 
 ```bash
 export USER_QUERY="Migrate this T-SQL to Databricks using migrate_sql_query, then run it with run_sql_query:
@@ -298,7 +298,7 @@ settings = Settings.from_env()
 
 query = "Migrate this SQL Edge query to Databricks and run it: SELECT TOP 5 ISNULL(first_name, 'unknown') AS first_name FROM pharmacy_db.dbo.dim_patient;"
 
-# classify_query returns a ClassifierResult with .tier and token usage
+# classify_query devuelve un ClassifierResult con .tier y uso de tokens
 classifier_result = classify_query(settings, query)
 agent = build_agent(settings, tier=classifier_result.tier)
 
@@ -306,17 +306,17 @@ result = agent.invoke({"messages": [HumanMessage(content=query)]})
 print(result["messages"][-1].content)
 ```
 
-## Dependencies
+## Dependencias
 
-| Package | Purpose |
+| Paquete | Propósito |
 |---|---|
-| `anthropic` | Claude API client |
-| `langchain-anthropic` | LangChain-compatible Claude chat model (used when `ANTHROPIC_API_KEY` is set) |
-| `langchain-openai` | LangChain-compatible OpenAI-format chat model (used for OpenRouter) |
-| `langchain-core` | Base abstractions for tools and messages |
-| `langgraph` | Agent graph orchestration |
-| `pyodbc` | ODBC connector for Azure SQL Edge |
-| `databricks-sql-connector` | Databricks SQL warehouse connector |
-| `python-dotenv` | Load environment variables from `.env` |
-| `sqlfluff` | SQL linting/fixing and dialect-aware migration assistance |
-| `rich` | Terminal UI (panels, markdown, colored output) |
+| `anthropic` | Cliente de API de Claude |
+| `langchain-anthropic` | Modelo de chat Claude compatible con LangChain (usado cuando `ANTHROPIC_API_KEY` está configurada) |
+| `langchain-openai` | Modelo de chat en formato OpenAI compatible con LangChain (usado para OpenRouter) |
+| `langchain-core` | Abstracciones base para herramientas y mensajes |
+| `langgraph` | Orquestación de grafos del agente |
+| `pyodbc` | Conector ODBC para Azure SQL Edge |
+| `databricks-sql-connector` | Conector de Databricks SQL warehouse |
+| `python-dotenv` | Carga variables de entorno desde `.env` |
+| `sqlfluff` | Linting/corrección SQL y asistencia de migración con conocimiento de dialectos |
+| `rich` | Interfaz de terminal (paneles, markdown, salida con colores) |

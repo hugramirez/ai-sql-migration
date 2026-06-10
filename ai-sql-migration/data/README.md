@@ -1,115 +1,115 @@
-# Data directory
+# Directorio de datos
 
-Database initialization (`init_db.py`) and SQL pipelines under `pipelines/`.
+Inicialización de base de datos (`init_db.py`) y pipelines SQL bajo `pipelines/`.
 
 ## Databricks (Unity Catalog)
 
-From **`ai-sql-migration`**, set `DATABRICKS_HOST`, `DATABRICKS_TOKEN`, and `DATABRICKS_WAREHOUSE_ID` in `.env`. The catalog **`localuc`** must exist and you must have `USE CATALOG` permission.
+Desde **`ai-sql-migration`**, configura `DATABRICKS_HOST`, `DATABRICKS_TOKEN` y `DATABRICKS_WAREHOUSE_ID` en `.env`. El catálogo **`localuc`** debe existir y debes tener permiso `USE CATALOG`.
 
-### Prerequisites: Create the `localuc` Catalog (Required)
+### Prerrequisitos: Crear el catálogo `localuc` (Requerido)
 
-Before running `init_db_databricks.py`, the Unity Catalog **must exist**. Run these SQL commands in your **Databricks workspace SQL editor**:
+Antes de ejecutar `init_db_databricks.py`, el Unity Catalog **debe existir**. Ejecuta estos comandos SQL en el **editor SQL de tu workspace de Databricks**:
 
 ```sql
 CREATE CATALOG IF NOT EXISTS localuc;
 GRANT USE CATALOG ON CATALOG localuc TO `user@enterprise.com`;
 ```
 
-Replace `user@enterprise.com` with your Databricks principal (user email or service principal). Without this step, `init_db_databricks.py` will fail with permission or "catalog not found" errors.
+Reemplaza `user@enterprise.com` con tu principal de Databricks (correo de usuario o service principal). Sin este paso, `init_db_databricks.py` fallará con errores de permiso o "catalog not found".
 
-`DATABRICKS_WAREHOUSE_ID` must be the **full** SQL warehouse UUID (32 hex characters, with or without hyphens); a truncated ID usually yields HTTP 400 on connect.
+`DATABRICKS_WAREHOUSE_ID` debe ser el **UUID completo** del SQL warehouse (32 caracteres hexadecimales, con o sin guiones); un ID truncado generalmente produce HTTP 400 al conectar.
 
-Optional: `DATABRICKS_MAX_ROWS_PER_TABLE=100` limits bronze **dimension** CSV loads to the first *N* rows per table (smoke tests). Omit for a full load. CLI: `uv run python data/init_db_databricks.py init --max-rows 100` (use `--max-rows 0` to ignore the env cap for that run).
+Opcional: `DATABRICKS_MAX_ROWS_PER_TABLE=100` limita la carga de CSVs de **dimensiones** bronze a las primeras *N* filas por tabla (pruebas de humo). Omite para una carga completa. CLI: `uv run python data/init_db_databricks.py init --max-rows 100` (usa `--max-rows 0` para ignorar el límite de entorno en esa ejecución).
 
-- **Python CLI**: `uv run python data/init_db_databricks.py --help` — `init` runs bronze DDL, loads dimension CSVs into `localuc.bronze.raw_dim_*`, then silver / gold / views. SQL files that append `OPTIMIZE` after a `CREATE TABLE … AS SELECT` are split into separate warehouse statements automatically. Facts in bronze are not loaded from `raw_data` (schema differs from SQL Server exports); extend with your own ingest.
-- **Smoke test (SQL warehouse only)**: `uv run python scripts/test_databricks_sql_connection.py` — runs `SELECT 1` with the same `databricks.sql.connect` parameters as the pipeline (reads `.env`).
-- **Notebook**: open `data/init_db_databricks.ipynb` (includes a minimal connection cell after `load_dotenv`; same flow as CLI for the full pipeline).
+- **CLI de Python**: `uv run python data/init_db_databricks.py --help` — `init` ejecuta DDL bronze, carga CSVs de dimensiones en `localuc.bronze.raw_dim_*`, luego silver / gold / vistas. Los archivos SQL que añaden `OPTIMIZE` después de un `CREATE TABLE … AS SELECT` se dividen automáticamente en sentencias separadas del warehouse. Los facts en bronze no se cargan desde `raw_data` (el esquema difiere de las exportaciones de SQL Server); extiende con tu propia ingesta.
+- **Prueba de humo (solo SQL warehouse)**: `uv run python scripts/test_databricks_sql_connection.py` — ejecuta `SELECT 1` con los mismos parámetros de `databricks.sql.connect` que el pipeline (lee `.env`).
+- **Notebook**: abre `data/init_db_databricks.ipynb` (incluye una celda de conexión mínima después de `load_dotenv`; mismo flujo que la CLI para el pipeline completo).
 
-## Database initialization
+## Inicialización de base de datos
 
-Create the SQL Server database, tables, and load sample CSVs before querying locally.
+Crea la base de datos SQL Server, tablas y carga CSVs de muestra antes de consultar localmente.
 
-### Prerequisites
+### Prerrequisitos
 
-- **Python**: run commands with [`uv`](https://docs.astral.sh/uv/) from the **`ai-sql-migration`** directory (the folder that contains `pyproject.toml`, `.env`, and `data/`).
-- **ODBC**: Microsoft **ODBC Driver 18 for SQL Server** (required by `init_db.py`).
-- **SQL Server**: reachable at `SQLEDGE_HOST`:`SQLEDGE_PORT` with permission to create/drop databases (see below).
+- **Python**: ejecuta comandos con [`uv`](https://docs.astral.sh/uv/) desde el directorio **`ai-sql-migration`** (la carpeta que contiene `pyproject.toml`, `.env` y `data/`).
+- **ODBC**: Microsoft **ODBC Driver 18 for SQL Server** (requerido por `init_db.py`).
+- **SQL Server**: accesible en `SQLEDGE_HOST`:`SQLEDGE_PORT` con permiso para crear/eliminar bases de datos (ver abajo).
 
-### Environment variables
+### Variables de entorno
 
-Create or edit `ai-sql-migration/.env`. `data/init_db.py` and `data/init_db_databricks.py` load it with **`override=True`**, so values in this file replace same-named variables already present in the environment (including empty placeholders from the shell or IDE).
+Crea o edita `ai-sql-migration/.env`. `data/init_db.py` y `data/init_db_databricks.py` lo cargan con **`override=True`**, por lo que los valores en este archivo reemplazan variables del mismo nombre ya presentes en el entorno (incluyendo placeholders vacíos del shell o IDE).
 
 ```env
 SQLEDGE_HOST=localhost
 SQLEDGE_PORT=1433
 SQLEDGE_DATABASE=localuc_db
 SQLEDGE_USER=sa
-SQLEDGE_PASSWORD=<your_password>
+SQLEDGE_PASSWORD=<tu_contraseña>
 ```
 
-Omit `SQLEDGE_HOST`, `SQLEDGE_PORT`, or `SQLEDGE_DATABASE` to use the defaults shown above. `SQLEDGE_USER` and `SQLEDGE_PASSWORD` are required (empty values cause the script to exit).
+Omite `SQLEDGE_HOST`, `SQLEDGE_PORT` o `SQLEDGE_DATABASE` para usar los valores por defecto mostrados arriba. `SQLEDGE_USER` y `SQLEDGE_PASSWORD` son requeridos (valores vacíos hacen que el script termine).
 
-### Quick start
+### Inicio rápido
 
-From **`ai-sql-migration`** (not the monorepo root unless you `cd` into this folder):
+Desde **`ai-sql-migration`** (no la raíz del monorepo a menos que hagas `cd` a esta carpeta):
 
 ```bash
-cd /path/to/ai-sql-migration
+cd /ruta/a/ai-sql-migration
 uv sync
 uv run python data/init_db.py
 ```
 
-If the repository root is `compufest-1-` and this project lives in a subfolder:
+Si la raíz del repositorio es `compufest-1-` y este proyecto vive en una subcarpeta:
 
 ```bash
 cd compufest-1-/ai-sql-migration
 uv run python data/init_db.py
 ```
 
-This runs `init()`, which:
+Esto ejecuta `init()`, que:
 
-1. **Drops `localuc_db` if it already exists** (best-effort), recreates it, then runs `pipelines/src_sql_server/run.sql` to create tables and indexes.
-2. Loads CSVs from `data/raw_data/` into `dbo.*` tables (see load order in `init_db.py`).
-3. Writes logs under `ai-sql-migration/logs/` as `data_load_YYYYMMDD_HHMMSS.log` (a new log file is created when the CSV load phase starts).
+1. **Elimina `localuc_db` si ya existe** (mejor esfuerzo), la recrea, luego ejecuta `pipelines/src_sql_server/run.sql` para crear tablas e índices.
+2. Carga CSVs desde `data/raw_data/` en tablas `dbo.*` (ver orden de carga en `init_db.py`).
+3. Escribe registros bajo `ai-sql-migration/logs/` como `data_load_YYYYMMDD_HHMMSS.log` (se crea un nuevo archivo de log cuando comienza la fase de carga de CSV).
 
-**Warning:** Step 1 is destructive for the configured database name. Do not point `SQLEDGE_DATABASE` at a shared or production database.
+**Advertencia:** El paso 1 es destructivo para el nombre de base de datos configurado. No apuntes `SQLEDGE_DATABASE` a una base de datos compartida o de producción.
 
-### Manual steps
+### Pasos manuales
 
-From **`ai-sql-migration`**, use subcommands (same `.env` as full init):
+Desde **`ai-sql-migration`**, usa subcomandos (mismo `.env` que init completo):
 
 ```bash
-# Tables only: drop/recreate database + run DDL (no CSV load)
+# Solo tablas: eliminar/recrear base de datos + ejecutar DDL (sin carga CSV)
 uv run python data/init_db.py create-tables
 
-# Load CSVs only: expects tables already exist
+# Solo cargar CSVs: espera que las tablas ya existan
 uv run python data/init_db.py load-data
 ```
 
-Optional overrides (otherwise values come from `.env`):
+Sobrescrituras opcionales (de lo contrario los valores vienen de `.env`):
 
 ```bash
 uv run python data/init_db.py init --host 127.0.0.1 --user sa --password '...'
 uv run python data/init_db.py load-data --data-path raw_data
 ```
 
-See `uv run python data/init_db.py --help` for all flags (`--sql-file`, `--port`, `--database`, etc.).
+Consulta `uv run python data/init_db.py --help` para todas las opciones (`--sql-file`, `--port`, `--database`, etc.).
 
-## Directory layout
+## Estructura de directorios
 
 ```
 data/
-├── init_db.py                 # SQL Server / SQL Edge: create DB + tables + load CSVs (pyodbc)
-├── init_db_databricks.py      # Databricks warehouse: UC DDL + bronze dim loads
-├── init_db_databricks.ipynb   # Notebook wrapper for the Databricks pipeline
+├── init_db.py                 # SQL Server / SQL Edge: crear BD + tablas + cargar CSVs (pyodbc)
+├── init_db_databricks.py      # Databricks warehouse: DDL UC + cargas de dimensiones bronze
+├── init_db_databricks.ipynb   # Notebook envoltorio para el pipeline de Databricks
 ├── README.md
-├── raw_data/               # dim_*.csv, fact_*.csv (table names match dbo tables)
+├── raw_data/               # dim_*.csv, fact_*.csv (nombres de tabla coinciden con tablas dbo)
 └── pipelines/
     ├── src_sql_server/
-    │   ├── run.sql         # Concatenated DDL (single script for init_db)
+    │   ├── run.sql         # DDL concatenado (script único para init_db)
     │   ├── schemas/
     │   │   └── schema.sql
-    │   ├── dimensions/     # Per-table DDL modules
+    │   ├── dimensions/     # Módulos DDL por tabla
     │   └── facts/
     └── src_databricks/
         ├── run.sql
@@ -120,34 +120,34 @@ data/
         └── views/
 ```
 
-Modular files under `dimensions/`, `facts/`, and `schemas/` are the source pieces; refresh `run.sql` when you change them if you rely on `init_db.py` (see the `SOURCE SECTION` comments inside `run.sql`).
+Los archivos modulares bajo `dimensions/`, `facts/` y `schemas/` son las piezas fuente; actualiza `run.sql` cuando los modifiques si dependes de `init_db.py` (ver los comentarios `SOURCE SECTION` dentro de `run.sql`).
 
-## Troubleshooting
+## Solución de problemas
 
-### "ODBC Driver 18 for SQL Server" not found
+### "ODBC Driver 18 for SQL Server" no encontrado
 
-Install the driver:
+Instala el driver:
 
-- **macOS**: `brew install msodbcsql18` (optional: `mssql-tools18`)
-- **Linux**: [Install the Microsoft ODBC driver for SQL Server](https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server)
-- **Windows**: [Download ODBC Driver for SQL Server](https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server)
+- **macOS**: `brew install msodbcsql18` (opcional: `mssql-tools18`)
+- **Linux**: [Instalar el controlador ODBC de Microsoft para SQL Server](https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server)
+- **Windows**: [Descargar ODBC Driver for SQL Server](https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server)
 
-### Connection refused or login failed
+### Conexión rechazada o inicio de sesión fallido
 
-Confirm SQL Server is running and listening on `SQLEDGE_HOST`:`SQLEDGE_PORT`, that TCP is enabled, and that firewall rules allow the client. This repository does not ship a root-level `docker-compose` file; use your own container or local instance and align `.env` with it.
+Confirma que SQL Server esté ejecutándose y escuchando en `SQLEDGE_HOST`:`SQLEDGE_PORT`, que TCP esté habilitado y que las reglas de firewall permitan al cliente. Este repositorio no incluye un archivo `docker-compose` raíz; usa tu propio contenedor o instancia local y alinea `.env` con él.
 
-### CSV files not found
+### Archivos CSV no encontrados
 
-CSV paths are `data/raw_data/<table>.csv` relative to `data/init_db.py`. From `ai-sql-migration`:
+Las rutas CSV son `data/raw_data/<tabla>.csv` relativas a `data/init_db.py`. Desde `ai-sql-migration`:
 
 ```bash
 ls -la data/raw_data/
 ```
 
-## Data model
+## Modelo de datos
 
-See `pipelines/src_sql_server/run.sql` for the full DDL.
+Consulta `pipelines/src_sql_server/run.sql` para el DDL completo.
 
-**Dimensions:** `dim_patient`, `dim_medication`, `dim_prescriber`, `dim_payer`, `dim_date`, `dim_care_team_member`
+**Dimensiones:** `dim_patient`, `dim_medication`, `dim_prescriber`, `dim_payer`, `dim_date`, `dim_care_team_member`
 
-**Facts:** `fact_prescription`, `fact_adherence`, `fact_clinical_interaction`, `fact_shipment`, `fact_last_event`
+**Hechos:** `fact_prescription`, `fact_adherence`, `fact_clinical_interaction`, `fact_shipment`, `fact_last_event`
