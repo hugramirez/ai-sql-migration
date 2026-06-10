@@ -1,6 +1,6 @@
 # ai-sql-migration
 
-Agente de migración SQL impulsado por IA que utiliza [LangGraph](https://github.com/langchain-ai/langgraph) y un LLM (Anthropic Claude o [OpenRouter](https://openrouter.ai)) para consultar datos desde **Azure SQL Edge** (Docker) y **Databricks** usando lenguaje natural.
+Agente de migración SQL impulsado por IA que utiliza [LangGraph](https://github.com/langchain-ai/langgraph) y un LLM (Anthropic Claude o [OpenRouter](https://openrouter.ai)) para migrar y consultar datos desde **Azure SQL Edge** (Docker) a **Databricks** usando lenguaje natural.
 
 Un clasificador LLM ligero enruta automáticamente cada consulta al modelo de tamaño adecuado según su complejidad (simple / medium / complex), optimizando el costo sin sacrificar calidad en tareas difíciles. El clasificador funciona tanto con Anthropic como con OpenRouter.
 
